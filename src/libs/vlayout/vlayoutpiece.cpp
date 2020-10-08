@@ -366,13 +366,24 @@ QStringList PieceLabelText(const QVector<QPointF> &labelShape, const VTextManage
 }
 
 //---------------------------------------------------------------------------------------------------------------------
+
+#ifdef Q_COMPILER_RVALUE_REFS
+VLayoutPiece &VLayoutPiece::operator=(VLayoutPiece &&detail) Q_DECL_NOTHROW { Swap(detail); return *this; }
+#endif
+
+void VLayoutPiece::Swap(VLayoutPiece &detail) Q_DECL_NOTHROW
+{ VAbstractPiece::Swap(detail); std::swap(d, detail.d); }
+
+//---------------------------------------------------------------------------------------------------------------------
 VLayoutPiece::VLayoutPiece()
-    :VAbstractPiece(), d(new VLayoutPieceData)
+    : VAbstractPiece(),
+      d(new VLayoutPieceData)
 {}
 
 //---------------------------------------------------------------------------------------------------------------------
 VLayoutPiece::VLayoutPiece(const VLayoutPiece &detail)
-    :VAbstractPiece(detail), d(detail.d)
+    : VAbstractPiece(detail),
+      d(detail.d)
 {}
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -403,7 +414,7 @@ VLayoutPiece VLayoutPiece::Create(const VPiece &piece, const VContainer *pattern
     det.SetSeamAllowancePoints(piece.SeamAllowancePoints(pattern), piece.IsSeamAllowance(),
                                piece.IsSeamAllowanceBuiltIn());
     det.SetInternalPaths(ConvertInternalPaths(piece, pattern));
-    det.SetPassmarks(piece.PassmarksLines(pattern));
+    det.setNotches(piece.createNotchLines(pattern));
 
     det.SetName(piece.GetName());
 
@@ -862,17 +873,17 @@ void VLayoutPiece::SetLayoutAllowancePoints()
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-QVector<QLineF> VLayoutPiece::GetPassmarks() const
+QVector<QLineF> VLayoutPiece::getNotches() const
 {
-    return Map(d->passmarks);
+    return Map(d->notches);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void VLayoutPiece::SetPassmarks(const QVector<QLineF> &passmarks)
+void VLayoutPiece::setNotches(const QVector<QLineF> &notches)
 {
     if (IsSeamAllowance())
     {
-        d->passmarks = passmarks;
+        d->notches = notches;
     }
 }
 
@@ -919,7 +930,7 @@ QVector<T> VLayoutPiece::Map(const QVector<T> &points) const
         QList<T> list = p.toList();
         for (int k=0, s=list.size(), max=(s/2); k<max; k++)
         {
-            list.swap(k, s-(1+k));
+			list.swapItemsAt(k, s-(1+k));
         }
         p = list.toVector();
     }
@@ -967,16 +978,16 @@ QPainterPath VLayoutPiece::ContourPath() const
             path.addPath(ekv);
         }
 
-        // Draw passmarks
-        const QVector<QLineF> passmarks = GetPassmarks();
-        QPainterPath passmaksPath;
-        for (qint32 i = 0; i < passmarks.count(); ++i)
+        // Draw notches
+        const QVector<QLineF> notches = getNotches();
+        QPainterPath notchesPath;
+        for (qint32 i = 0; i < notches.count(); ++i)
         {
-            passmaksPath.moveTo(passmarks.at(i).p1());
-            passmaksPath.lineTo(passmarks.at(i).p2());
+            notchesPath.moveTo(notches.at(i).p1());
+            notchesPath.lineTo(notches.at(i).p2());
         }
 
-        path.addPath(passmaksPath);
+        path.addPath(notchesPath);
         path.setFillRule(Qt::WindingFill);
     }
 

@@ -1,74 +1,73 @@
 # Contributing code
 
-We highly recommend that you read this page before you clone the repo and start making changes. 
+Thanks for contributing to Seamly code, documentation, translations, website, and wiki! 
 
-Our workflow is based on "Git Flow".    
-Read more about git flow branch development here: http://nvie.com/posts/a-successful-git-branching-model/  
-Read the Github tutorials about making Pull Requests https://help.github.com/articles/about-pull-requests/ and https://help.github.com/articles/creating-a-pull-request/  
+Our workflow is based on **Git Flow**, outlined in the steps below.    
+As always, please fix only one issue at a time.   
+Build your branch with Qt and test, then make a pull request.   
 
-## Named branches
+Read more about **Git Flow**:  http://nvie.com/posts/a-successful-git-branching-model/   
+Read more about **Pull Requests**: https://help.github.com/articles/about-pull-requests/ and https://help.github.com/articles/creating-a-pull-request/    
 
-Use the "Git Flow" naming scheme for your contributor fixes:
-* **feature-_issue#_** - Create from **develop**. Contains code for new or improved features. Merge to **develop**. (e.g. **feature-155** to name your fix for issue #155)
+## Naming conventions 
 
-These are 
+Name your branch after the issue you will fix. Example: Name your branch **issue-#155** for issue #155.
+
+The permanent named branches on this repo are: 
 * **develop** - Contains next major release. Used for testing and sharing among developers. 
 * **master** - Used only for releases.
-* **release-x.x.x** - Create from **develop**. Contains feature freeze state before the next major release. Used for preparing each major & minor release with updated build information. Merge to **master** with new tag to create a new release.
-* **hotfix-x.x.x** - Create from **develop** and **master**. Contains a quick fix. Merge to **master** (or **release**) and **develop**.
+* **release-x.x.x** - Created from **develop**. Contains feature freeze state before the next major release. Used for preparing each major & minor release with updated build information. Merge to **master** with new tag to create a new release.
+* **hotfix-x.x.x** - Create from **develop** and **master**. Contains a quick emergency fix for big bugs. Merge to **master** (or **release**) and **develop**.
+
+## Clone the repo & create your issue branch
+
+* Clone the repo & set the origin URL
+>git clone https://github.com/fashionfreedom/seamly2d  
+git remote set-url origin https://github.com/fashionfreedom/seamly2d 
+
+* Create your issue branch then switch focus to your issue branch. Examples use branch for issue #155.
+>git checkout develop       
+git checkout -b issue-#155   
+git checkout issue-#155    
+
+## Daily workflow  
+
+* Pull latest changes from the origin **develop** branch & merge them into your issue branch 
+>git pull origin develop  
+git checkout issue-#155  
+git merge develop  
+
+* Make your code changes & commit your changes.  
+>git commit -a  
+git commit -m "fix bug with arc and line tool issue-#155"  
+git commit push issue-#155 
+
+## Create a Pull Request
+
+* Build & test your issue branch with Qt 5.13.2 & Qt Creator 4.3.x with compilers MSVC 2017, MinGW 7.3.0, gcc, or clang. 
+
+* Push your issue branch up to the github repo.
+>git push -u origin issue-#155 
+
+* Select **Branch:develop** then **Pull Requests** on the repo main menu bar. 
+* Select the green **New Pull Request** button then select your issue branch from the **Compare:develop** dropdown list.  
+* Enter the Pull Request Header as "tag: description issue_" using _conventional-changelog/commit-zen-cli_ tags so your commits are auto-included in the Changelog.md file. Read more here: https://docs.changelogg.io/conventional-changelog-template. Example PR Header: "fix: bug with Arc and line tool #issue-#155".    
+ + Valid Tags are: 
+    - fix
+    - feat
+    - build
+    - ci
+    - chore
+    - docs
+    - perf
+    - refactor
+    - revert
+    - style
+    - test 
+* Click the **Create Pull Request** button.
+* Select **Linked Issues** in the right hand column and select the issue. Example: select issue #155.  
+* The maintainer will check that all CI/CD tests passed, review the code, then merge your issue branch into **develop**.
+* At the next build, the PR Header description will be auto-added to the ChangeLog.md file.
 
 
-### Create your feature branch
-
-Get the latest code & create your **feature-_issue#_** branch.  Include the issue number that you're working on.
-
-> git pull  
-git checkout develop                 
-git checkout -b feature-_issue#_   
-git checkout feature-_issue#_      
-#make your code changes then commit...
-git commit -a
-git commit -m "_your commit message_"
-git commit push feature-_issue#_   
-
-If you don't have rights to create a branch, contact the maintainer - they will give you rights.
-
-
-### Follow the daily code routine - important!
-
-Check daily for **develop** updates & merge into **feature-_issue#_**
-
->git checkout develop
-git pull
-git checkout feature-_issue#_
-git merge develop
-#make your code changes then commit...
-git commit -a
-git commit -m "_your commit message_"
-git push origin  feature-_issue#_    #save your changes to repo!
-
-Periodically test your code by building in QtCreator and running the app.
-Checkout your feature branch before building in Qt! 
-No need to build the develop branch :)
-
-
-### When you're ready to submit your feature branch
-
-Build your code in QtCreator one last time and test by running the app, trying to break your new or improved feature.
-If all is good...
-Merge your **feature-_issue#_** to your **develop** & resolve merge issues.
-Go back to **feature-_issue#_** & push  to the github repo.
-
->git checkout develop
-git merge feature-_issue_#
-git checkout feature-_issue#_
-git push origin feature-_issue#_
-
-Login to the github repo and make a pull request with description "**Resolved (or Fixed) issue #XXX. \<Text of issue description\>**"
-Add your changes to file **ChangeLog.txt**!!!
-
-The maintainer will merge your branch into **develop**.
- 
-
-# Reviewing 
-Most likely we will ask you to fix some issues in your code. In this case you will add your changes to your local **feature** branch, push your **feature** branch to the repo, and update your existing pull request. 
+Thanks for being an open source contributor!  

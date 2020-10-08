@@ -153,6 +153,16 @@ int IndexOfNode(const QVector<VPieceNode> &list, quint32 id)
 }
 
 //---------------------------------------------------------------------------------------------------------------------
+
+#ifdef Q_COMPILER_RVALUE_REFS
+VPiecePath &VPiecePath::operator=(VPiecePath &&path) Q_DECL_NOTHROW
+{ Swap(path); return *this; }
+#endif
+
+void VPiecePath::Swap(VPiecePath &path) Q_DECL_NOTHROW
+{ std::swap(d, path.d); }
+
+//---------------------------------------------------------------------------------------------------------------------
 VPiecePath::VPiecePath()
     : d(new VPiecePathData)
 {}
@@ -278,7 +288,7 @@ QVector<QPointF> VPiecePath::PathPoints(const VContainer *data) const
     QVector<QPointF> points;
     for (int i = 0; i < CountNodes(); ++i)
     {
-        if (at(i).IsExcluded())
+        if (at(i).isExcluded())
         {
             continue;// skip excluded node
         }
@@ -323,7 +333,7 @@ QVector<VPointF> VPiecePath::PathNodePoints(const VContainer *data, bool showExc
         {
             case Tool::NodePoint:
             {
-                if (showExcluded || not at(i).IsExcluded())
+                if (showExcluded || not at(i).isExcluded())
                 {
                     const QSharedPointer<VPointF> point = data->GeometricObject<VPointF>(at(i).GetId());
                     points.append(*point);
@@ -478,7 +488,7 @@ QVector<quint32> VPiecePath::MissingNodes(const VPiecePath &path) const
         set2.insert(path.at(j).GetId());
     }
 
-    const QList<quint32> set3 = set1.subtract(set2).toList();
+	const QList<quint32> set3 = set1.subtract(set2).values();
     QVector<quint32> nodes;
     for (qint32 i = 0; i < set3.size(); ++i)
     {
@@ -822,7 +832,7 @@ int VPiecePath::FindInLoopNotExcludedUp(int start, const QVector<VPieceNode> &no
     bool found = false;
     do
     {
-        if (not nodes.at(i).IsExcluded())
+        if (not nodes.at(i).isExcluded())
         {
             found = true;
             break;
@@ -858,7 +868,7 @@ int VPiecePath::FindInLoopNotExcludedDown(int start, const QVector<VPieceNode> &
     bool found = false;
     do
     {
-        if (not nodes.at(i).IsExcluded())
+        if (not nodes.at(i).isExcluded())
         {
             found = true;
             break;

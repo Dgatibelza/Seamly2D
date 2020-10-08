@@ -2,7 +2,7 @@
  *                                                                         *
  *   Copyright (C) 2017  Seamly, LLC                                       *
  *                                                                         *
- *   https://github.com/fashionfreedom/seamly2d                             *
+ *   https://github.com/fashionfreedom/seamly2d                            *
  *                                                                         *
  ***************************************************************************
  **
@@ -78,6 +78,15 @@ VArc::VArc ()
  * @param f1 start angle (degree).
  * @param f2 end angle (degree).
  */
+
+#ifdef Q_COMPILER_RVALUE_REFS
+VArc &VArc::operator=(VArc &&arc) Q_DECL_NOTHROW
+{ Swap(arc); return *this; }
+#endif
+
+void VArc::Swap(VArc &arc) Q_DECL_NOTHROW
+{ VAbstractArc::Swap(arc); std::swap(d, arc.d); }
+
 VArc::VArc (const VPointF &center, qreal radius, const QString &formulaRadius, qreal f1, const QString &formulaF1,
             qreal f2, const QString &formulaF2, quint32 idObject, Draw mode)
     : VAbstractArc(GOType::Arc, center, f1, formulaF1, f2, formulaF2, idObject, mode),
@@ -313,6 +322,25 @@ QVector<QPointF> VArc::GetPoints() const
         pStart = lineP4P3.p1();
     }
     return points;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QVector<QLineF> VArc::getSegments() const
+{
+    QVector<QPointF> points = GetPoints();
+    QVector<QLineF> lines;
+    if (points.size() >= 2)
+    {
+        for (int i=0; i < points.size()-1; ++i)
+        {
+            QLineF segment = QLineF(points.at(i), points.at(i+1));
+            if (segment.length() > 0)
+            {
+                lines.append(segment);
+            }
+        }
+    }
+    return lines;
 }
 
 //---------------------------------------------------------------------------------------------------------------------

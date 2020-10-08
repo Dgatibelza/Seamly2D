@@ -62,6 +62,7 @@
 #include "../vmisc/diagnostic.h"
 #include "../qmuparser/qmuparsererror.h"
 
+#include <Qt>
 #include <QDir>
 #include <QFileOpenEvent>
 #include <QLocalSocket>
@@ -189,6 +190,7 @@ inline void noisyFailureMsgHandler(QtMsgType type, const QMessageLogContext &con
         const bool topWinAllowsPop = (QApplication::activeModalWidget() == nullptr) ||
                 !QApplication::activeModalWidget()->inherits("QFileDialog");
         QMessageBox messageBox;
+
         switch (type)
         {
             case QtWarningMsg:
@@ -196,11 +198,11 @@ inline void noisyFailureMsgHandler(QtMsgType type, const QMessageLogContext &con
                 messageBox.setIcon(QMessageBox::Warning);
                 break;
             case QtCriticalMsg:
-                messageBox.setWindowTitle(QApplication::translate("mNoisyHandler", "Critical error"));
+                messageBox.setWindowTitle(QApplication::translate("mNoisyHandler", "Critical Error"));
                 messageBox.setIcon(QMessageBox::Critical);
                 break;
             case QtFatalMsg:
-                messageBox.setWindowTitle(QApplication::translate("mNoisyHandler", "Fatal error"));
+                messageBox.setWindowTitle(QApplication::translate("mNoisyHandler", "Fatal Error"));
                 messageBox.setIcon(QMessageBox::Critical);
                 break;
             #if QT_VERSION > QT_VERSION_CHECK(5, 4, 2)
@@ -229,6 +231,7 @@ inline void noisyFailureMsgHandler(QtMsgType type, const QMessageLogContext &con
                 #ifndef QT_NO_CURSOR
                     QGuiApplication::setOverrideCursor(Qt::ArrowCursor);
                 #endif
+                    messageBox.setWindowFlags(messageBox.windowFlags() & ~Qt::WindowContextHelpButtonHint);
                     messageBox.exec();
                 #ifndef QT_NO_CURSOR
                     QGuiApplication::restoreOverrideCursor();
@@ -244,7 +247,7 @@ inline void noisyFailureMsgHandler(QtMsgType type, const QMessageLogContext &con
     }
     else
     {
-        if (type != QtDebugMsg)
+		if (type != QtDebugMsg && type != QtWarningMsg)
         {
             abort(); // be NOISY unless overridden!
         }
@@ -257,10 +260,10 @@ MApplication::MApplication(int &argc, char **argv)
       mainWindows(),
       localServer(nullptr),
       trVars(nullptr),
-      dataBase(QPointer<DialogMDataBase>()),
+      dataBase(QPointer<MeasurementDatabaseDialog>()),
       testMode(false)
 {
-    setApplicationDisplayName(VER_PRODUCTNAME_STR);
+    //setApplicationDisplayName(VER_PRODUCTNAME_STR);
     setApplicationName(VER_INTERNALNAME_STR);
     setOrganizationName(VER_COMPANYNAME_STR);
     setOrganizationDomain(VER_COMPANYDOMAIN_STR);
@@ -404,6 +407,11 @@ void MApplication::InitOptions()
     qInstallMessageHandler(noisyFailureMsgHandler);
 
     OpenSettings();
+    VSeamlyMeSettings *settings = SeamlyMeSettings();
+    QDir().mkpath(settings->GetDefPathTemplate());
+    QDir().mkpath(settings->GetDefPathIndividualMeasurements());
+    QDir().mkpath(settings->GetDefPathMultisizeMeasurements());
+    QDir().mkpath(settings->GetDefPathLabelTemplate());
 
     qCDebug(mApp, "Version: %s", qUtf8Printable(APP_VERSION_STR));
     qCDebug(mApp, "Build revision: %s", BUILD_REVISION);
@@ -525,15 +533,7 @@ QString MApplication::diagramsPath() const
         }
     }
 #else // Unix
-    QFileInfo file(QCoreApplication::applicationDirPath() + dPath);
-    if (file.exists())
-    {
-        return file.absoluteFilePath();
-    }
-    else
-    {
-        return QStringLiteral("/usr/share/seamly2d") + dPath;
-    }
+    return QCoreApplication::applicationDirPath() + QStringLiteral("/../share") + dPath;
 #endif
 }
 
@@ -542,7 +542,7 @@ void MApplication::ShowDataBase()
 {
     if (dataBase.isNull())
     {
-        dataBase = new DialogMDataBase();
+        dataBase = new MeasurementDatabaseDialog();
         dataBase->setAttribute(Qt::WA_DeleteOnClose, true);
         dataBase->setModal(false);
         dataBase->show();

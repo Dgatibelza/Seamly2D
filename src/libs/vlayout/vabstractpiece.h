@@ -170,11 +170,10 @@ public:
 
     VAbstractPiece &operator=(const VAbstractPiece &piece);
 #ifdef Q_COMPILER_RVALUE_REFS
-    VAbstractPiece &operator=(VAbstractPiece &&piece) Q_DECL_NOTHROW { Swap(piece); return *this; }
+	VAbstractPiece &operator=(VAbstractPiece &&piece) Q_DECL_NOTHROW;
 #endif
 
-    void Swap(VAbstractPiece &piece) Q_DECL_NOTHROW
-    { std::swap(d, piece.d); }
+	void Swap(VAbstractPiece &piece) Q_DECL_NOTHROW;
 
     QString GetName() const;
     void    SetName(const QString &value);
@@ -205,7 +204,8 @@ public:
     static QVector<QPointF> CheckLoops(const QVector<QPointF> &points);
     static QVector<QPointF> EkvPoint(const VSAPoint &p1Line1, const VSAPoint &p2Line1,
                                      const VSAPoint &p1Line2, const VSAPoint &p2Line2, qreal width);
-    static QLineF           ParallelLine(const VSAPoint &p1, const VSAPoint &p2, qreal width);
+    static QLineF           createParallelLine(const VSAPoint &p1, const VSAPoint &p2, qreal width);
+    static QLineF           createParallelLine(const QPointF &p1, const QPointF &p2, qreal width);
 
     template <class T>
     static QVector<T> CorrectEquidistantPoints(const QVector<T> &points, bool removeFirstAndLast = true);
@@ -243,7 +243,7 @@ private:
     static QVector<QPointF> AngleBySecondRightAngle(const QPointF &p2, const QPointF &p3,
                                                     const QPointF &sp1, const QPointF &sp2, const QPointF &sp3,
                                                     qreal width);
-    static QLineF           ParallelLine(const QPointF &p1, const QPointF &p2, qreal width);
+
     static QPointF          SingleParallelPoint(const QPointF &p1, const QPointF &p2, qreal angle, qreal width);
     static QLineF           BisectorLine(const QPointF &p1, const QPointF &p2, const QPointF &p3);
     static qreal            AngleBetweenBisectors(const QLineF &b1, const QLineF &b2);

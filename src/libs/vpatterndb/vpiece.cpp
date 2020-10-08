@@ -2,7 +2,7 @@
  *                                                                         *
  *   Copyright (C) 2017  Seamly, LLC                                       *
  *                                                                         *
- *   https://github.com/fashionfreedom/seamly2d                             *
+ *   https://github.com/fashionfreedom/seamly2d                            *
  *                                                                         *
  ***************************************************************************
  **
@@ -51,17 +51,15 @@
 
 #include "vpiece.h"
 #include "vpiece_p.h"
+#include "vcontainer.h"
 #include "../vgeometry/vpointf.h"
 #include "../vgeometry/vabstractcurve.h"
-#include "vcontainer.h"
+#include "../vgeometry/varc.h"
 #include "../vmisc/vabstractapplication.h"
 
 #include <QSharedPointer>
 #include <QDebug>
 #include <QPainterPath>
-
-const qreal passmarkFactor = 0.5;
-const qreal maxPassmarkLength = (10/*mm*/ / 25.4) * PrintDPI;
 
 namespace
 {
@@ -84,7 +82,7 @@ QVector<quint32> PieceMissingNodes(const QVector<quint32> &d1Nodes, const QVecto
         set2.insert(d2Nodes.at(j));
     }
 
-    const QList<quint32> set3 = set1.subtract(set2).toList();
+	const QList<quint32> set3 = set1.subtract(set2).values();
     QVector<quint32> r;
     for (qint32 i = 0; i < set3.size(); ++i)
     {
@@ -94,180 +92,8 @@ QVector<quint32> PieceMissingNodes(const QVector<quint32> &d1Nodes, const QVecto
     return r;
 }
 
-const qreal passmarkGap = (1.5/*mm*/ / 25.4) * PrintDPI;
-
 //---------------------------------------------------------------------------------------------------------------------
-QVector<QLineF> CreateTwoPassmarkLines(const QLineF &line)
-{
-    QPointF l1p1;
-    {
-        QLineF line1 = line;
-        line1.setAngle(line1.angle() + 90);
-        line1.setLength(passmarkGap/2.);
-        l1p1 = line1.p2();
-    }
-
-    QPointF l2p1;
-    {
-        QLineF line2 = line;
-        line2.setAngle(line2.angle() - 90);
-        line2.setLength(passmarkGap/2.);
-        l2p1 = line2.p2();
-    }
-
-    QPointF l1p2;
-    {
-        QLineF line1 = QLineF(line.p2(), line.p1());
-        line1.setAngle(line1.angle() - 90);
-        line1.setLength(passmarkGap/2.);
-        l1p2 = line1.p2();
-    }
-
-    QPointF l2p2;
-    {
-        QLineF line2 = QLineF(line.p2(), line.p1());
-        line2.setAngle(line2.angle() + 90);
-        line2.setLength(passmarkGap/2.);
-        l2p2 = line2.p2();
-    }
-
-    QVector<QLineF> lines;
-    lines.append(QLineF(l1p1, l1p2));
-    lines.append(QLineF(l2p1, l2p2));
-    return lines;
-}
-
-//---------------------------------------------------------------------------------------------------------------------
-QVector<QLineF> CreateThreePassmarkLines(const QLineF &line)
-{
-    QPointF l1p1;
-    {
-        QLineF line1 = line;
-        line1.setAngle(line1.angle() + 90);
-        line1.setLength(passmarkGap);
-        l1p1 = line1.p2();
-    }
-
-    QPointF l2p1;
-    {
-        QLineF line2 = line;
-        line2.setAngle(line2.angle() - 90);
-        line2.setLength(passmarkGap);
-        l2p1 = line2.p2();
-    }
-
-    QPointF l1p2;
-    {
-        QLineF line1 = QLineF(line.p2(), line.p1());
-        line1.setAngle(line1.angle() - 90);
-        line1.setLength(passmarkGap);
-        l1p2 = line1.p2();
-    }
-
-    QPointF l2p2;
-    {
-        QLineF line2 = QLineF(line.p2(), line.p1());
-        line2.setAngle(line2.angle() + 90);
-        line2.setLength(passmarkGap);
-        l2p2 = line2.p2();
-    }
-
-    QVector<QLineF> lines;
-    lines.append(QLineF(l1p1, l1p2));
-    lines.append(line);
-    lines.append(QLineF(l2p1, l2p2));
-    return lines;
-}
-
-//---------------------------------------------------------------------------------------------------------------------
-QVector<QLineF> CreateTMarkPassmark(const QLineF &line)
-{
-    QPointF p1;
-    {
-        QLineF tmpLine = QLineF(line.p2(), line.p1());
-        tmpLine.setAngle(tmpLine.angle() - 90);
-        tmpLine.setLength(line.length() * 0.75 / 2);
-        p1 = tmpLine.p2();
-    }
-
-    QPointF p2;
-    {
-        QLineF tmpLine = QLineF(line.p2(), line.p1());
-        tmpLine.setAngle(tmpLine.angle() + 90);
-        tmpLine.setLength(line.length() * 0.75 / 2);
-        p2 = tmpLine.p2();
-    }
-
-    QVector<QLineF> lines;
-    lines.append(line);
-    lines.append(QLineF(p1, p2));
-    return lines;
-}
-
-//---------------------------------------------------------------------------------------------------------------------
-QVector<QLineF> CreateVMarkPassmark(const QLineF &line)
-{
-    QLineF l1 = line;
-    l1.setAngle(l1.angle() - 35);
-
-    QLineF l2 = line;
-    l2.setAngle(l2.angle() + 35);
-
-    QVector<QLineF> lines;
-    lines.append(l1);
-    lines.append(l2);
-    return lines;
-}
-
-//---------------------------------------------------------------------------------------------------------------------
-QVector<QLineF> CreatePassmarkLines(PassmarkLineType lineType, PassmarkAngleType angleType, const QLineF &line)
-{
-    QVector<QLineF> passmarksLines;
-
-    if (angleType == PassmarkAngleType::Straightforward || angleType == PassmarkAngleType::Intersection)
-    {
-        switch (lineType)
-        {
-            case PassmarkLineType::TwoLines:
-                passmarksLines += CreateTwoPassmarkLines(line);
-                break;
-            case PassmarkLineType::ThreeLines:
-                passmarksLines += CreateThreePassmarkLines(line);
-                break;
-            case PassmarkLineType::TMark:
-                passmarksLines += CreateTMarkPassmark(line);
-                break;
-            case PassmarkLineType::VMark:
-                passmarksLines += CreateVMarkPassmark(line);
-                break;
-            case PassmarkLineType::OneLine:
-            default:
-                passmarksLines.append(line);
-                break;
-        }
-    }
-    else
-    {
-        switch (lineType)
-        {
-            case PassmarkLineType::TMark:
-                passmarksLines += CreateTMarkPassmark(line);
-                break;
-            case PassmarkLineType::OneLine:
-            case PassmarkLineType::TwoLines:
-            case PassmarkLineType::ThreeLines:
-            case PassmarkLineType::VMark:
-            default:
-                passmarksLines.append(line);
-                break;
-        }
-    }
-
-    return passmarksLines;
-}
-
-//---------------------------------------------------------------------------------------------------------------------
-bool IsPassmarksPossible(const QVector<VPieceNode> &path)
+bool notchesPossible(const QVector<VPieceNode> &path)
 {
     int countPointNodes = 0;
     int countOthers = 0;
@@ -275,7 +101,7 @@ bool IsPassmarksPossible(const QVector<VPieceNode> &path)
     for (int i = 0; i< path.size(); ++i)
     {
         const VPieceNode &node = path.at(i);
-        if (node.IsExcluded())
+        if (node.isExcluded())
         {
             continue;// skip node
         }
@@ -288,13 +114,25 @@ bool IsPassmarksPossible(const QVector<VPieceNode> &path)
 }
 
 //---------------------------------------------------------------------------------------------------------------------
+
+#ifdef Q_COMPILER_RVALUE_REFS
+VPiece &VPiece::operator=(VPiece &&piece) Q_DECL_NOTHROW
+{ Swap(piece); return *this; }
+#endif
+
+void VPiece::Swap(VPiece &piece) Q_DECL_NOTHROW
+{ VAbstractPiece::Swap(piece); std::swap(d, piece.d); }
+
+//---------------------------------------------------------------------------------------------------------------------
 VPiece::VPiece()
-    : VAbstractPiece(), d(new VPieceData(PiecePathType::PiecePath))
+    : VAbstractPiece()
+    , d(new VPieceData(PiecePathType::PiecePath))
 {}
 
 //---------------------------------------------------------------------------------------------------------------------
 VPiece::VPiece(const VPiece &piece)
-    : VAbstractPiece(piece), d (piece.d)
+    : VAbstractPiece(piece)
+    , d (piece.d)
 {}
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -366,7 +204,7 @@ QVector<QPointF> VPiece::SeamAllowancePoints(const VContainer *data) const
     for (int i = 0; i< unitedPath.size(); ++i)
     {
         const VPieceNode &node = unitedPath.at(i);
-        if (node.IsExcluded())
+        if (node.isExcluded())
         {
             continue;// skip excluded node
         }
@@ -433,20 +271,20 @@ QVector<QPointF> VPiece::SeamAllowancePoints(const VContainer *data) const
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-QVector<QLineF> VPiece::PassmarksLines(const VContainer *data, const QVector<QPointF> &seamAllowance) const
+QVector<QLineF> VPiece::createNotchLines(const VContainer *data, const QVector<QPointF> &seamAllowance) const
 {
     const QVector<VPieceNode> unitedPath = GetUnitedPath(data);
-    if (not IsSeamAllowance() || not IsPassmarksPossible(unitedPath))
+    if (not IsSeamAllowance() || not notchesPossible(unitedPath))
     {
         return QVector<QLineF>();
     }
 
-    QVector<QLineF> passmarks;
+    QVector<QLineF> notches;
 
     for (int i = 0; i< unitedPath.size(); ++i)
     {
         const VPieceNode &node = unitedPath.at(i);
-        if (node.IsExcluded() || not node.IsPassmark())
+        if (node.isExcluded() || not node.isNotch())
         {
             continue;// skip node
         }
@@ -454,10 +292,10 @@ QVector<QLineF> VPiece::PassmarksLines(const VContainer *data, const QVector<QPo
         const int previousIndex = VPiecePath::FindInLoopNotExcludedUp(i, unitedPath);
         const int nextIndex = VPiecePath::FindInLoopNotExcludedDown(i, unitedPath);
 
-        passmarks += CreatePassmark(unitedPath, previousIndex, i, nextIndex, data, seamAllowance);
+        notches += createNotch(unitedPath, previousIndex, i, nextIndex, data, seamAllowance);
     }
 
-    return passmarks;
+    return notches;
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -510,20 +348,20 @@ QPainterPath VPiece::SeamAllowancePath(const QVector<QPointF> &points) const
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-QPainterPath VPiece::PassmarksPath(const VContainer *data, const QVector<QPointF> &seamAllowance) const
+QPainterPath VPiece::getNotchesPath(const VContainer *data, const QVector<QPointF> &pathPoints) const
 {
-    const QVector<QLineF> passmarks = PassmarksLines(data, seamAllowance);
+    const QVector<QLineF> notches = createNotchLines(data, pathPoints);
     QPainterPath path;
 
     // seam allowence
     if (IsSeamAllowance())
     {
-        if (not passmarks.isEmpty())
+        if (not notches.isEmpty())
         {
-            for (qint32 i = 0; i < passmarks.count(); ++i)
+            for (qint32 i = 0; i < notches.count(); ++i)
             {
-                path.moveTo(passmarks.at(i).p1());
-                path.lineTo(passmarks.at(i).p2());
+                path.moveTo(notches.at(i).p1());
+                path.lineTo(notches.at(i).p2());
             }
 
             path.setFillRule(Qt::WindingFill);
@@ -783,10 +621,10 @@ QVector<VPieceNode> VPiece::GetUnitedPath(const VContainer *data) const
                     customNodes[j].SetReverse(not customNodes.at(j).GetReverse());
                 }
 
-                // If seam allowance is built in main path user will not see a passmark provided by piece path
+                // If seam allowance is built in main path user will not see a notch provided by piece path
                 if (IsSeamAllowanceBuiltIn())
                 {
-                    customNodes[j].SetPassmark(false);
+                    customNodes[j].setNotch(false);
                 }
                 else
                 {
@@ -814,9 +652,9 @@ QVector<CustomSARecord> VPiece::GetValidRecords() const
                 && record.path > NULL_ID
                 && record.endPoint > NULL_ID
                 && indexStartPoint != -1
-                && not d->m_path.at(indexStartPoint).IsExcluded()
+                && not d->m_path.at(indexStartPoint).isExcluded()
                 && indexEndPoint != -1
-                && not d->m_path.at(indexEndPoint).IsExcluded()
+                && not d->m_path.at(indexEndPoint).isExcluded()
                 && indexStartPoint < indexEndPoint)
         {
             records.append(record);
@@ -877,7 +715,7 @@ QVector<CustomSARecord> VPiece::FilterRecords(QVector<CustomSARecord> records) c
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-QVector<VSAPoint> VPiece::GetNodeSAPoints(const QVector<VPieceNode> &path, int index, const VContainer *data) const
+QVector<VSAPoint> VPiece::getNodeSAPoints(const QVector<VPieceNode> &path, int index, const VContainer *data) const
 {
     SCASSERT(data != nullptr)
 
@@ -904,12 +742,12 @@ QVector<VSAPoint> VPiece::GetNodeSAPoints(const QVector<VPieceNode> &path, int i
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-bool VPiece::GetPassmarkSAPoint(const QVector<VPieceNode> &path, int index, const VContainer *data,
-                                VSAPoint &point) const
+bool VPiece::getNotchSAPoint(const QVector<VPieceNode> &path, int index, const VContainer *data,
+                             VSAPoint &point) const
 {
     SCASSERT(data != nullptr)
 
-    const QVector<VSAPoint> points = GetNodeSAPoints(path, index, data);
+    const QVector<VSAPoint> points = getNodeSAPoints(path, index, data);
 
     if (points.isEmpty() || points.size() > 1)
     {
@@ -921,12 +759,12 @@ bool VPiece::GetPassmarkSAPoint(const QVector<VPieceNode> &path, int index, cons
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-bool VPiece::GetPassmarkPreviousSAPoints(const QVector<VPieceNode> &path, int index, const VSAPoint &passmarkSAPoint,
-                                         const VContainer *data, VSAPoint &point) const
+bool VPiece::getNotchPreviousSAPoints(const QVector<VPieceNode> &path, int index, const VSAPoint &notchSAPoint,
+                                      const VContainer *data, VSAPoint &point) const
 {
     SCASSERT(data != nullptr)
 
-    const QVector<VSAPoint> points = GetNodeSAPoints(path, index, data);
+    const QVector<VSAPoint> points = getNodeSAPoints(path, index, data);
 
     if (points.isEmpty())
     {
@@ -938,7 +776,7 @@ bool VPiece::GetPassmarkPreviousSAPoints(const QVector<VPieceNode> &path, int in
     do
     {
         const VSAPoint previous = points.at(nodeIndex);
-        if (passmarkSAPoint.toPoint() != previous.toPoint())
+        if (notchSAPoint.toPoint() != previous.toPoint())
         {
             point = previous;
             found = true;
@@ -954,12 +792,12 @@ bool VPiece::GetPassmarkPreviousSAPoints(const QVector<VPieceNode> &path, int in
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-int VPiece::GetPassmarkNextSAPoints(const QVector<VPieceNode> &path, int index, const VSAPoint &passmarkSAPoint,
-                                    const VContainer *data, VSAPoint &point) const
+int VPiece::getNextNotchSAPoints(const QVector<VPieceNode> &path, int index, const VSAPoint &notchSAPoint,
+                                 const VContainer *data, VSAPoint &point) const
 {
     SCASSERT(data != nullptr)
 
-    const QVector<VSAPoint> points = GetNodeSAPoints(path, index, data);
+    const QVector<VSAPoint> points = getNodeSAPoints(path, index, data);
 
     if (points.isEmpty())
     {
@@ -971,7 +809,7 @@ int VPiece::GetPassmarkNextSAPoints(const QVector<VPieceNode> &path, int index, 
     do
     {
         const VSAPoint next = points.at(nodeIndex);
-        if (passmarkSAPoint.toPoint() != next.toPoint())
+        if (notchSAPoint.toPoint() != next.toPoint())
         {
             point = next;
             found = true;
@@ -988,7 +826,7 @@ int VPiece::GetPassmarkNextSAPoints(const QVector<VPieceNode> &path, int index, 
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-bool VPiece::GetSeamPassmarkSAPoint(const VSAPoint &previousSAPoint, const VSAPoint &passmarkSAPoint,
+bool VPiece::getSeamNotchSAPoint(const VSAPoint &previousSAPoint, const VSAPoint &notchSAPoint,
                                     const VSAPoint &nextSAPoint, const VContainer *data, QPointF &point) const
 {
     SCASSERT(data != nullptr)
@@ -998,22 +836,22 @@ bool VPiece::GetSeamPassmarkSAPoint(const VSAPoint &previousSAPoint, const VSAPo
 
     /* Because method VAbstractPiece::EkvPoint has troubles with edges on a same line we should specially treat such
        cases.
-       First check if two edges and seam alowance create paralell lines.
-       Second case check if two edges are on a same line geometrically and a passmark point has equal SA width.*/
-    if (IsEkvPointOnLine(passmarkSAPoint, previousSAPoint, nextSAPoint)// see issue #665
-        || (IsEkvPointOnLine(static_cast<QPointF>(passmarkSAPoint), static_cast<QPointF>(previousSAPoint),
+       First check if two edges and seam alowance create parallel lines.
+       Second case check if two edges are on a same line geometrically and a notch point has equal SA width.*/
+    if (IsEkvPointOnLine(notchSAPoint, previousSAPoint, nextSAPoint)// see issue #665
+        || (IsEkvPointOnLine(static_cast<QPointF>(notchSAPoint), static_cast<QPointF>(previousSAPoint),
                              static_cast<QPointF>(nextSAPoint))
-            && qAbs(passmarkSAPoint.GetSABefore(width)
-                    - passmarkSAPoint.GetSAAfter(width)) < VGObject::accuracyPointOnLine))
+            && qAbs(notchSAPoint.GetSABefore(width)
+                    - notchSAPoint.GetSAAfter(width)) < VGObject::accuracyPointOnLine))
     {
-        QLineF line (passmarkSAPoint, nextSAPoint);
+        QLineF line (notchSAPoint, nextSAPoint);
         line.setAngle(line.angle() + 90);
-        line.setLength(VAbstractPiece::MaxLocalSA(passmarkSAPoint, width));
+        line.setLength(VAbstractPiece::MaxLocalSA(notchSAPoint, width));
         ekvPoints.append(line.p2());
     }
     else
     {
-        ekvPoints = EkvPoint(previousSAPoint, passmarkSAPoint, nextSAPoint, passmarkSAPoint, width);
+        ekvPoints = EkvPoint(previousSAPoint, notchSAPoint, nextSAPoint, notchSAPoint, width);
     }
 
     if (ekvPoints.isEmpty())
@@ -1035,15 +873,15 @@ bool VPiece::GetSeamPassmarkSAPoint(const VSAPoint &previousSAPoint, const VSAPo
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-bool VPiece::IsPassmarkVisible(const QVector<VPieceNode> &path, int passmarkIndex) const
+bool VPiece::isNotchVisible(const QVector<VPieceNode> &path, int notchIndex) const
 {
-    if (passmarkIndex < 0 || passmarkIndex >= path.size())
+    if (notchIndex < 0 || notchIndex >= path.size())
     {
         return false;
     }
 
-    const VPieceNode &node = path.at(passmarkIndex);
-    if (node.GetTypeTool() != Tool::NodePoint || not node.IsPassmark() || node.IsExcluded())
+    const VPieceNode &node = path.at(notchIndex);
+    if (node.GetTypeTool() != Tool::NodePoint || not node.isNotch() || node.isExcluded())
     {
         return false;
     }
@@ -1065,7 +903,7 @@ bool VPiece::IsPassmarkVisible(const QVector<VPieceNode> &path, int passmarkInde
         {
             const int indexStartPoint = VPiecePath::indexOfNode(path, records.at(i).startPoint);
             const int indexEndPoint = VPiecePath::indexOfNode(path, records.at(i).endPoint);
-            if (passmarkIndex > indexStartPoint && passmarkIndex < indexEndPoint)
+            if (notchIndex > indexStartPoint && notchIndex < indexEndPoint)
             {
                 return false;
             }
@@ -1075,101 +913,115 @@ bool VPiece::IsPassmarkVisible(const QVector<VPieceNode> &path, int passmarkInde
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-QVector<QLineF> VPiece::CreatePassmark(const QVector<VPieceNode> &path, int previousIndex, int passmarkIndex,
+QVector<QLineF> VPiece::createNotch(const QVector<VPieceNode> &path, int previousIndex, int notchIndex,
                                        int nextIndex, const VContainer *data,
-                                       const QVector<QPointF> &seamAllowance) const
+                                       const QVector<QPointF> &pathPoints) const
 {
     SCASSERT(data != nullptr);
 
-    if (not IsPassmarkVisible(path, passmarkIndex))
+    if (not isNotchVisible(path, notchIndex))
     {
         return QVector<QLineF>();
     }
 
-    VSAPoint passmarkSAPoint;
-    if (not GetPassmarkSAPoint(path, passmarkIndex, data, passmarkSAPoint))
+    VSAPoint notchSAPoint;
+    if (not getNotchSAPoint(path, notchIndex, data, notchSAPoint))
     {
         return QVector<QLineF>(); // Something wrong
     }
 
     VSAPoint previousSAPoint;
-    if (not GetPassmarkPreviousSAPoints(path, previousIndex, passmarkSAPoint, data,
-                                        previousSAPoint))
+    if (not getNotchPreviousSAPoints(path, previousIndex, notchSAPoint, data, previousSAPoint))
     {
         return QVector<QLineF>(); // Something wrong
     }
 
     VSAPoint nextSAPoint;
-    if (not GetPassmarkNextSAPoints(path, nextIndex, passmarkSAPoint, data, nextSAPoint))
+    if (not getNextNotchSAPoints(path, nextIndex, notchSAPoint, data, nextSAPoint))
     {
         return QVector<QLineF>(); // Something wrong
     }
 
+    const QVector<QPointF> mainPathPoints = MainPathPoints(data);
     if (not IsSeamAllowanceBuiltIn())
     {
         QVector<QLineF> lines;
-        lines += SAPassmark(path, previousSAPoint, passmarkSAPoint, nextSAPoint, data, passmarkIndex, seamAllowance);
-        if (qApp->Settings()->IsDoublePassmark()
-                && not IsHideMainPath()
-                && path.at(passmarkIndex).IsMainPathNode()
-                && path.at(passmarkIndex).GetPassmarkAngleType() != PassmarkAngleType::Intersection
-                && path.at(passmarkIndex).IsShowSecondPassmark())
+        if (path.at(notchIndex).showNotch())
         {
-            lines += BuiltInSAPassmark(path, previousSAPoint, passmarkSAPoint, nextSAPoint, data, passmarkIndex);
+            lines += createSeamAllowanceNotch(path, previousSAPoint, notchSAPoint,  nextSAPoint,
+                                              data, notchIndex, pathPoints);
+        }
+        if (qApp->Settings()->showSecondNotch()
+                && not IsHideMainPath()
+                && path.at(notchIndex).IsMainPathNode()
+                && path.at(notchIndex).getNotchSubType() != NotchSubType::Intersection
+                && path.at(notchIndex).showSecondNotch())
+        {
+            lines += createBuiltInSaNotch(path, previousSAPoint, notchSAPoint, nextSAPoint, data,
+                                          notchIndex, mainPathPoints);
         }
         return lines;
     }
     else
     {
-        return BuiltInSAPassmark(path, previousSAPoint, passmarkSAPoint, nextSAPoint, data, passmarkIndex);
+        return createBuiltInSaNotch(path, previousSAPoint, notchSAPoint, nextSAPoint, data, notchIndex, mainPathPoints);
     }
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-QVector<QLineF> VPiece::SAPassmark(const QVector<VPieceNode> &path, VSAPoint &previousSAPoint,
-                                   const VSAPoint &passmarkSAPoint, VSAPoint &nextSAPoint, const VContainer *data,
-                                   int passmarkIndex, const QVector<QPointF> &seamAllowance) const
+QVector<QLineF> VPiece::createSeamAllowanceNotch(const QVector<VPieceNode> &path, VSAPoint &previousSAPoint,
+                                                 const VSAPoint &notchSAPoint, VSAPoint &nextSAPoint,
+                                                 const VContainer *data, int notchIndex,
+                                                 const QVector<QPointF> &pathPoints) const
 {
-    QPointF seamPassmarkSAPoint;
-    if (not GetSeamPassmarkSAPoint(previousSAPoint, passmarkSAPoint, nextSAPoint, data, seamPassmarkSAPoint))
+    QPointF seamNotchSAPoint;
+    if (not getSeamNotchSAPoint(previousSAPoint, notchSAPoint, nextSAPoint, data, seamNotchSAPoint))
     {
         return QVector<QLineF>(); // Something wrong
     }
 
-    const qreal width = ToPixel(GetSAWidth(), *data->GetPatternUnit());
+    QVector<QLineF> notches;
 
-    QVector<QLineF> passmarksLines;
+    const VPieceNode &node = path.at(notchIndex);
 
-    qreal passmarkLength = VAbstractPiece::MaxLocalSA(passmarkSAPoint, width) * passmarkFactor;
-    passmarkLength = qMin(passmarkLength, maxPassmarkLength);
-    const VPieceNode &node = path.at(passmarkIndex);
-    if (node.GetPassmarkAngleType() == PassmarkAngleType::Straightforward)
+    NotchData notchData;
+    notchData.type    = node.getNotchType();
+    notchData.subType = node.getNotchSubType();
+    notchData.length  = ToPixel(node.getNotchLength(), *data->GetPatternUnit());
+    notchData.width   = ToPixel(node.getNotchWidth(),  *data->GetPatternUnit());
+    notchData.angle   = node.getNotchAngle();
+    notchData.count   = node.getNotchCount();
+
+
+    if (node.getNotchSubType() == NotchSubType::Straightforward)
     {
-        QLineF line = QLineF(seamPassmarkSAPoint, passmarkSAPoint);
-        line.setLength(passmarkLength);
-        passmarksLines += CreatePassmarkLines(node.GetPassmarkLineType(), node.GetPassmarkAngleType(), line);
+        QLineF line = QLineF(seamNotchSAPoint, notchSAPoint);
+        line.setLength(notchData.length);
+        notchData.line  = line;
+        notches += createNotches(notchData, pathPoints);
     }
-    else if (node.GetPassmarkAngleType() == PassmarkAngleType::Bisector)
+    else if (node.getNotchSubType() == NotchSubType::Bisector)
     {
-        const QLineF bigLine1 = ParallelLine(previousSAPoint, passmarkSAPoint, width );
-        const QLineF bigLine2 = ParallelLine(passmarkSAPoint, nextSAPoint, width );
+        const QLineF bigLine1 = createParallelLine(previousSAPoint, notchSAPoint, notchData.width );
+        const QLineF bigLine2 = createParallelLine(notchSAPoint, nextSAPoint, notchData.width );
 
-        QLineF edge1 = QLineF(seamPassmarkSAPoint, bigLine1.p1());
-        QLineF edge2 = QLineF(seamPassmarkSAPoint, bigLine2.p2());
+        QLineF edge1 = QLineF(seamNotchSAPoint, bigLine1.p1());
+        QLineF edge2 = QLineF(seamNotchSAPoint, bigLine2.p2());
 
         edge1.setAngle(edge1.angle() + edge1.angleTo(edge2)/2.);
-        edge1.setLength(passmarkLength);
+        edge1.setLength(notchData.length);
 
-        passmarksLines += CreatePassmarkLines(node.GetPassmarkLineType(), node.GetPassmarkAngleType(), edge1);
+        notchData.line  = edge1;
+        notches += createNotches(notchData, pathPoints);
     }
-    else if (node.GetPassmarkAngleType() == PassmarkAngleType::Intersection)
+    else if (node.getNotchSubType() == NotchSubType::Intersection)
     {
         QVector<QPointF> seamPoints;
-        seamAllowance.isEmpty() ? seamPoints = SeamAllowancePoints(data) : seamPoints = seamAllowance;
+        pathPoints.isEmpty() ? seamPoints = SeamAllowancePoints(data) : seamPoints = pathPoints;
 
         {
-            // first passmark
-            QLineF line(previousSAPoint, passmarkSAPoint);
+            // first notch
+            QLineF line(previousSAPoint, notchSAPoint);
             line.setLength(line.length()*100); // Hope 100 is enough
 
             const QVector<QPointF> intersections = VAbstractCurve::CurveIntersectLine(seamPoints, line);
@@ -1178,15 +1030,16 @@ QVector<QLineF> VPiece::SAPassmark(const QVector<VPieceNode> &path, VSAPoint &pr
                 return QVector<QLineF>(); // Something wrong
             }
 
-            line = QLineF(intersections.first(), passmarkSAPoint);
-            line.setLength(qMin(passmarkSAPoint.GetSAAfter(width) * passmarkFactor, maxPassmarkLength));
+            line = QLineF(intersections.first(), notchSAPoint);
+            line.setLength(notchData.length);
 
-            passmarksLines += CreatePassmarkLines(node.GetPassmarkLineType(), node.GetPassmarkAngleType(), line);
+            notchData.line = line;
+            notches += createNotches(notchData, pathPoints);
         }
 
         {
-            // second passmark
-            QLineF line(nextSAPoint, passmarkSAPoint);
+            // second notch
+            QLineF line(nextSAPoint, notchSAPoint);
             line.setLength(line.length()*100); // Hope 100 is enough
 
             const QVector<QPointF> intersections = VAbstractCurve::CurveIntersectLine(seamPoints, line);
@@ -1196,37 +1049,44 @@ QVector<QLineF> VPiece::SAPassmark(const QVector<VPieceNode> &path, VSAPoint &pr
                 return QVector<QLineF>(); // Something wrong
             }
 
-            line = QLineF(intersections.last(), passmarkSAPoint);
-            line.setLength(qMin(passmarkSAPoint.GetSABefore(width) * passmarkFactor, maxPassmarkLength));
+            line = QLineF(intersections.last(), notchSAPoint);
+            line.setLength(notchData.length);
 
-            passmarksLines += CreatePassmarkLines(node.GetPassmarkLineType(), node.GetPassmarkAngleType(), line);
+            notchData.line = line;
+            notches += createNotches(notchData, pathPoints);
         }
     }
 
-    return passmarksLines;
+    return notches;
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-QVector<QLineF> VPiece::BuiltInSAPassmark(const QVector<VPieceNode> &path, const VSAPoint &previousSAPoint,
-                                          const VSAPoint &passmarkSAPoint, const VSAPoint &nextSAPoint,
-                                          const VContainer *data, int passmarkIndex) const
+QVector<QLineF> VPiece::createBuiltInSaNotch(const QVector<VPieceNode> &path, const VSAPoint &previousSAPoint,
+                                             const VSAPoint &notchSAPoint, const VSAPoint &nextSAPoint,
+                                             const VContainer *data, int notchIndex,
+                                             const QVector<QPointF> &pathPoints) const
 {
-    QVector<QLineF> passmarksLines;
+    QVector<QLineF> notches;
 
-    const qreal width = ToPixel(GetSAWidth(), *data->GetPatternUnit());
-    qreal passmarkLength = VAbstractPiece::MaxLocalSA(passmarkSAPoint, width) * passmarkFactor;
-    passmarkLength = qMin(passmarkLength, maxPassmarkLength);
+    const VPieceNode &node = path.at(notchIndex);
 
-    QLineF edge1 = QLineF(passmarkSAPoint, previousSAPoint);
-    QLineF edge2 = QLineF(passmarkSAPoint, nextSAPoint);
+    QLineF edge1 = QLineF(notchSAPoint, previousSAPoint);
+    QLineF edge2 = QLineF(notchSAPoint, nextSAPoint);
+
+    NotchData notchData;
+    notchData.type    = node.getNotchType();
+    notchData.subType = node.getNotchSubType();
+    notchData.length  = ToPixel(node.getNotchLength(), *data->GetPatternUnit());
+    notchData.width   = ToPixel(node.getNotchWidth(), *data->GetPatternUnit());
+    notchData.angle   = node.getNotchAngle();
+    notchData.count   = node.getNotchCount();
 
     edge1.setAngle(edge1.angle() + edge1.angleTo(edge2)/2.);
-    edge1.setLength(passmarkLength);
+    edge1.setLength(notchData.length);
+    notchData.line = edge1;
+    notches += createNotches(notchData, pathPoints);
 
-    const VPieceNode &node = path.at(passmarkIndex);
-    passmarksLines += CreatePassmarkLines(node.GetPassmarkLineType(), node.GetPassmarkAngleType(), edge1);
-
-    return passmarksLines;
+    return notches;
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -1241,4 +1101,403 @@ int VPiece::IsCSAStart(const QVector<CustomSARecord> &records, quint32 id)
     }
 
     return -1;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QVector<QLineF> VPiece::createSlitNotch(NotchData notchData, const QVector<QPointF> &pathPoints) const
+{
+    QLineF refline = QLineF(notchData.line);
+    qreal  angle   = notchData.angle;
+    qreal  offset  = notchData.offset;
+
+    QLineF line = createParallelLine(refline.p1(), refline.p2(), offset);
+    line.setAngle(line.angle() + angle);
+
+    QVector<QLineF> lines;
+    lines.append(findIntersection(pathPoints, QLineF(line.p2(), line.p1())));
+    return lines;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QVector<QLineF> VPiece::createTNotch(NotchData notchData, const QVector<QPointF> &pathPoints) const
+{
+    QLineF refline = QLineF(notchData.line);
+    qreal length   = notchData.length;
+    qreal width    = notchData.width;
+    qreal angle    = notchData.angle;
+    qreal offset   = notchData.offset;
+
+    QLineF tempLine = createParallelLine(refline.p1(), refline.p2(), offset);
+    tempLine.setAngle(tempLine.angle() + angle);
+    tempLine = findIntersection(pathPoints, QLineF(tempLine.p2(), tempLine.p1()));
+    QLineF line = QLineF(tempLine.p2(), tempLine.p1());
+    line.setLength(length);
+
+    QPointF p1;
+    {
+        QLineF tempLine = QLineF(line.p2(), line.p1());
+        tempLine.setAngle(tempLine.angle() - 90);
+        tempLine.setLength(width  * 0.75 / 2);
+        p1 = tempLine.p2();
+    }
+
+    QPointF p2;
+    {
+        QLineF tempLine = QLineF(line.p2(), line.p1());
+        tempLine.setAngle(tempLine.angle() + 90);
+        tempLine.setLength(width * 0.75 / 2);
+        p2 = tempLine.p2();
+    }
+
+    QVector<QLineF> lines;
+    lines.append(line);
+    lines.append(QLineF(p1, p2));
+    return lines;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QVector<QLineF> VPiece::createUNotch(const NotchData notchData, const QVector<QPointF> &pathPoints) const
+{
+    QLineF refline = QLineF(notchData.line);
+    qreal length   = notchData.length;
+    qreal width    = notchData.width;
+    qreal angle    = notchData.angle;
+    qreal offset   = notchData.offset;
+
+    QLineF centerLine = createParallelLine(refline.p1(), refline.p2(), offset);
+
+    QLineF line1 = createParallelLine(centerLine.p1(), centerLine.p2(), width / 2.);
+    line1.setLength(length / 2.);
+    line1.setAngle(line1.angle() + angle);
+
+    QLineF line2 = createParallelLine(centerLine.p1(), centerLine.p2(), - width / 2.);
+    line2.setLength(length / 2.);
+    line2.setAngle(line2.angle() + angle);
+
+    centerLine.setLength(length / 2.);
+    centerLine.setAngle(centerLine.angle() + angle);
+
+    VArc arc(VPointF(centerLine.p2()), width / 2., QLineF(centerLine.p2(), line2.p2()).angle(), QLineF(centerLine.p2(), line1.p2()).angle());
+
+    QVector<QLineF> lines;
+    lines.append(arc.getSegments());
+    lines.append(findIntersection(pathPoints, QLineF(line1.p2(), line1.p1())));
+    lines.append(findIntersection(pathPoints, QLineF(line2.p2(), line2.p1())));
+    return lines;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QVector<QLineF> VPiece::createVInternalNotch(NotchData notchData, const QVector<QPointF> &pathPoints) const
+{
+    QLineF refline = QLineF(notchData.line);
+    qreal length   = notchData.length;
+    qreal width    = notchData.width;
+    qreal angle    = notchData.angle;
+    qreal offset   = notchData.offset;
+
+    QLineF tempLine = createParallelLine(refline.p1(), refline.p2(), offset);
+    tempLine.setAngle(tempLine.angle() + angle);
+    tempLine = findIntersection(pathPoints, QLineF(tempLine.p2(), tempLine.p1()));
+    QLineF line = QLineF(tempLine.p2(), tempLine.p1());
+    line.setLength(length);
+
+    QPointF p1;
+    {
+        QLineF tempLine = QLineF(line.p2(), line.p1());
+        tempLine.setAngle(tempLine.angle() - 90);
+        tempLine.setLength(width / 2);
+        p1 = tempLine.p2();
+    }
+
+    QPointF p2;
+    {
+        QLineF tempLine = QLineF(line.p2(), line.p1());
+        tempLine.setAngle(tempLine.angle() + 90);
+        tempLine.setLength(width / 2);
+        p2 = tempLine.p2();
+    }
+
+    QVector<QLineF> lines;
+    lines.append(QLineF(line.p1(), p2));
+    lines.append(QLineF(line.p1(), p1));
+    return lines;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QVector<QLineF> VPiece::createVExternalNotch(NotchData notchData, const QVector<QPointF> &pathPoints) const
+{
+    QLineF refline = QLineF(notchData.line);
+    qreal width    = notchData.width;
+    qreal angle    = notchData.angle;
+    qreal offset   = notchData.offset;
+
+    QLineF line = createParallelLine(refline.p1(), refline.p2(), offset);
+    line.setAngle(line.angle() + angle);
+
+    QPointF p1;
+    {
+        QLineF tempLine = QLineF(line.p1(), line.p2());
+        tempLine.setAngle(tempLine.angle() - 90);
+        tempLine.setLength(width / 2);
+        p1 = tempLine.p2();
+    }
+
+    QPointF p2;
+    {
+        QLineF tempLine = QLineF(line.p1(), line.p2());
+        tempLine.setAngle(tempLine.angle() + 90);
+        tempLine.setLength(width / 2);
+        p2 = tempLine.p2();
+    }
+
+    QVector<QLineF> lines;
+    lines.append(findIntersection(pathPoints, QLineF(line.p2(), p2)));
+    lines.append(findIntersection(pathPoints, QLineF(line.p2(), p1)));
+    return lines;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QVector<QLineF> VPiece::createCastleNotch(const NotchData notchData, const QVector<QPointF> &pathPoints) const
+{
+    QLineF refline = notchData.line;
+    qreal width    = notchData.width;
+    qreal angle    = notchData.angle;
+    qreal offset   = notchData.offset;
+
+    QLineF line = createParallelLine(refline.p1(), refline.p2(), offset);
+
+    QLineF line1 = createParallelLine(line.p1(), line.p2(), width / 2.);
+    line1.setAngle(line1.angle() + angle);
+    QLineF line2 = createParallelLine(line.p1(), line.p2(), -width / 2.);
+    line2.setAngle(line2.angle() + angle);
+
+    QVector<QLineF> lines;
+    lines.append(QLineF(line1.p2(), line2.p2()));
+    lines.append(findIntersection(pathPoints, QLineF(line1.p2(), line1.p1())));
+    lines.append(findIntersection(pathPoints, QLineF(line2.p2(), line2.p1())));
+    return lines;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QVector<QLineF> VPiece::createDiamondNotch(NotchData notchData, const QVector<QPointF> &pathPoints) const
+{
+    //QLineF refline = notchData.line;
+    //qreal length    = notchData.length;
+    //qreal width    = notchData.width;
+    qreal angle    = notchData.angle;
+    //qreal offset   = notchData.offset;
+
+    QVector<QLineF> lines;
+    lines += createVExternalNotch(notchData, pathPoints);
+    notchData.angle = angle - 180;
+    lines += createVExternalNotch(notchData, pathPoints);
+    return lines;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QVector<QLineF> VPiece::createNotches(NotchData notchData, const QVector<QPointF> &pathPoints) const
+{
+    int count            = notchData.count;
+    NotchType type       = notchData.type;
+    NotchSubType subType = notchData.subType;
+    qreal width          = notchData.width;
+
+    QVector<QLineF> notches;
+
+    if (subType == NotchSubType::Straightforward)
+    {
+        switch (type)
+        {
+            case NotchType::TNotch:
+            {
+                switch (count)
+                {
+                    case 2:
+                        notchData.offset = width * .625;
+                        notches += createTNotch(notchData, pathPoints);
+                        notchData.offset = -(width * .625);
+                        notches += createTNotch(notchData, pathPoints);
+                        break;
+                    case 3:
+                        notchData.offset = 0;
+                        notches += createTNotch(notchData, pathPoints);
+                        notchData.offset = width * 1.25;
+                        notches += createTNotch(notchData, pathPoints);
+                        notchData.offset = -(width * 1.25);
+                        notches += createTNotch(notchData, pathPoints);
+                        break;
+                    case 1:
+                    default:
+                        notchData.offset = 0;
+                        notches += createTNotch(notchData, pathPoints);
+                        break;
+                }
+                break;
+            case NotchType::UNotch:
+                switch (count)
+                {
+                    case 2:
+                        notchData.offset = width * .625;
+                        notches += createUNotch(notchData, pathPoints);
+                        notchData.offset = -(width * .625);
+                        notches += createUNotch(notchData, pathPoints);
+                        break;
+                    case 3:
+                        notchData.offset = 0;
+                        notches += createUNotch(notchData, pathPoints);
+                        notchData.offset = width * 1.375;
+                        notches += createUNotch(notchData, pathPoints);
+                        notchData.offset = -(width * 1.375);
+                        notches += createUNotch(notchData, pathPoints);
+                        break;
+                    case 1:
+                    default:
+                        notchData.offset = 0;
+                        notches += createUNotch(notchData, pathPoints);
+                        break;
+                }
+                break;
+            case NotchType::VInternal:
+                switch (count)
+                {
+                    case 2:
+                        notchData.offset = width * .625;
+                        notches += createVInternalNotch(notchData, pathPoints);
+                        notchData.offset = -(width * .625);
+                        notches += createVInternalNotch(notchData, pathPoints);
+                        break;
+                    case 3:
+                        notchData.offset = 0;
+                        notches += createVInternalNotch(notchData, pathPoints);
+                        notchData.offset = width * 1.25;
+                        notches += createVInternalNotch(notchData, pathPoints);
+                        notchData.offset = -(width * 1.25);
+                        notches += createVInternalNotch(notchData, pathPoints);
+                        break;
+                    case 1:
+                    default:
+                        notchData.offset = 0;
+                        notches += createVInternalNotch(notchData, pathPoints);
+                        break;
+                }
+                break;
+            case NotchType::VExternal:
+                switch (count)
+                {
+                    case 2:
+                        notchData.offset = width * .625;
+                        notches += createVExternalNotch(notchData, pathPoints);
+                        notchData.offset = -(width * .625);
+                        notches += createVExternalNotch(notchData, pathPoints);
+                        break;
+                    case 3:
+                        notchData.offset = 0;
+                        notches += createVExternalNotch(notchData, pathPoints);
+                        notchData.offset = width * 1.25;
+                        notches += createVExternalNotch(notchData, pathPoints);
+                        notchData.offset = -(width * 1.25);
+                        notches += createVExternalNotch(notchData, pathPoints);
+                        break;
+                    case 1:
+                    default:
+                        notchData.offset = 0;
+                        notches += createVExternalNotch(notchData, pathPoints);
+                        break;
+                }
+                break;
+            case NotchType::Castle:
+                switch (count)
+                {
+                    case 2:
+                        notchData.offset = width * .625;
+                        notches += createCastleNotch(notchData, pathPoints);
+                        notchData.offset = -(width * .625);
+                        notches += createCastleNotch(notchData, pathPoints);
+                        break;
+                    case 3:
+                        notchData.offset = 0;
+                        notches += createCastleNotch(notchData, pathPoints);
+                        notchData.offset = width * 1.375;
+                        notches += createCastleNotch(notchData, pathPoints);
+                        notchData.offset = -(width * 1.375);
+                        notches += createCastleNotch(notchData, pathPoints);
+                        break;
+                    case 1:
+                    default:
+                        notchData.offset = 0;
+                        notches += createCastleNotch(notchData, pathPoints);
+                        break;
+                }
+                break;
+                case NotchType::Diamond:
+                    switch (count)
+                    {
+                        case 2:
+                            notchData.offset = width * .625;
+                            notches += createDiamondNotch(notchData, pathPoints);
+                            notchData.offset = -(width * .625);
+                            notches += createDiamondNotch(notchData, pathPoints);
+                            break;
+                        case 3:
+                            notchData.offset = 0;
+                            notches += createDiamondNotch(notchData, pathPoints);
+                            notchData.offset = width * 1.375;
+                            notches += createDiamondNotch(notchData, pathPoints);
+                            notchData.offset = -(width * 1.375);
+                            notches += createDiamondNotch(notchData, pathPoints);
+                            break;
+                        case 1:
+                        default:
+                            notchData.offset = 0;
+                            notches += createDiamondNotch(notchData, pathPoints);
+                            break;
+                    }
+                    break;
+            case NotchType::Slit:
+            default:
+                switch (count)
+                {
+                    case 2:
+                        notchData.offset = width * .625;
+                        notches += createSlitNotch(notchData, pathPoints);
+                        notchData.offset = -(width * .625);
+                        notches += createSlitNotch(notchData, pathPoints);
+                        break;
+                    case 3:
+                        notchData.offset = 0;
+                        notches += createSlitNotch(notchData, pathPoints);
+                        notchData.offset = width * 1.25;
+                        notches += createSlitNotch(notchData, pathPoints);
+                        notchData.offset = -(width * 1.25);
+                        notches += createSlitNotch(notchData, pathPoints);
+                        break;
+                    case 1:
+                    default:
+                        notchData.offset = 0;
+                        notches += createSlitNotch(notchData, pathPoints);
+                        break;
+                }
+            }
+        }
+    }
+    else
+    {
+        notchData.offset = 0;
+        notches += createSlitNotch(notchData, pathPoints);
+    }
+
+    return notches;
+}
+
+QLineF VPiece::findIntersection(const QVector<QPointF> &pathPoints, const QLineF &line) const
+{
+    QLineF tempLine = line;
+    tempLine.setLength(tempLine.length()*1.5);
+    QVector<QPointF> intersections = VAbstractCurve::CurveIntersectLine(pathPoints, tempLine);
+    if (not intersections.isEmpty())
+    {
+        return QLineF(line.p1(), intersections.last());
+    }
+
+    return line;
 }

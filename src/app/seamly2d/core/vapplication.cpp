@@ -62,6 +62,7 @@
 #include "../qmuparser/qmuparsererror.h"
 #include "../mainwindow.h"
 
+#include <Qt>
 #include <QtDebug>
 #include <QDir>
 #include <QProcess>
@@ -205,23 +206,24 @@ inline void noisyFailureMsgHandler(QtMsgType type, const QMessageLogContext &con
                 !QApplication::activeModalWidget()->inherits("QFileDialog");
 
         QMessageBox messageBox;
+
         switch (type)
         {
             case QtWarningMsg:
-                messageBox.setWindowTitle(QApplication::translate("vNoisyHandler", "Warning."));
+                messageBox.setWindowTitle(QApplication::translate("vNoisyHandler", "Warning"));
                 messageBox.setIcon(QMessageBox::Warning);
                 break;
             case QtCriticalMsg:
-                messageBox.setWindowTitle(QApplication::translate("vNoisyHandler", "Critical error."));
+                messageBox.setWindowTitle(QApplication::translate("vNoisyHandler", "Critical Error"));
                 messageBox.setIcon(QMessageBox::Critical);
                 break;
             case QtFatalMsg:
-                messageBox.setWindowTitle(QApplication::translate("vNoisyHandler", "Fatal error."));
+                messageBox.setWindowTitle(QApplication::translate("vNoisyHandler", "Fatal Error"));
                 messageBox.setIcon(QMessageBox::Critical);
                 break;
             #if QT_VERSION > QT_VERSION_CHECK(5, 4, 2)
             case QtInfoMsg:
-                messageBox.setWindowTitle(QApplication::translate("vNoisyHandler", "Information."));
+                messageBox.setWindowTitle(QApplication::translate("vNoisyHandler", "InformationS"));
                 messageBox.setIcon(QMessageBox::Information);
                 break;
             #endif
@@ -243,6 +245,7 @@ inline void noisyFailureMsgHandler(QtMsgType type, const QMessageLogContext &con
                 #ifndef QT_NO_CURSOR
                     QGuiApplication::setOverrideCursor(Qt::ArrowCursor);
                 #endif
+                    messageBox.setWindowFlags(messageBox.windowFlags() & ~Qt::WindowContextHelpButtonHint);
                     messageBox.exec();
                 #ifndef QT_NO_CURSOR
                     QGuiApplication::restoreOverrideCursor();
@@ -258,7 +261,7 @@ inline void noisyFailureMsgHandler(QtMsgType type, const QMessageLogContext &con
     }
     else
     {
-        if (type != QtDebugMsg)
+        if( QtDebugMsg != type && QtWarningMsg != type )
         {
             abort(); // be NOISY unless overridden!
         }
@@ -286,7 +289,7 @@ VApplication::VApplication(int &argc, char **argv)
       lockLog(),
       out(nullptr)
 {
-    setApplicationDisplayName(VER_PRODUCTNAME_STR);
+    //setApplicationDisplayName(VER_PRODUCTNAME_STR);
     setApplicationName(VER_INTERNALNAME_STR);
     setOrganizationName(VER_COMPANYNAME_STR);
     setOrganizationDomain(VER_COMPANYDOMAIN_STR);
@@ -605,6 +608,15 @@ void VApplication::InitOptions()
         //This does not happen under GNOME or KDE
         QIcon::setThemeName("win.icon.theme");
     }
+
+    OpenSettings();
+    VSettings *settings = Seamly2DSettings();
+    QDir().mkpath(settings->GetDefPathLayout());
+    QDir().mkpath(settings->GetDefPathPattern());
+    QDir().mkpath(settings->GetDefPathIndividualMeasurements());
+    QDir().mkpath(settings->GetDefPathMultisizeMeasurements());
+    QDir().mkpath(settings->GetDefPathTemplate());
+    QDir().mkpath(settings->GetDefPathLabelTemplate());
 }
 
 //---------------------------------------------------------------------------------------------------------------------

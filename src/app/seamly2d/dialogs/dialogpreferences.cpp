@@ -68,6 +68,8 @@ DialogPreferences::DialogPreferences(QWidget *parent)
       m_pathPage(new PreferencesPathPage)
 {
     ui->setupUi(this);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+
     qApp->Settings()->GetOsSeparator() ? setLocale(QLocale()) : setLocale(QLocale::c());
 
     QPushButton *bOk = ui->buttonBox->button(QDialogButtonBox::Ok);
@@ -149,7 +151,7 @@ void DialogPreferences::Apply()
     m_patternPage->Apply();
     m_pathPage->Apply();
 
-    m_patternPage->InitDefaultSeamAllowance();
+    m_patternPage->initDefaultSeamAllowance();
 
     qApp->Seamly2DSettings()->GetOsSeparator() ? setLocale(QLocale()) : setLocale(QLocale::c());
     emit UpdateProperties();

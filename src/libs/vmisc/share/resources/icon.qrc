@@ -25,7 +25,6 @@
         <file>icon/32x32/arrowUp.png</file>
         <file>icon/32x32/arrowLeftUp.png</file>
         <file>icon/32x32/putHereLeft.png</file>
-        <file>icon/path_config.png</file>
         <file>icon/16x16/info.png</file>
         <file>icon/16x16/measurement.png</file>
         <file>icon/16x16/landscape.png</file>
@@ -73,7 +72,22 @@
         <file>icon/32x32/paths@2x.png</file>
         <file>icon/32x32/pins.png</file>
         <file>icon/32x32/pins@2x.png</file>
-        <file>icon/32x32/passmark.png</file>
-        <file>icon/32x32/passmark@2x.png</file>
+        <file>icon/32x32/notches.png</file>
+        <file>icon/32x32/notches@2x.png</file>
+        <file>icon/path_config.png</file>
+        <file>icon/24x24/castle_notch.png</file>
+        <file>icon/24x24/diamond_notch.png</file>
+        <file>icon/24x24/external_v_notch.png</file>
+        <file>icon/24x24/internal_v_notch.png</file>
+        <file>icon/24x24/slit_notch.png</file>
+        <file>icon/24x24/t_notch.png</file>
+        <file>icon/24x24/u_notch.png</file>
+        <file>icon/24x24/clockwise.png</file>
+        <file>icon/24x24/counter_clockwise.png</file>
+        <file>icon/24x24/spacer.png</file>
+        <file>icon/32x32/move_bottom.png</file>
+        <file>icon/32x32/move_down.png</file>
+        <file>icon/32x32/move_top.png</file>
+        <file>icon/32x32/move_up.png</file>
     </qresource>
 </RCC>

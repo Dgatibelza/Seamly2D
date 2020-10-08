@@ -528,7 +528,7 @@ QDomElement VAbstractTool::AddSANode(VAbstractPattern *doc, const QString &tagNa
     }
 
     {
-        const bool excluded = node.IsExcluded();
+        const bool excluded = node.isExcluded();
         if (excluded)
         {
             doc->SetAttribute(nod, VAbstractPattern::AttrNodeExcluded, excluded);
@@ -572,38 +572,32 @@ QDomElement VAbstractTool::AddSANode(VAbstractPattern *doc, const QString &tagNa
 
     if (type == Tool::NodePoint)
     {
-        doc->SetAttribute(nod, VAbstractPattern::AttrNodePassmark, node.IsPassmark());
-        doc->SetAttribute(nod, VAbstractPattern::AttrNodePassmarkLine,
-                          PassmarkLineTypeToString(node.GetPassmarkLineType()));
-        doc->SetAttribute(nod, VAbstractPattern::AttrNodePassmarkAngle,
-                          PassmarkAngleTypeToString(node.GetPassmarkAngleType()));
+        if (node.isNotch())
+        {
+            doc->SetAttribute(nod, VAbstractPattern::AttrNodeIsNotch,         node.isNotch());
+            doc->SetAttribute(nod, VAbstractPattern::AttrNodeShowNotch,       node.showNotch());
+            doc->SetAttribute(nod, VAbstractPattern::AttrNodeShowSecondNotch, node.showSecondNotch());
+            doc->SetAttribute(nod, VAbstractPattern::AttrNodeNotchType,    notchTypeToString(node.getNotchType()));
+            doc->SetAttribute(nod, VAbstractPattern::AttrNodeNotchSubType, notchSubTypeToString(node.getNotchSubType()));
+            doc->SetAttribute(nod, VAbstractPattern::AttrNodeNotchLength,     node.getNotchLength());
+            doc->SetAttribute(nod, VAbstractPattern::AttrNodeNotchWidth,      node.getNotchWidth());
+            doc->SetAttribute(nod, VAbstractPattern::AttrNodeNotchAngle,      node.getNotchAngle());
+            doc->SetAttribute(nod, VAbstractPattern::AttrNodeNotchCount,      node.getNotchCount());
+        }
 
-        if (not node.IsPassmark()
-                && node.GetPassmarkLineType() == PassmarkLineType::OneLine
-                && node.GetPassmarkAngleType() == PassmarkAngleType::Straightforward)
+        if (not node.isNotch() && node.getNotchType() == NotchType::Slit
+            && node.getNotchSubType() == NotchSubType::Straightforward)
         { // For backward compatebility.
-            nod.removeAttribute(VAbstractPattern::AttrNodePassmark);
-            nod.removeAttribute(VAbstractPattern::AttrNodePassmarkLine);
-            nod.removeAttribute(VAbstractPattern::AttrNodePassmarkAngle);
+            nod.removeAttribute(VAbstractPattern::AttrNodeIsNotch);
+            nod.removeAttribute(VAbstractPattern::AttrNodeNotchType);
+            nod.removeAttribute(VAbstractPattern::AttrNodeNotchSubType);
         }
     }
     else
     { // Wrong configuration.
-        nod.removeAttribute(VAbstractPattern::AttrNodePassmark);
-        nod.removeAttribute(VAbstractPattern::AttrNodePassmarkLine);
-        nod.removeAttribute(VAbstractPattern::AttrNodePassmarkAngle);
-    }
-
-    {
-        const bool showSecond = node.IsShowSecondPassmark();
-        if (not showSecond)
-        {
-            doc->SetAttribute(nod, VAbstractPattern::AttrNodeShowSecondPassmark, showSecond);
-        }
-        else
-        { // For backward compatebility.
-            nod.removeAttribute(VAbstractPattern::AttrNodeShowSecondPassmark);
-        }
+        nod.removeAttribute(VAbstractPattern::AttrNodeIsNotch);
+        nod.removeAttribute(VAbstractPattern::AttrNodeNotchType);
+        nod.removeAttribute(VAbstractPattern::AttrNodeNotchSubType);
     }
 
     return nod;
