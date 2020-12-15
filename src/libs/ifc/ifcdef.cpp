@@ -250,6 +250,8 @@ QMap<QString, QIcon> CurvePenStylesPics()
     return map;
 }
 
+const QString ColorByGroup          = QStringLiteral("byGroup");
+const QString ColorNone             = QStringLiteral("none");
 const QString ColorBlack            = QStringLiteral("black");
 const QString ColorGreen            = QStringLiteral("green");
 const QString ColorBlue             = QStringLiteral("blue");
@@ -267,10 +269,14 @@ const QString ColorMediumSeaGreen   = QStringLiteral("mediumseagreen");
 const QString ColorLime             = QStringLiteral("lime");
 const QString ColorDeepSkyBlue      = QStringLiteral("deepskyblue");
 const QString ColorCornFlowerBlue   = QStringLiteral("cornflowerblue");
+const QString ColorGray             = QStringLiteral("gray");
+const QString ColorDarkGray         = QStringLiteral("darkgray");
+const QString ColorLightGray        = QStringLiteral("lightgray");
+const QString ColorWhite            = QStringLiteral("white");
 
 //variables
 const QString measurement_         = QStringLiteral("M_");
-const QString increment_           = QStringLiteral("Increment_");
+const QString variable_           = QStringLiteral("Variable_");
 const QString line_                = QStringLiteral("Line_");
 const QString angleLine_           = QStringLiteral("AngleLine_");
 const QString spl_                 = QStringLiteral(SPL_);
@@ -302,7 +308,7 @@ const QString currentLength        = QStringLiteral("CurrentLength");
 const QString currentSeamAllowance = QStringLiteral("CurrentSeamAllowance");
 
 const QStringList builInVariables = QStringList() << measurement_
-                                                  << increment_
+                                                  << variable_
                                                   << line_
                                                   << angleLine_
                                                   << arc_
