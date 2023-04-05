@@ -145,7 +145,7 @@ DialogVariables::DialogVariables(VContainer *data, VPattern *doc, QWidget *paren
 
     connect(ui->refresh_PushButton, &QPushButton::clicked, this, &DialogVariables::refreshPattern);
 
-    connect(ui->variables_TableWidget->horizontalHeader(), &QHeaderView::sectionClicked, [this](int logicalIndex)
+    connect(ui->variables_TableWidget->horizontalHeader(), &QHeaderView::sectionClicked, [this]()
     {
         isSorted = true;
         setMoveControls();
@@ -231,7 +231,7 @@ void DialogVariables::fillCustomVariables(bool freshCall)
         ui->variables_TableWidget->resizeRowsToContents();
     }
 
-    ui->variables_TableWidget->setColumnWidth(0, 120);
+    ui->variables_TableWidget->setColumnWidth(0, 350);
     ui->variables_TableWidget->horizontalHeader()->setStretchLastSection(true);
     ui->variables_TableWidget->blockSignals(false);
 }
@@ -383,7 +383,7 @@ QString DialogVariables::clearCustomVariableName(const QString &name) const
 //---------------------------------------------------------------------------------------------------------------------
 bool DialogVariables::evalVariableFormula(const QString &formula, bool fromUser, VContainer *data, QLabel *label)
 {
-    const QString postfix = UnitsToStr(qApp->patternUnit());//Show unit in dialog lable (cm, mm or inch)
+    const QString postfix = UnitsToStr(qApp->patternUnit());//Show unit in dialog label (cm, mm or inch)
     if (formula.isEmpty())
     {
         label->setText(tr("Error") + " (" + postfix + "). " + tr("Empty field."));
@@ -431,7 +431,7 @@ bool DialogVariables::evalVariableFormula(const QString &formula, bool fromUser,
 //---------------------------------------------------------------------------------------------------------------------
 void DialogVariables::setMoveControls()
 {
-    if (isSorted == true | isFiltered == true)
+    if (isSorted || isFiltered)
     {
         ui->toolButtonUp->setEnabled(false);
         ui->toolButtonDown->setEnabled(false);
@@ -476,7 +476,7 @@ void DialogVariables::setMoveControls()
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void DialogVariables::enableDetails(bool enabled)
+void DialogVariables::enablePieces(bool enabled)
 {
     if (enabled)
     {
@@ -668,7 +668,7 @@ void DialogVariables::removeCustomVariable()
     }
     else
     {
-        enableDetails(false);
+        enablePieces(false);
     }
 }
 
@@ -791,7 +791,7 @@ void DialogVariables::saveCustomVariableFormula()
     if (formula->text() == text)
     {
         QTableWidgetItem *result = ui->variables_TableWidget->item(row, 1);
-        //Show unit in dialog lable (cm, mm or inch)
+        //Show unit in dialog label (cm, mm or inch)
         const QString postfix = UnitsToStr(qApp->patternUnit());
         ui->calculatedValue_Label->setText(result->text() + " " +postfix);
         return;
@@ -799,7 +799,7 @@ void DialogVariables::saveCustomVariableFormula()
 
     if (text.isEmpty())
     {
-        //Show unit in dialog lable (cm, mm or inch)
+        //Show unit in dialog label (cm, mm or inch)
         const QString postfix = UnitsToStr(qApp->patternUnit());
         ui->calculatedValue_Label->setText(tr("Error") + " (" + postfix + "). " + tr("Empty field."));
         return;
@@ -850,7 +850,7 @@ void DialogVariables::Fx()
     dialog->SetFormula(qApp->TrVars()->TryFormulaFromUser(ui->formula_PlainTextEdit->toPlainText().replace("\n", " "),
                                                           qApp->Settings()->GetOsSeparator()));
     const QString postfix = UnitsToStr(qApp->patternUnit(), true);
-    dialog->setPostfix(postfix);//Show unit in dialog lable (cm, mm or inch)
+    dialog->setPostfix(postfix);//Show unit in dialog label (cm, mm or inch)
 
     if (dialog->exec() == QDialog::Accepted)
     {
@@ -966,7 +966,7 @@ void DialogVariables::showCustomVariableDetails()
 {
     if (ui->variables_TableWidget->rowCount() > 0)
     {
-        enableDetails(true);
+        enablePieces(true);
 
         // name
         const QTableWidgetItem *name = ui->variables_TableWidget->item(ui->variables_TableWidget->currentRow(), 0);
@@ -979,7 +979,7 @@ void DialogVariables::showCustomVariableDetails()
         catch(const VExceptionBadId &e)
         {
             Q_UNUSED(e)
-            enableDetails(false);
+            enablePieces(false);
             return;
         }
 
@@ -1010,7 +1010,7 @@ void DialogVariables::showCustomVariableDetails()
     }
     else
     {
-        enableDetails(false);
+        enablePieces(false);
     }
 }
 

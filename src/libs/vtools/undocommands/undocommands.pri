@@ -2,23 +2,31 @@
 # This need for corect working file translations.pro
 
 HEADERS += \
+    $$PWD/add_draftblock.h \
+    $$PWD/add_groupitem.h \
     $$PWD/addtocalc.h \
-    $$PWD/addpatternpiece.h \
+    $$PWD/delete_draftblock.h \
+    $$PWD/label/moveoperationlabel.h \
+    $$PWD/label/showoperationpointname.h \
+    $$PWD/move_groupitem.h \
     $$PWD/movespoint.h \
     $$PWD/movespline.h \
     $$PWD/movesplinepath.h \
+    $$PWD/remove_groupitem.h \
+    $$PWD/rename_draftblock.h \
     $$PWD/savetooloptions.h \
     $$PWD/deltool.h \
-    $$PWD/deletepatternpiece.h \
     $$PWD/adddetnode.h \
+    $$PWD/set_piece_color.h \
+    $$PWD/toggle_piecelock.h \
     $$PWD/vundocommand.h \
-    $$PWD/renamepp.h \
     $$PWD/label/movelabel.h \
     $$PWD/label/movedoublelabel.h \
+    $$PWD/label/showpointname.h \
+    $$PWD/label/showdoublepointname.h \
     $$PWD/addgroup.h \
     $$PWD/delgroup.h \
     $$PWD/label/moveabstractlabel.h \
-    $$PWD/label/operationmovelabel.h \
     $$PWD/addpiece.h \
     $$PWD/deletepiece.h \
     $$PWD/movepiece.h \
@@ -27,23 +35,31 @@ HEADERS += \
     $$PWD/savepiecepathoptions.h
 
 SOURCES += \
+    $$PWD/add_draftblock.cpp \
+    $$PWD/add_groupitem.cpp \
     $$PWD/addtocalc.cpp \
-    $$PWD/addpatternpiece.cpp \
+    $$PWD/delete_draftblock.cpp \
+    $$PWD/label/moveoperationlabel.cpp \
+    $$PWD/label/showoperationpointname.cpp \
+    $$PWD/move_groupitem.cpp \
     $$PWD/movespoint.cpp \
     $$PWD/movespline.cpp \
     $$PWD/movesplinepath.cpp \
+    $$PWD/remove_groupitem.cpp \
+    $$PWD/rename_draftblock.cpp \
     $$PWD/savetooloptions.cpp \
     $$PWD/deltool.cpp \
-    $$PWD/deletepatternpiece.cpp \
     $$PWD/adddetnode.cpp \
+    $$PWD/set_piece_color.cpp \
+    $$PWD/toggle_piecelock.cpp \
     $$PWD/vundocommand.cpp \
-    $$PWD/renamepp.cpp \
     $$PWD/label/movelabel.cpp \
     $$PWD/label/movedoublelabel.cpp \
+    $$PWD/label/showpointname.cpp \
+    $$PWD/label/showdoublepointname.cpp \
     $$PWD/addgroup.cpp \
     $$PWD/delgroup.cpp \
     $$PWD/label/moveabstractlabel.cpp \
-    $$PWD/label/operationmovelabel.cpp \
     $$PWD/addpiece.cpp \
     $$PWD/deletepiece.cpp \
     $$PWD/movepiece.cpp \

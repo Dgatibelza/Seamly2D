@@ -80,9 +80,13 @@
  * @param parent parent widget
  */
 DialogLineIntersect::DialogLineIntersect(const VContainer *data, const quint32 &toolId, QWidget *parent)
-    :DialogTool(data, toolId, parent), ui(new Ui::DialogLineIntersect), flagPoint(true)
+    : DialogTool(data, toolId, parent)
+    , ui(new Ui::DialogLineIntersect)
+    , flagPoint(true)
 {
     ui->setupUi(this);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+    setWindowIcon(QIcon(":/toolicon/32x32/intersect.png"));
 
     ui->lineEditNamePoint->setClearButtonEnabled(true);
 
@@ -96,15 +100,11 @@ DialogLineIntersect::DialogLineIntersect(const VContainer *data, const quint32 &
     FillComboBoxPoints(ui->comboBoxP1Line2);
     FillComboBoxPoints(ui->comboBoxP2Line2);
 
-    connect(ui->lineEditNamePoint, &QLineEdit::textChanged, this, &DialogLineIntersect::NamePointChanged);
-    connect(ui->comboBoxP1Line1, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
-            this, &DialogLineIntersect::PointNameChanged);
-    connect(ui->comboBoxP2Line1, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
-            this, &DialogLineIntersect::PointNameChanged);
-    connect(ui->comboBoxP1Line2, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
-            this, &DialogLineIntersect::PointNameChanged);
-    connect(ui->comboBoxP2Line2, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
-            this, &DialogLineIntersect::PointNameChanged);
+    connect(ui->lineEditNamePoint, &QLineEdit::textChanged,        this, &DialogLineIntersect::NamePointChanged);
+    connect(ui->comboBoxP1Line1,   &QComboBox::currentTextChanged, this, &DialogLineIntersect::PointNameChanged);
+    connect(ui->comboBoxP2Line1,   &QComboBox::currentTextChanged, this, &DialogLineIntersect::PointNameChanged);
+    connect(ui->comboBoxP1Line2,   &QComboBox::currentTextChanged, this, &DialogLineIntersect::PointNameChanged);
+    connect(ui->comboBoxP2Line2,   &QComboBox::currentTextChanged, this, &DialogLineIntersect::PointNameChanged);
 
     vis = new VisToolLineIntersect(data);
 }
@@ -183,17 +183,14 @@ void DialogLineIntersect::ChosenObject(quint32 id, const SceneObject &type)
                             {
                                 this->setModal(true);
                                 this->show();
-                                connect(ui->comboBoxP1Line1,
-                                        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+
+                                connect(ui->comboBoxP1Line1,   &QComboBox::currentTextChanged, this,
                                         &DialogLineIntersect::PointChanged);
-                                connect(ui->comboBoxP2Line1,
-                                        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+                                connect(ui->comboBoxP2Line1,   &QComboBox::currentTextChanged, this,
                                         &DialogLineIntersect::PointChanged);
-                                connect(ui->comboBoxP1Line2,
-                                        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+                                connect(ui->comboBoxP1Line2,   &QComboBox::currentTextChanged, this,
                                         &DialogLineIntersect::PointChanged);
-                                connect(ui->comboBoxP2Line2,
-                                        static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this,
+                                connect(ui->comboBoxP2Line2,   &QComboBox::currentTextChanged, this,
                                         &DialogLineIntersect::PointChanged);
                             }
                         }
@@ -254,7 +251,7 @@ void DialogLineIntersect::PointNameChanged()
     QLineF line1(static_cast<QPointF>(*p1Line1), static_cast<QPointF>(*p2Line1));
     QLineF line2(static_cast<QPointF>(*p1Line2), static_cast<QPointF>(*p2Line2));
     QPointF fPoint;
-    QLineF::IntersectType intersect = line1.intersect(line2, &fPoint);
+    QLineF::IntersectType intersect = line1.intersects(line2, &fPoint);
 
     QColor color = okColor;
     if (set.size() < 3 || intersect == QLineF::NoIntersection)
@@ -286,8 +283,8 @@ void DialogLineIntersect::ShowVisualization()
  */
 void DialogLineIntersect::CheckState()
 {
-    SCASSERT(bOk != nullptr)
-    bOk->setEnabled(flagName && flagPoint);
+    SCASSERT(ok_Button != nullptr)
+    ok_Button->setEnabled(flagName && flagPoint);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -305,7 +302,7 @@ bool DialogLineIntersect::CheckIntersecion()
     QLineF line1(static_cast<QPointF>(*p1L1), static_cast<QPointF>(*p2L1));
     QLineF line2(static_cast<QPointF>(*p1L2), static_cast<QPointF>(*p2L2));
     QPointF fPoint;
-    QLineF::IntersectType intersect = line1.intersect(line2, &fPoint);
+    QLineF::IntersectType intersect = line1.intersects(line2, &fPoint);
     if (intersect == QLineF::UnboundedIntersection || intersect == QLineF::BoundedIntersection)
     {
         return true;

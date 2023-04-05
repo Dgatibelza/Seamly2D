@@ -368,9 +368,8 @@ void VTranslateMeasurements::InitGroupA()
     m = translate("VTranslateMeasurements", "height_waist_back",
                   "Name in a formula. Don't use math symbols and space in name!!!!");
     g = translate("VTranslateMeasurements", "Height: Waist Back", "Full measurement name.");
-    d = translate("VTranslateMeasurements", "Vertical height from Waist Back to floor. ('Height: Waist Front'' - "
-                  "'Leg: Crotch to floor'').", "Full measurement description.");
-    InitMeasurement(heightWaistBack_M, m, g, d, "A23", "(height_waist_front - leg_crotch_to_floor)");
+    d = translate("VTranslateMeasurements", "Vertical height from Waist Back to floor.", "Full measurement name.");
+    InitMeasurement(heightWaistBack_M, m, g, d, "A23");
     //=================================================================================================================
 }
 
@@ -1447,6 +1446,12 @@ void VTranslateMeasurements::InitGroupJ()
     d = translate("VTranslateMeasurements", "From center of Shoulder to Bustpoint.", "Full measurement description.");
     InitMeasurement(bustpointToShoulderCenter_M, m, g, d, "J10");
     //=================================================================================================================
+    m = translate("VTranslateMeasurements", "bustpoint_to_neck_front",
+                  "Name in a formula. Don't use math symbols and space in name!!!!");
+    g = translate("VTranslateMeasurements", "Bustpoint to Neck Front", "Full measurement name.");
+    d = translate("VTranslateMeasurements", "From Neck Front to Bustpoint.", "Full measurement description.");
+    InitMeasurement(bustpointToNeckFront_M, m, g, d, "J11");
+    //=================================================================================================================
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -1846,7 +1851,7 @@ void VTranslateMeasurements::InitGroupN()
                   "Name in a formula. Don't use math symbols and space in name!!!!");
     g = translate("VTranslateMeasurements", "Crotch length", "Full measurement name.");
     d = translate("VTranslateMeasurements", "Put tape across gap between buttocks at Hip level. Measure from Waist "
-                  "Front down betwen legs and up to Waist Back.", "Full measurement description.");
+                  "Front down between legs and up to Waist Back.", "Full measurement description.");
     InitMeasurement(crotchLength_M, m, g, d, "N01");
     //=================================================================================================================
     m = translate("VTranslateMeasurements", "crotch_length_b",
@@ -1947,7 +1952,7 @@ void VTranslateMeasurements::InitGroupO()
                   "Name in a formula. Don't use math symbols and space in name!!!!");
     g = translate("VTranslateMeasurements", "Natural Waist arc, back", "Full measurement name.");
     d = translate("VTranslateMeasurements", "From Side to Side at Natural Waist level, across the back. Calculate as "
-                  "( Natural Waist circumference  - Natural Waist arc (front) ).", "Full measurement description.");
+                  "( Natural Waist circumference - Natural Waist arc (front) ).", "Full measurement description.");
     InitMeasurement(waistNaturalArcB_M, m, g, d, "O05", "(waist_natural_circ - waist_natural_arc_f)");
     //=================================================================================================================
     m = translate("VTranslateMeasurements", "waist_to_natural_waist_f",

@@ -1,27 +1,4 @@
-/***************************************************************************
- *                                                                         *
- *   Copyright (C) 2017  Seamly, LLC                                       *
- *                                                                         *
- *   https://github.com/fashionfreedom/seamly2d                            *
- *                                                                         *
- ***************************************************************************
- **
- **  Seamly2D is free software: you can redistribute it and/or modify
- **  it under the terms of the GNU General Public License as published by
- **  the Free Software Foundation, either version 3 of the License, or
- **  (at your option) any later version.
- **
- **  Seamly2D is distributed in the hope that it will be useful,
- **  but WITHOUT ANY WARRANTY; without even the implied warranty of
- **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- **  GNU General Public License for more details.
- **
- **  You should have received a copy of the GNU General Public License
- **  along with Seamly2D.  If not, see <http://www.gnu.org/licenses/>.
- **
- **************************************************************************
-
- ************************************************************************
+/************************************************************************
  **
  **  @file   def.h
  **  @author Roman Telezhynskyi <dismine(at)gmail.com>
@@ -31,7 +8,7 @@
  **  @copyright
  **  This source code is part of the Valentine project, a pattern making
  **  program, whose allow create and modeling patterns of clothing.
- **  Copyright (C) 2015 Seamly2D project
+ **  Copyright (C) 2013 - 2022 Seamly2D project
  **  <https://github.com/fashionfreedom/seamly2d> All Rights Reserved.
  **
  **  Seamly2D is free software: you can redistribute it and/or modify
@@ -53,11 +30,12 @@
 #define DEF_H
 
 #include <qcompilerdetection.h>
-#include <QPrinter>
+#include <QLineF>
 #include <QString>
 #include <QStringList>
 #include <Qt>
 #include <QtGlobal>
+#include <QPrinter>
 #include <csignal>
 #ifdef Q_OS_WIN
     #include <windows.h>
@@ -78,8 +56,51 @@ class QGraphicsItem;
 
 #define SceneSize 50000
 
+enum class LayoutExportFormat : char
+{
+    SVG = 0,
+    PDF = 1,
+    PDFTiled = 2,
+    PNG = 3,
+    JPG = 4,
+    BMP = 5,
+    PPM = 6,
+    OBJ = 7,              /* Wavefront OBJ*/
+    PS  = 8,
+    EPS = 9,
+    DXF_AC1006_Flat = 10,  /* R10. */
+    DXF_AC1009_Flat = 11,  /* R11 & R12. */
+    DXF_AC1012_Flat = 12,  /* R13. */
+    DXF_AC1014_Flat = 13,  /* R14. */
+    DXF_AC1015_Flat = 14, /* ACAD 2000. */
+    DXF_AC1018_Flat = 15, /* ACAD 2004. */
+    DXF_AC1021_Flat = 16, /* ACAD 2007. */
+    DXF_AC1024_Flat = 17, /* ACAD 2010. */
+    DXF_AC1027_Flat = 18, /* ACAD 2013. */
+    DXF_AC1006_AAMA = 19, /* R10. */
+    DXF_AC1009_AAMA = 20, /* R11 & R12. */
+    DXF_AC1012_AAMA = 21, /* R13. */
+    DXF_AC1014_AAMA = 22, /* R14. */
+    DXF_AC1015_AAMA = 23, /* ACAD 2000. */
+    DXF_AC1018_AAMA = 24, /* ACAD 2004. */
+    DXF_AC1021_AAMA = 25, /* ACAD 2007. */
+    DXF_AC1024_AAMA = 26, /* ACAD 2010. */
+    DXF_AC1027_AAMA = 27, /* ACAD 2013. */
+    DXF_AC1006_ASTM = 28, /* R10. */
+    DXF_AC1009_ASTM = 29, /* R11 & R12. */
+    DXF_AC1012_ASTM = 30, /* R13. */
+    DXF_AC1014_ASTM = 31, /* R14. */
+    DXF_AC1015_ASTM = 32, /* ACAD 2000. */
+    DXF_AC1018_ASTM = 33, /* ACAD 2004. */
+    DXF_AC1021_ASTM = 34, /* ACAD 2007. */
+    DXF_AC1024_ASTM = 35, /* ACAD 2010. */
+    DXF_AC1027_ASTM = 36, /* ACAD 2013. */
+    TIF = 37,             /* TIFF */
+    COUNT                 /*Use only for validation*/
+};
+
 enum class NodeDetail : char { Contour, Modeling };
-enum class SceneObject : char { Point, Line, Spline, Arc, ElArc, SplinePath, Detail, Unknown };
+enum class SceneObject : char { Point, Line, Spline, Arc, ElArc, SplinePath, Piece, Unknown };
 enum class MeasurementsType : char { Multisize, Individual , Unknown};
 enum class Unit : char { Mm = 0, Cm, Inch, Px, LAST_UNIT_DO_NOT_USE};
 enum class Source : char { FromGui, FromFile, FromTool };
@@ -181,7 +202,7 @@ enum class Tool : ToolVisHolderType
     PointFromCircleAndTangent,
     PointFromArcAndTangent,
     TrueDarts,
-    UnionDetails,
+    Union,
     Group,
     Rotation,
     MirrorByLine,
@@ -189,8 +210,8 @@ enum class Tool : ToolVisHolderType
     Move,
     Midpoint,
     EllipticalArc,
-    Pin,
-    InsertNode,
+    AnchorPoint,
+    InsertNodes,
     LAST_ONE_DO_NOT_USE //add new stuffs above this, this constant must be last and never used
 };
 
@@ -240,14 +261,16 @@ enum class Vis : ToolVisHolderType
     ToolEllipticalArc,
     ToolPiece,
     ToolInternalPath,
-    ToolPin,
-    PiecePins,
+    ToolAnchorPoint,
+    PieceAnchors,
     NoBrush,
     CurvePathItem,
     GrainlineItem,
     PieceItem,
     TextGraphicsItem,
-    LAST_ONE_DO_NOT_USE //add new stuffs above this, this constant must be last and never used
+    ScenePoint,
+    ArrowedLineItem,
+    LAST_ONE_DO_NOT_USE //add new types above this, this constant must be last and never used
 };
 
 enum class VarType : char { Measurement, Increment, LineLength, CurveLength, CurveCLength, LineAngle, CurveAngle,
@@ -438,7 +461,7 @@ Q_REQUIRED_RESULT QMarginsF UnitConvertor(const QMarginsF &margins, const Unit &
 void InitLanguages(QComboBox *combobox);
 Q_REQUIRED_RESULT QStringList SupportedLocales();
 
-Q_REQUIRED_RESULT QString StrippedName(const QString &fullFileName);
+Q_REQUIRED_RESULT QString strippedName(const QString &fullFileName);
 Q_REQUIRED_RESULT QString RelativeMPath(const QString &patternPath, const QString &absoluteMPath);
 Q_REQUIRED_RESULT QString AbsoluteMPath(const QString &patternPath, const QString &relativeMPath);
 
@@ -451,6 +474,16 @@ QMarginsF GetPrinterFields(const QSharedPointer<QPrinter> &printer);
 Q_REQUIRED_RESULT QPixmap darkenPixmap(const QPixmap &pixmap);
 
 void ShowInGraphicalShell(const QString &filePath);
+
+constexpr qreal accuracyPointOnLine = (0.1555/*mm*/ / 25.4) * 96.0;
+
+Q_REQUIRED_RESULT static inline bool VFuzzyComparePoints(const QPointF &p1, const QPointF &p2,
+                                                         qreal accuracy = accuracyPointOnLine);
+
+static inline bool VFuzzyComparePoints(const QPointF &p1, const QPointF &p2, qreal accuracy)
+{
+    return QLineF(p1, p2).length() <= accuracy;
+}
 
 Q_REQUIRED_RESULT static inline bool VFuzzyComparePossibleNulls(double p1, double p2);
 static inline bool VFuzzyComparePossibleNulls(double p1, double p2)
@@ -583,4 +616,33 @@ private:
     QxtPrivate<PUB>* pvt;
 };
 
+/*
+    Convert to a QSet
+*/
+//---------------------------------------------------------------------------------------------------------------------
+template <typename T, template <typename> class C>
+inline QSet<T> convertToSet(const C<T> &list)
+{
+    return QSet<T>(list.begin(), list.end());
+}
+
+/*
+    Convert to a QSet
+*/
+//---------------------------------------------------------------------------------------------------------------------
+template <typename T, typename C>
+inline QSet<T> convertToSet(const C &list)
+{
+    return QSet<T>(list.begin(), list.end());
+}
+
+/*
+    Convert to a QList
+*/
+//---------------------------------------------------------------------------------------------------------------------
+template <typename T, template <typename> class C>
+inline QList<T> convertToList(const C<T> &set)
+{
+    return QList<T>(set.begin(), set.end());
+}
 #endif // DEF_H

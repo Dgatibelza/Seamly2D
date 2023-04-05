@@ -74,8 +74,14 @@
 
 //---------------------------------------------------------------------------------------------------------------------
 DialogTrueDarts::DialogTrueDarts(const VContainer *data, const quint32 &toolId, QWidget *parent)
-    :DialogTool(data, toolId, parent), ui(new Ui::DialogTrueDarts), d1PointName(), d2PointName(), ch1(NULL_ID),
-      ch2(NULL_ID), flagName1(true), flagName2(true)
+    : DialogTool(data, toolId, parent)
+    , ui(new Ui::DialogTrueDarts)
+    , d1PointName()
+    , d2PointName()
+    , ch1(NULL_ID)
+    , ch2(NULL_ID)
+    , flagName1(true)
+    , flagName2(true)
 {
     ui->setupUi(this);
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -94,23 +100,13 @@ DialogTrueDarts::DialogTrueDarts(const VContainer *data, const quint32 &toolId, 
 
     FillComboBoxs(ch1, ch2);
 
-    connect(ui->lineEditFirstNewDartPoint, &QLineEdit::textChanged, this, &DialogTrueDarts::NameDartPoint1Changed);
+    connect(ui->lineEditFirstNewDartPoint,  &QLineEdit::textChanged, this, &DialogTrueDarts::NameDartPoint1Changed);
     connect(ui->lineEditSecondNewDartPoint, &QLineEdit::textChanged, this, &DialogTrueDarts::NameDartPoint2Changed);
-    connect(ui->comboBoxFirstBasePoint,
-            static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
-            this, &DialogTrueDarts::PointNameChanged);
-    connect(ui->comboBoxSecondBasePoint,
-            static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
-            this, &DialogTrueDarts::PointNameChanged);
-    connect(ui->comboBoxFirstDartPoint,
-            static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
-            this, &DialogTrueDarts::PointNameChanged);
-    connect(ui->comboBoxSecondDartPoint,
-            static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
-            this, &DialogTrueDarts::PointNameChanged);
-    connect(ui->comboBoxThirdDartPoint,
-            static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
-            this, &DialogTrueDarts::PointNameChanged);
+    connect(ui->comboBoxFirstBasePoint,     &QComboBox::currentTextChanged, this, &DialogTrueDarts::PointNameChanged);
+    connect(ui->comboBoxSecondBasePoint,    &QComboBox::currentTextChanged, this, &DialogTrueDarts::PointNameChanged);
+    connect(ui->comboBoxFirstDartPoint,     &QComboBox::currentTextChanged, this, &DialogTrueDarts::PointNameChanged);
+    connect(ui->comboBoxSecondDartPoint,    &QComboBox::currentTextChanged, this, &DialogTrueDarts::PointNameChanged);
+    connect(ui->comboBoxThirdDartPoint,     &QComboBox::currentTextChanged, this, &DialogTrueDarts::PointNameChanged);
 
     vis = new VisToolTrueDarts(data);
 }
@@ -404,12 +400,12 @@ void DialogTrueDarts::SaveData()
 //---------------------------------------------------------------------------------------------------------------------
 void DialogTrueDarts::CheckState()
 {
-    SCASSERT(bOk != nullptr)
-    bOk->setEnabled(flagName1 && flagName2 && flagError);
+    SCASSERT(ok_Button != nullptr)
+    ok_Button->setEnabled(flagName1 && flagName2 && flagError);
     // In case dialog hasn't apply button
-    if ( bApply != nullptr)
+    if (apply_Button != nullptr)
     {
-        bApply->setEnabled(bOk->isEnabled());
+        apply_Button->setEnabled(ok_Button->isEnabled());
     }
 }
 

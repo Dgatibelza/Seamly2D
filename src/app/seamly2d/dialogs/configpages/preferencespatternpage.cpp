@@ -51,14 +51,16 @@
 
 #include "preferencespatternpage.h"
 #include "ui_preferencespatternpage.h"
-#include "../../core/vapplication.h"
-#include "../ifc/xml/vabstractpattern.h"
-#include "../dialogdatetimeformats.h"
 
-#include <QMessageBox>
-#include <QDate>
-#include <QTime>
+#include "../dialogdatetimeformats.h"
+#include "../ifc/xml/vabstractpattern.h"
+#include "../../core/vapplication.h"
+
 #include <QComboBox>
+#include <QDate>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <QTime>
 
 namespace
 {
@@ -85,14 +87,9 @@ PreferencesPatternPage::PreferencesPatternPage(QWidget *parent)
     setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
     initDefaultSeamAllowance();
-    initLabelDateTimeFormats();
+    initializeLabelsTab();
     initNotches();
-
-    ui->undoCount_SpinBox->setValue(qApp->Seamly2DSettings()->GetUndoCount());
-    ui->forbidFlipping_CheckBox->setChecked(qApp->Seamly2DSettings()->GetForbidWorkpieceFlipping());
-    ui->showSecondNotch_CheckBox->setChecked(qApp->Seamly2DSettings()->showSecondNotch());
-    ui->hideMainPath_CheckBox->setChecked(qApp->Seamly2DSettings()->IsHideMainPath());
-    ui->labelFont_ComboBox->setCurrentFont(qApp->Seamly2DSettings()->GetLabelFont());
+    initGrainlines();
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -106,26 +103,44 @@ void PreferencesPatternPage::Apply()
 {
     VSettings *settings = qApp->Seamly2DSettings();
 
-    /* Maximum number of commands in undo stack may only be set when the undo stack is empty, since setting it on a
-     * non-empty stack might delete the command at the current index. Calling setUndoLimit() on a non-empty stack
-     * prints a warning and does nothing.*/
-    settings->SetUndoCount(ui->undoCount_SpinBox->value());
-
     settings->SetDefaultSeamAllowance(ui->defaultSeamAllowance_DoubleSpinBox->value());
+    settings->setDefaultSeamColor(ui->defaultSeamColor_ComboBox->currentData().toString());
+    settings->setDefaultSeamLinetype(ui->defaultSeamLinetype_ComboBox->currentData().toString());
+    settings->setDefaultSeamLineweight(ui->defaultSeamLineweight_ComboBox->currentData().toReal());
+    settings->setDefaultCutColor(ui->defaultCutColor_ComboBox->currentData().toString());
+    settings->setDefaultCutLinetype(ui->defaultCutLinetype_ComboBox->currentData().toString());
+    settings->setDefaultCutLineweight(ui->defaultCutLineweight_ComboBox->currentData().toReal());
 
-    settings->SetForbidWorkpieceFlipping(ui->forbidFlipping_CheckBox->isChecked());
-    settings->SetHideMainPath(ui->hideMainPath_CheckBox->isChecked());
-    settings->SetLabelFont(ui->labelFont_ComboBox->currentFont());
+    settings->setDefaultInternalColor(ui->defaultInternalColor_ComboBox->currentData().toString());
+    settings->setDefaultInternalLinetype(ui->defaultInternalLinetype_ComboBox->currentData().toString());
+    settings->setDefaultInternalLineweight(ui->defaultInternalLineweight_ComboBox->currentData().toReal());
+
+    settings->setDefaultCutoutColor(ui->defaultCutoutColor_ComboBox->currentData().toString());
+    settings->setDefaultCutoutLinetype(ui->defaultCutoutLinetype_ComboBox->currentData().toString());
+    settings->setDefaultCutoutLineweight(ui->defaultCutoutLineweight_ComboBox->currentData().toReal());
+
+    settings->setForbidPieceFlipping(ui->forbidFlipping_CheckBox->isChecked());
+    settings->setHideSeamLine(ui->hideSeamLine_CheckBox->isChecked());
 
     settings->setDefaultNotchType(ui->defaultNotchType_ComboBox->currentData().toString());
+    settings->setDefaultNotchColor(ui->defaultNotchColor_ComboBox->currentData().toString());
     settings->setDefaultNotchLength(ui->defaultNotchLength_DoubleSpinBox->value());
     settings->setDefaultNotchWidth(ui->defaultNotchWidth_DoubleSpinBox->value());
-    if (settings->showSecondNotch() != ui->showSecondNotch_CheckBox->isChecked())
-    {
-        settings->setShowSecondNotch(ui->showSecondNotch_CheckBox->isChecked());
-        qApp->getCurrentDocument()->LiteParseTree(Document::LiteParse);
-    }
+    settings->setShowSeamAllowanceNotch(ui->showSeamAllowanceNotch_CheckBox->isChecked());
+    settings->setShowSeamlineNotch(ui->showSeamlineNotch_CheckBox->isChecked());
 
+    settings->setDefaultSeamAllowanceVisibilty(ui->showSeamAllowances_CheckBox->isChecked());
+    settings->setDefaultGrainlineVisibilty(ui->showGrainlines_CheckBox->isChecked());
+    settings->setDefaultGrainlineLength(ui->defaultGrainlineLength_DoubleSpinBox->value());
+    settings->setDefaultGrainlineColor(ui->defaultGrainlineColor_ComboBox->currentData().toString());
+    settings->setDefaultGrainlineLineweight(ui->defaultGrainlineLineweight_ComboBox->currentData().toReal());
+
+
+    settings->setShowPatternLabels(ui->showPatternLabels_CheckBox->isChecked());
+    settings->setShowPieceLabels(ui->showPieceLabels_CheckBox->isChecked());
+    settings->setDefaultLabelWidth(ui->defaultLabelWidth_DoubleSpinBox->value());
+    settings->setDefaultLabelHeight(ui->defaultLabelHeight_DoubleSpinBox->value());
+    settings->setDefaultLabelColor(ui->defaultLabelColor_ComboBox->currentData().toString());
     settings->SetLabelDateFormat(ui->dateFormats_ComboBox->currentText());
     settings->SetLabelTimeFormat(ui->timeFormats_ComboBox->currentText());
 
@@ -136,8 +151,76 @@ void PreferencesPatternPage::Apply()
 //---------------------------------------------------------------------------------------------------------------------
 void PreferencesPatternPage::initDefaultSeamAllowance()
 {
+    ui->forbidFlipping_CheckBox->setChecked(qApp->Seamly2DSettings()->getForbidPieceFlipping());
+    ui->hideSeamLine_CheckBox->setChecked(qApp->Seamly2DSettings()->isHideSeamLine());
+    ui->showSeamAllowances_CheckBox->setChecked(qApp->Seamly2DSettings()->getDefaultSeamAllowanceVisibilty());
     ui->defaultSeamAllowance_DoubleSpinBox->setValue(qApp->Seamly2DSettings()->GetDefaultSeamAllowance());
     ui->defaultSeamAllowance_DoubleSpinBox->setSuffix(" " + UnitsToStr(StrToUnits(qApp->Seamly2DSettings()->GetUnit()), true));
+
+    int index = ui->defaultSeamColor_ComboBox->findData(qApp->Seamly2DSettings()->getDefaultSeamColor());
+    if (index != -1)
+    {
+        ui->defaultSeamColor_ComboBox->setCurrentIndex(index);
+    }
+    index = ui->defaultSeamLinetype_ComboBox->findData(qApp->Seamly2DSettings()->getDefaultSeamLinetype());
+    if (index != -1)
+    {
+        ui->defaultSeamLinetype_ComboBox->setCurrentIndex(index);
+    }
+    index = ui->defaultSeamLineweight_ComboBox->findData(qApp->Seamly2DSettings()->getDefaultSeamLineweight());
+    if (index != -1)
+    {
+        ui->defaultSeamLineweight_ComboBox->setCurrentIndex(index);
+    }
+
+
+    index = ui->defaultCutColor_ComboBox->findData(qApp->Seamly2DSettings()->getDefaultCutColor());
+    if (index != -1)
+    {
+        ui->defaultCutColor_ComboBox->setCurrentIndex(index);
+    }
+    index = ui->defaultCutLinetype_ComboBox->findData(qApp->Seamly2DSettings()->getDefaultCutLinetype());
+    if (index != -1)
+    {
+        ui->defaultCutLinetype_ComboBox->setCurrentIndex(index);
+    }
+    index = ui->defaultCutLineweight_ComboBox->findData(qApp->Seamly2DSettings()->getDefaultCutLineweight());
+    if (index != -1)
+    {
+        ui->defaultCutLineweight_ComboBox->setCurrentIndex(index);
+    }
+
+    index = ui->defaultInternalColor_ComboBox->findData(qApp->Seamly2DSettings()->getDefaultInternalColor());
+    if (index != -1)
+    {
+        ui->defaultInternalColor_ComboBox->setCurrentIndex(index);
+    }
+    index = ui->defaultInternalLinetype_ComboBox->findData(qApp->Seamly2DSettings()->getDefaultInternalLinetype());
+    if (index != -1)
+    {
+        ui->defaultInternalLinetype_ComboBox->setCurrentIndex(index);
+    }
+    index = ui->defaultInternalLineweight_ComboBox->findData(qApp->Seamly2DSettings()->getDefaultInternalLineweight());
+    if (index != -1)
+    {
+        ui->defaultInternalLineweight_ComboBox->setCurrentIndex(index);
+    }
+
+    index = ui->defaultCutoutColor_ComboBox->findData(qApp->Seamly2DSettings()->getDefaultCutoutColor());
+    if (index != -1)
+    {
+        ui->defaultCutoutColor_ComboBox->setCurrentIndex(index);
+    }
+    index = ui->defaultCutoutLinetype_ComboBox->findData(qApp->Seamly2DSettings()->getDefaultCutoutLinetype());
+    if (index != -1)
+    {
+        ui->defaultCutoutLinetype_ComboBox->setCurrentIndex(index);
+    }
+    index = ui->defaultCutoutLineweight_ComboBox->findData(qApp->Seamly2DSettings()->getDefaultCutoutLineweight());
+    if (index != -1)
+    {
+        ui->defaultCutoutLineweight_ComboBox->setCurrentIndex(index);
+    }
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -159,9 +242,47 @@ void PreferencesPatternPage::editDateTimeFormats()
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void PreferencesPatternPage::initLabelDateTimeFormats()
+void PreferencesPatternPage::setDefaultTemplate()
+{
+    QToolButton *button = qobject_cast<QToolButton *>(sender());
+    VSettings *settings = qApp->Seamly2DSettings();
+
+    QString filter(tr("Label template") + QLatin1String("(*.xml)"));
+    const QString fileName = QFileDialog::getOpenFileName(this, tr("Import template"),
+                                                          settings->GetPathLabelTemplate(), filter, nullptr,
+                                                          QFileDialog::DontUseNativeDialog);
+
+
+    if (button == ui->patternTemplate_ToolButton)
+    {
+        ui->patternTemplate_LineEdit->setText(fileName);
+        settings->setDefaultPatternTemplate(fileName);
+    }
+    else if (button == ui->pieceTemplate_ToolButton)
+    {
+        ui->pieceTemplate_LineEdit->setText(fileName);
+        settings->setDefaultPieceTemplate(fileName);
+    }
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void PreferencesPatternPage::initializeLabelsTab()
 {
     VSettings *settings = qApp->Seamly2DSettings();
+
+    ui->showPatternLabels_CheckBox->setChecked(qApp->Seamly2DSettings()->showPatternLabels());
+    ui->showPieceLabels_CheckBox->setChecked(qApp->Seamly2DSettings()->showPieceLabels());
+
+    ui->defaultLabelWidth_DoubleSpinBox->setValue(qApp->Seamly2DSettings()->getDefaultLabelWidth());
+    ui->defaultLabelWidth_DoubleSpinBox->setSuffix(" " + UnitsToStr(StrToUnits(qApp->Seamly2DSettings()->GetUnit()), true));
+    ui->defaultLabelHeight_DoubleSpinBox->setValue(qApp->Seamly2DSettings()->getDefaultLabelHeight());
+    ui->defaultLabelHeight_DoubleSpinBox->setSuffix(" " + UnitsToStr(StrToUnits(qApp->Seamly2DSettings()->GetUnit()), true));
+
+    int index = ui->defaultLabelColor_ComboBox->findData(qApp->Seamly2DSettings()->getDefaultLabelColor());
+    if (index != -1)
+    {
+        ui->defaultLabelColor_ComboBox->setCurrentIndex(index);
+    }
 
     initComboBoxFormats(ui->dateFormats_ComboBox,
                         VSettings::PredefinedDateFormats() + settings->GetUserDefinedDateFormats(),
@@ -172,6 +293,11 @@ void PreferencesPatternPage::initLabelDateTimeFormats()
 
     connect(ui->editDateFormats_PushButton, &QPushButton::clicked, this, &PreferencesPatternPage::editDateTimeFormats);
     connect(ui->editTimeFormats_PushButton, &QPushButton::clicked, this, &PreferencesPatternPage::editDateTimeFormats);
+
+    ui->patternTemplate_LineEdit->setText(settings->getDefaultPatternTemplate());
+    ui->pieceTemplate_LineEdit->setText(settings->getDefaultPieceTemplate());
+    connect(ui->patternTemplate_ToolButton, &QToolButton::clicked, this, &PreferencesPatternPage::setDefaultTemplate);
+    connect(ui->pieceTemplate_ToolButton,   &QToolButton::clicked, this, &PreferencesPatternPage::setDefaultTemplate);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -191,13 +317,39 @@ void PreferencesPatternPage::initNotches()
     {
         ui->defaultNotchType_ComboBox->setCurrentIndex(index);
     }
-    ui->showSecondNotch_CheckBox->setChecked(qApp->Seamly2DSettings()->showSecondNotch());
+
+    index = ui->defaultNotchColor_ComboBox->findData(qApp->Seamly2DSettings()->getDefaultNotchColor());
+    if (index != -1)
+    {
+        ui->defaultNotchColor_ComboBox->setCurrentIndex(index);
+    }
+    ui->showSeamlineNotch_CheckBox->setChecked(qApp->Seamly2DSettings()->showSeamlineNotch());
+    ui->showSeamAllowanceNotch_CheckBox->setChecked(qApp->Seamly2DSettings()->showSeamAllowanceNotch());
     ui->defaultNotchLength_DoubleSpinBox->setValue(qApp->Seamly2DSettings()->getDefaultNotchLength());
     ui->defaultNotchLength_DoubleSpinBox->setSuffix(" " + UnitsToStr(StrToUnits(qApp->Seamly2DSettings()->GetUnit()), true));
     ui->defaultNotchWidth_DoubleSpinBox->setValue(qApp->Seamly2DSettings()->getDefaultNotchWidth());
     ui->defaultNotchWidth_DoubleSpinBox->setSuffix(" " + UnitsToStr(StrToUnits(qApp->Seamly2DSettings()->GetUnit()), true));
 }
 
+//---------------------------------------------------------------------------------------------------------------------
+void PreferencesPatternPage::initGrainlines()
+{
+    ui->showGrainlines_CheckBox->setChecked(qApp->Seamly2DSettings()->getDefaultGrainlineVisibilty());
+
+    ui->defaultGrainlineLength_DoubleSpinBox->setValue(qApp->Seamly2DSettings()->getDefaultGrainlineLength());
+    ui->defaultGrainlineLength_DoubleSpinBox->setSuffix(" " + UnitsToStr(StrToUnits(qApp->Seamly2DSettings()->GetUnit()), true));
+
+    int index = ui->defaultGrainlineColor_ComboBox->findData(qApp->Seamly2DSettings()->getDefaultGrainlineColor());
+    if (index != -1)
+    {
+        ui->defaultGrainlineColor_ComboBox->setCurrentIndex(index);
+    }
+    index = ui->defaultGrainlineLineweight_ComboBox->findData(qApp->Seamly2DSettings()->getDefaultGrainlineLineweight());
+    if (index != -1)
+    {
+        ui->defaultGrainlineLineweight_ComboBox->setCurrentIndex(index);
+    }
+}
 //---------------------------------------------------------------------------------------------------------------------
 void PreferencesPatternPage::initComboBoxFormats(QComboBox *box, const QStringList &items, const QString &currentFormat)
 {

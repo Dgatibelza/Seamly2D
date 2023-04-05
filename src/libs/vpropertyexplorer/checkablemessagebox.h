@@ -29,8 +29,6 @@
 #include <QString>
 #include <QtGlobal>
 
-#include "vpropertyexplorer_global.h"
-
 class QSettings;
 
 namespace Utils
@@ -38,11 +36,11 @@ namespace Utils
 
 class CheckableMessageBoxPrivate;
 
-class VPROPERTYEXPLORERSHARED_EXPORT CheckableMessageBox : public QDialog
+class CheckableMessageBox : public QDialog
 {
     Q_OBJECT
     Q_PROPERTY(QString text READ text WRITE setText)
-    Q_PROPERTY(QPixmap iconPixmap READ iconPixmap WRITE setIconPixmap)
+    //Q_PROPERTY(QPixmap iconPixmap READ iconPixmap WRITE setIconPixmap)
     Q_PROPERTY(bool isChecked READ isChecked WRITE setChecked)
     Q_PROPERTY(QString checkBoxText READ checkBoxText WRITE setCheckBoxText)
     Q_PROPERTY(QDialogButtonBox::StandardButtons buttons READ standardButtons WRITE setStandardButtons)
@@ -110,7 +108,7 @@ public:
     void setDefaultButton(QDialogButtonBox::StandardButton s);
 
     // See static QMessageBox::standardPixmap()
-    QPixmap iconPixmap() const;
+    //QPixmap iconPixmap() const;
     void setIconPixmap (const QPixmap &p);
 
     // Query the result

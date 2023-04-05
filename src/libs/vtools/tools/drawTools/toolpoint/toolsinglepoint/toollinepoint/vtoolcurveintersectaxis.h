@@ -80,8 +80,9 @@ public:
     static VToolCurveIntersectAxis *Create(QSharedPointer<DialogTool> dialog, VMainGraphicsScene *scene,
                                            VAbstractPattern *doc, VContainer *data);
     static VToolCurveIntersectAxis *Create(const quint32 _id, const QString &pointName, const QString &lineType,
-                                           const QString &lineColor, QString &formulaAngle, const quint32 &basePointId,
-                                           const quint32 &curveId, const qreal &mx, const qreal &my,
+                                           const QString &lineWeight,
+                                           const QString &lineColor, QString &formulaAngle, quint32 basePointId,
+                                           quint32 curveId, qreal mx, qreal my, bool showPointName,
                                            VMainGraphicsScene  *scene, VAbstractPattern *doc, VContainer *data,
                                            const Document &parse, const Source &typeCreation);
 
@@ -102,8 +103,10 @@ public:
 
     virtual void         ShowVisualization(bool show) Q_DECL_OVERRIDE;
 
+protected slots:
+    virtual void         showContextMenu(QGraphicsSceneContextMenuEvent *event, quint32 id=NULL_ID) Q_DECL_OVERRIDE;
+
 protected:
-    virtual void         contextMenuEvent ( QGraphicsSceneContextMenuEvent * event ) Q_DECL_OVERRIDE;
     virtual void         SaveDialog(QDomElement &domElement) Q_DECL_OVERRIDE;
     virtual void         SaveOptions(QDomElement &tag, QSharedPointer<VGObject> &obj) Q_DECL_OVERRIDE;
     virtual void         ReadToolAttributes(const QDomElement &domElement) Q_DECL_OVERRIDE;
@@ -115,7 +118,8 @@ private:
     quint32              curveId;
 
                          VToolCurveIntersectAxis(VAbstractPattern *doc, VContainer *data, const quint32 &id,
-                                                 const QString &lineType, const QString &lineColor,
+                                                 const QString &lineType, const QString &lineWeight,
+                                                 const QString &lineColor,
                                                  const QString &formulaAngle, const quint32 &basePointId,
                                                  const quint32 &curveId, const Source &typeCreation,
                                                  QGraphicsItem * parent = nullptr);

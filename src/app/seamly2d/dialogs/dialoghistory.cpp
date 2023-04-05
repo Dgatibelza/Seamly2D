@@ -64,6 +64,7 @@
 #include "../xml/vpattern.h"
 #include "../vmisc/diagnostic.h"
 #include <QDebug>
+#include <QCloseEvent>
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
@@ -84,19 +85,23 @@ DialogHistory::DialogHistory(VContainer *data, VPattern *doc, QWidget *parent)
     setWindowFlags(Qt::Window);
     setWindowFlags((windowFlags() | Qt::WindowStaysOnTopHint) & ~Qt::WindowContextHelpButtonHint);
 
+    ui->find_LineEdit->installEventFilter(this);
+
     qApp->Settings()->GetOsSeparator() ? setLocale(QLocale()) : setLocale(QLocale::c());
 
-    bOk = ui->buttonBox->button(QDialogButtonBox::Ok);
-    connect(bOk, &QPushButton::clicked, this, &DialogHistory::DialogAccepted);
+    ok_Button = ui->buttonBox->button(QDialogButtonBox::Ok);
+    connect(ok_Button, &QPushButton::clicked, this, &DialogHistory::DialogAccepted);
     FillTable();
     InitialTable();
-    connect(ui->tableWidget, &QTableWidget::cellClicked, this, &DialogHistory::cellClicked);
-    connect(this, &DialogHistory::ShowHistoryTool, doc, [doc](quint32 id, bool enable)
+    connect(ui->tableWidget,   &QTableWidget::cellClicked,      this, &DialogHistory::cellClicked);
+    connect(doc,               &VPattern::ChangedCursor,        this, &DialogHistory::ChangedCursor);
+    connect(doc,               &VPattern::patternChanged,       this, &DialogHistory::updateHistory);
+    connect(ui->find_LineEdit, &QLineEdit::textEdited,          this, &DialogHistory::findText);
+    connect(this,              &DialogHistory::ShowHistoryTool, doc,  [doc](quint32 id, bool enable)
     {
         emit doc->ShowTool(id, enable);
     });
-    connect(doc, &VPattern::ChangedCursor, this, &DialogHistory::ChangedCursor);
-    connect(doc, &VPattern::patternChanged, this, &DialogHistory::UpdateHistory);
+
     ShowPoint();
 }
 
@@ -175,9 +180,9 @@ void DialogHistory::ChangedCursor(quint32 id)
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
- * @brief UpdateHistory update history table
+ * @brief updateHistory update history table
  */
-void DialogHistory::UpdateHistory()
+void DialogHistory::updateHistory()
 {
     FillTable();
     InitialTable();
@@ -190,7 +195,7 @@ void DialogHistory::UpdateHistory()
 void DialogHistory::FillTable()
 {
     ui->tableWidget->clear();
-    QVector<VToolRecord> history = doc->getLocalHistory();
+    QVector<VToolRecord> history = doc->getBlockHistory();
     qint32 currentRow = -1;
     qint32 count = 0;
     ui->tableWidget->setRowCount(history.size());//Set Row count to number of Tool history records
@@ -212,7 +217,6 @@ void DialogHistory::FillTable()
             }
 
             QTableWidgetItem *item = new QTableWidgetItem(historyRecord);
-            item->setFont(QFont("Times", 10, QFont::Bold));
             item->setFlags(item->flags() ^ Qt::ItemIsEditable);
             ui->tableWidget->setItem(currentRow, 1, item);//2nd column is Tool history description
             ++count;
@@ -250,7 +254,7 @@ QString DialogHistory::Record(const VToolRecord &tool)
     if (domElem.isElement() == false)
     {
         qDebug()<<"Can't find element by id"<<Q_FUNC_INFO;
-        return tr("Can't create record.");
+        return QString();
     }
     try
     {
@@ -422,33 +426,47 @@ QString DialogHistory::Record(const VToolRecord &tool)
                         .arg(elArc->NameForHistory(tr("Elliptical arc")))
                         .arg(elArc->GetLength());
             }
+            case Tool::Rotation:
+                return tr("Rotate objects around point %1. Suffix '%2'")
+                          .arg(PointName(AttrUInt(domElem, AttrCenter)),
+                          doc->GetParametrString(domElem, AttrSuffix, QString()));
+            case Tool::MirrorByLine:
+                return tr("Mirror by line %1_%2. Suffix '%3'")
+                          .arg(PointName(AttrUInt(domElem, AttrP1Line)),
+                          PointName(AttrUInt(domElem, AttrP2Line)),
+                          doc->GetParametrString(domElem, AttrSuffix, QString()));
+            case Tool::MirrorByAxis:
+                return tr("Mirror by axis through %1 point. Suffix '%2'")
+                          .arg(PointName(AttrUInt(domElem, AttrCenter)),
+                           doc->GetParametrString(domElem, AttrSuffix, QString()));
+            case Tool::Move:
+                return tr("Move objects, rotate around point %1. Suffix '%2'")
+                          .arg(PointName(AttrUInt(domElem, AttrCenter)),
+                          doc->GetParametrString(domElem, AttrSuffix, QString()));
+
             //Because "history" not only show history of pattern, but help restore current data for each pattern's
             //piece, we need add record about details and nodes, but don't show them.
             case Tool::Piece:
-            case Tool::UnionDetails:
+            case Tool::Union:
             case Tool::NodeArc:
             case Tool::NodeElArc:
             case Tool::NodePoint:
             case Tool::NodeSpline:
             case Tool::NodeSplinePath:
             case Tool::Group:
-            case Tool::Rotation:
-            case Tool::MirrorByLine:
-            case Tool::MirrorByAxis:
-            case Tool::Move:
             case Tool::InternalPath:
-            case Tool::Pin:
-            case Tool::InsertNode:
+            case Tool::AnchorPoint:
+            case Tool::InsertNodes:
                 return QString();
         }
     }
     catch (const VExceptionBadId &e)
     {
         qDebug()<<e.ErrorMessage()<<Q_FUNC_INFO;
-        return tr("Can't create record.");
+        return QString();
     }
     qDebug()<<"Can't create history record for the tool.";
-    return tr("Can't create record.");
+    return QString();
 }
 
 QT_WARNING_POP
@@ -529,10 +547,40 @@ void DialogHistory::changeEvent(QEvent *event)
 }
 
 //---------------------------------------------------------------------------------------------------------------------
+bool DialogHistory::eventFilter(QObject *object, QEvent *event)
+{
+    if (QLineEdit *textEdit = qobject_cast<QLineEdit *>(object))
+    {
+        if (event->type() == QEvent::KeyPress)
+        {
+            QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+            if ((keyEvent->key() == Qt::Key_Period) && (keyEvent->modifiers() & Qt::KeypadModifier))
+            {
+                if (qApp->Settings()->GetOsSeparator())
+                {
+                    textEdit->insert(QLocale().decimalPoint());
+                }
+                else
+                {
+                    textEdit->insert(QLocale::c().decimalPoint());
+                }
+                return true;
+            }
+        }
+    }
+    else
+    {
+        // pass the event on to the parent class
+        return DialogTool::eventFilter(object, event);
+    }
+    return false;// pass the event to the widget
+}
+
+//---------------------------------------------------------------------------------------------------------------------
 void DialogHistory::RetranslateUi()
 {
     qint32 currentRow = cursorRow;
-    UpdateHistory();
+    updateHistory();
 
     QTableWidgetItem *item = ui->tableWidget->item(cursorRow, 0);
     SCASSERT(item != nullptr)
@@ -561,4 +609,20 @@ int DialogHistory::CursorRow() const
         }
     }
     return ui->tableWidget->rowCount()-1;
+}
+
+void DialogHistory::findText(const QString &text)
+{
+    updateHistory();
+    if (text.isEmpty())
+    {
+        return;
+    }
+
+    QList<QTableWidgetItem *> items = ui->tableWidget->findItems(text, Qt::MatchContains);
+
+    for (int i = 0; i < items.count(); ++i)
+    {
+        items.at(i)->setBackground(QColor("skyblue"));
+    }
 }

@@ -79,9 +79,14 @@
  * @param parent parent widget
  */
 DialogPointOfContact::DialogPointOfContact(const VContainer *data, const quint32 &toolId, QWidget *parent)
-    :DialogTool(data, toolId, parent), ui(new Ui::DialogPointOfContact), radius(QString()), formulaBaseHeight(0)
+    : DialogTool(data, toolId, parent)
+    , ui(new Ui::DialogPointOfContact)
+    , radius(QString())
+    , formulaBaseHeight(0)
 {
     ui->setupUi(this);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+    setWindowIcon(QIcon(":/toolicon/32x32/point_of_contact.png"));
 
     ui->lineEditNamePoint->setClearButtonEnabled(true);
 
@@ -99,16 +104,13 @@ DialogPointOfContact::DialogPointOfContact(const VContainer *data, const quint32
     FillComboBoxPoints(ui->comboBoxSecondPoint);
     FillComboBoxPoints(ui->comboBoxCenter);
 
-    connect(ui->toolButtonExprRadius, &QPushButton::clicked, this, &DialogPointOfContact::FXRadius);
-    connect(ui->lineEditNamePoint, &QLineEdit::textChanged, this, &DialogPointOfContact::NamePointChanged);
+    connect(ui->toolButtonExprRadius, &QPushButton::clicked,        this, &DialogPointOfContact::FXRadius);
+    connect(ui->lineEditNamePoint,    &QLineEdit::textChanged,      this, &DialogPointOfContact::NamePointChanged);
     connect(ui->plainTextEditFormula, &QPlainTextEdit::textChanged, this, &DialogPointOfContact::FormulaTextChanged);
-    connect(ui->pushButtonGrowLength, &QPushButton::clicked, this, &DialogPointOfContact::DeployFormulaTextEdit);
-    connect(ui->comboBoxFirstPoint, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
-            this, &DialogPointOfContact::PointNameChanged);
-    connect(ui->comboBoxSecondPoint, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
-            this, &DialogPointOfContact::PointNameChanged);
-    connect(ui->comboBoxCenter, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
-            this, &DialogPointOfContact::PointNameChanged);
+    connect(ui->pushButtonGrowLength, &QPushButton::clicked,        this, &DialogPointOfContact::DeployFormulaTextEdit);
+    connect(ui->comboBoxFirstPoint,   &QComboBox::currentTextChanged, this, &DialogPointOfContact::PointNameChanged);
+    connect(ui->comboBoxSecondPoint,  &QComboBox::currentTextChanged, this, &DialogPointOfContact::PointNameChanged);
+    connect(ui->comboBoxCenter,       &QComboBox::currentTextChanged, this, &DialogPointOfContact::PointNameChanged);
 
     vis = new VisToolPointOfContact(data);
 }

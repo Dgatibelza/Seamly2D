@@ -1,11 +1,13 @@
 /***************************************************************************
- *                                                                         *
- *   Copyright (C) 2017  Seamly, LLC                                       *
- *                                                                         *
- *   https://github.com/fashionfreedom/seamly2d                            *
- *                                                                         *
- ***************************************************************************
+ **  @file   vabstractconverter.cpp
+ **  @author Douglas S Caskey
+ **  @date   Dec 27, 2022
  **
+ **  @copyright
+ **  Copyright (C) 2017 - 2022 Seamly, LLC
+ **  https://github.com/fashionfreedom/seamly2d
+ **
+ **  @brief
  **  Seamly2D is free software: you can redistribute it and/or modify
  **  it under the terms of the GNU General Public License as published by
  **  the Free Software Foundation, either version 3 of the License, or
@@ -17,11 +19,10 @@
  **  GNU General Public License for more details.
  **
  **  You should have received a copy of the GNU General Public License
- **  along with Seamly2D.  If not, see <http://www.gnu.org/licenses/>.
- **
- **************************************************************************
+ **  along with Seamly2D. If not, see <http://www.gnu.org/licenses/>.
+ **************************************************************************/
 
- ************************************************************************
+/************************************************************************
  **
  **  @file   vabstractconverter.cpp
  **  @author Roman Telezhynskyi <dismine(at)gmail.com>
@@ -29,17 +30,17 @@
  **
  **  @brief
  **  @copyright
- **  This source code is part of the Valentine project, a pattern making
+ **  This source code is part of the Valentina project, a pattern making
  **  program, whose allow create and modeling patterns of clothing.
- **  Copyright (C) 2013-2015 Seamly2D project
- **  <https://github.com/fashionfreedom/seamly2d> All Rights Reserved.
+ **  Copyright (C) 2014 Valentina project
+ **  <https://bitbucket.org/dismine/valentina> All Rights Reserved.
  **
- **  Seamly2D is free software: you can redistribute it and/or modify
+ **  Valentina is free software: you can redistribute it and/or modify
  **  it under the terms of the GNU General Public License as published by
  **  the Free Software Foundation, either version 3 of the License, or
  **  (at your option) any later version.
  **
- **  Seamly2D is distributed in the hope that it will be useful,
+ **  Valentina is distributed in the hope that it will be useful,
  **  but WITHOUT ANY WARRANTY; without even the implied warranty of
  **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  **  GNU General Public License for more details.
@@ -102,7 +103,7 @@ QString VAbstractConverter::Convert()
     }
     else
     {
-        const QString errorMsg(tr("Error openning a temp file: %1.").arg(m_tmpFile.errorString()));
+        const QString errorMsg(tr("Error Opening a temp file: %1.").arg(m_tmpFile.errorString()));
         throw VException(errorMsg);
     }
 
@@ -180,6 +181,65 @@ int VAbstractConverter::GetVersion(const QString &version)
 }
 
 //---------------------------------------------------------------------------------------------------------------------
+QString VAbstractConverter::removeVersionNumber(const QString& fileName)
+{
+    // This method removes different instances of version numbers for the filename:
+    // 1. Regular, old format version: myPattern(v0.6.0).val
+    // 2. Messed up, "recursive" old format: myPattern(v0(v0.6.0).6.0).val.bak
+    // 3. New format: myPattern_v060.val
+    // For all the above cases the return value should be: myPattern.<ext>
+
+    const QRegularExpression newVersionRx(QStringLiteral("_v\\d\\d\\d"));
+    QString fileNameWithoutVersion;
+    int dotPos = fileName.lastIndexOf(QLatin1Char('.'));
+    int versionPos = fileName.indexOf(QLatin1String("(v"));
+
+    if (versionPos > 0)
+    {
+        // Old format version number should be removed until the last ')' if present
+        int lastParenthesisPos = fileName.lastIndexOf(QLatin1Char(')'));
+        if (lastParenthesisPos > versionPos && lastParenthesisPos < dotPos)
+        {
+            dotPos = lastParenthesisPos + 1;
+        }
+
+        fileNameWithoutVersion = fileName.left(versionPos);
+    }
+    else if ((versionPos = fileName.indexOf(newVersionRx)) > -1)
+    {
+        // New format version number should be removed until the first '.' (if present)
+        dotPos = fileName.indexOf(QLatin1Char('.'), versionPos);
+        fileNameWithoutVersion = fileName.left(versionPos);
+    }
+    else
+    {
+        fileNameWithoutVersion = fileName;
+    }
+
+    if (versionPos > -1 && dotPos > versionPos)
+    {
+        fileNameWithoutVersion += fileName.mid(dotPos);
+    }
+
+    return fileNameWithoutVersion;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VAbstractConverter::removeBakExtension(const QString &fileName)
+{
+    QString newFileName = fileName;
+    int dotPos = newFileName.lastIndexOf(QLatin1Char('.'));
+
+    while (dotPos > -1 && newFileName.mid(dotPos) == QLatin1String(".bak"))
+    {
+        newFileName = newFileName.left(dotPos);
+        dotPos = newFileName.lastIndexOf(QLatin1Char('.'));
+    }
+
+    return newFileName;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
 void VAbstractConverter::ValidateVersion(const QString &version)
 {
     const QRegularExpression rx(QStringLiteral("^(0|([1-9][0-9]*)).(0|([1-9][0-9]*)).(0|([1-9][0-9]*))$"));
@@ -203,12 +263,25 @@ void VAbstractConverter::ReserveFile() const
     //It's not possible in all cases make conversion without lose data.
     //For such cases we will store old version in a reserve file.
     QString error;
-    QFileInfo info(m_convertedFileName);
-    const QString reserveFileName = QString("%1/%2(v%3).%4.bak")
-            .arg(info.absoluteDir().absolutePath())
-            .arg(info.baseName())
-            .arg(GetVersionStr())
-            .arg(info.completeSuffix());
+    const QFileInfo info(removeVersionNumber(removeBakExtension(m_convertedFileName)));
+    const QString baseNameWithoutVersion = info.baseName();
+    const QString versionWithoutDots = GetVersionStr().remove(QLatin1Char('.'));
+    const QString baseFileName = QString("%1_v%2")
+            .arg(baseNameWithoutVersion)
+            .arg(versionWithoutDots);
+    QString sequencePart;
+    int sequenceNumber = 1;
+    QString reserveFileName;
+
+    do {
+        reserveFileName = QString("%1/%2%3.%4")
+                              .arg(info.absoluteDir().absolutePath())
+                              .arg(baseFileName)
+                              .arg(sequencePart)
+                              .arg(info.completeSuffix());
+        sequencePart = QString("_(%1)").arg(++sequenceNumber);
+    } while (QFileInfo(reserveFileName).exists());
+
     if (not SafeCopy(m_convertedFileName, reserveFileName, error))
     {
 #ifdef Q_OS_WIN32

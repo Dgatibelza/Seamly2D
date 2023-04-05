@@ -75,6 +75,7 @@
 #include <QGridLayout>
 #include <QSpacerItem>
 #include <QThread>
+#include <QStandardPaths>
 
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_CLANG("-Wmissing-prototypes")
@@ -111,16 +112,6 @@ inline void noisyFailureMsgHandler(QtMsgType type, const QMessageLogContext &con
 #endif //defined(V_NO_ASSERT)
 
 #if defined(Q_OS_MAC)
-#   if QT_VERSION >= QT_VERSION_CHECK(5, 4, 0) && QT_VERSION < QT_VERSION_CHECK(5, 7, 0)
-        // Try hide very annoying, Qt related, warnings in Mac OS X
-        // QNSView mouseDragged: Internal mouse button tracking invalid (missing Qt::LeftButton)
-        // https://bugreports.qt.io/browse/QTBUG-42846
-        if ((type == QtWarningMsg) && msg.contains(QStringLiteral("QNSView")))
-        {
-            type = QtDebugMsg;
-        }
-#   endif
-
     // Hide Qt bug 'Assertion when reading an icns file'
     // https://bugreports.qt.io/browse/QTBUG-45537
     // Remove after Qt fix will be released
@@ -256,15 +247,15 @@ inline void noisyFailureMsgHandler(QtMsgType type, const QMessageLogContext &con
 
 //---------------------------------------------------------------------------------------------------------------------
 MApplication::MApplication(int &argc, char **argv)
-    :VAbstractApplication(argc, argv),
-      mainWindows(),
-      localServer(nullptr),
-      trVars(nullptr),
-      dataBase(QPointer<MeasurementDatabaseDialog>()),
-      testMode(false)
+    : VAbstractApplication(argc, argv)
+    , mainWindows()
+    , localServer(nullptr)
+    , trVars(nullptr)
+    , dataBase(QPointer<MeasurementDatabaseDialog>())
+    , testMode(false)
 {
     //setApplicationDisplayName(VER_PRODUCTNAME_STR);
-    setApplicationName(VER_INTERNALNAME_STR);
+    setApplicationName(VER_INTERNALNAME_ME_STR);
     setOrganizationName(VER_COMPANYNAME_STR);
     setOrganizationDomain(VER_COMPANYDOMAIN_STR);
     // Setting the Application version
@@ -420,7 +411,7 @@ void MApplication::InitOptions()
     qCDebug(mApp, "Command-line arguments: %s", qUtf8Printable(arguments().join(", ")));
     qCDebug(mApp, "Process ID: %s", qUtf8Printable(QString().setNum(applicationPid())));
 
-    LoadTranslation(QLocale().name());// By default the console version uses system locale
+    loadTranslations(QLocale().name());// By default the console version uses system locale
 
     static const char * GENERIC_ICON_TO_CHECK = "document-open";
     if (QIcon::hasThemeIcon(GENERIC_ICON_TO_CHECK) == false)
@@ -431,8 +422,6 @@ void MApplication::InitOptions()
        //This does not happen under GNOME or KDE
        QIcon::setThemeName("win.icon.theme");
     }
-
-    QResource::registerResource(diagramsPath());
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -506,35 +495,6 @@ VSeamlyMeSettings *MApplication::SeamlyMeSettings()
 {
     SCASSERT(settings != nullptr)
     return qobject_cast<VSeamlyMeSettings *>(settings);
-}
-
-//---------------------------------------------------------------------------------------------------------------------
-QString MApplication::diagramsPath() const
-{
-    const QString dPath = QStringLiteral("/diagrams.rcc");
-#ifdef Q_OS_WIN
-    return QCoreApplication::applicationDirPath() + dPath;
-#elif defined(Q_OS_MAC)
-    QFileInfo fileBundle(QCoreApplication::applicationDirPath() + QStringLiteral("/../Resources") + dPath);
-    if (fileBundle.exists())
-    {
-        return fileBundle.absoluteFilePath();
-    }
-    else
-    {
-        QFileInfo file(QCoreApplication::applicationDirPath() + dPath);
-        if (file.exists())
-        {
-            return file.absoluteFilePath();
-        }
-        else
-        {
-            return QStringLiteral("/usr/share/seamly2d") + dPath;
-        }
-    }
-#else // Unix
-    return QCoreApplication::applicationDirPath() + QStringLiteral("/../share") + dPath;
-#endif
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -706,7 +666,7 @@ void MApplication::ParseCommandLine(const SocketConnection &connection, const QS
             }
         }
 
-        LoadTranslation(SeamlyMeSettings()->GetLocale());
+        loadTranslations(SeamlyMeSettings()->GetLocale());
     }
 
     const QStringList args = parser.positionalArguments();
@@ -714,7 +674,7 @@ void MApplication::ParseCommandLine(const SocketConnection &connection, const QS
     {
         if (testMode && args.count() > 1)
         {
-            qCCritical(mApp, "%s\n", qPrintable(tr("Test mode doesn't support openning several files.")));
+            qCCritical(mApp, "%s\n", qPrintable(tr("Test mode doesn't support Opening several files.")));
             parser.showHelp(V_EX_USAGE);
         }
 

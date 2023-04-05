@@ -72,9 +72,12 @@
  * @param parent parent widget
  */
 DialogTriangle::DialogTriangle(const VContainer *data, const quint32 &toolId, QWidget *parent)
-    :DialogTool(data, toolId, parent), ui(new Ui::DialogTriangle)
+    : DialogTool(data, toolId, parent)
+    , ui(new Ui::DialogTriangle)
 {
     ui->setupUi(this);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+    setWindowIcon(QIcon(":/toolicon/32x32/triangle.png"));
 
     ui->lineEditNamePoint->setClearButtonEnabled(true);
 
@@ -89,15 +92,11 @@ DialogTriangle::DialogTriangle(const VContainer *data, const quint32 &toolId, QW
     FillComboBoxPoints(ui->comboBoxFirstPoint);
     FillComboBoxPoints(ui->comboBoxSecondPoint);
 
-    connect(ui->lineEditNamePoint, &QLineEdit::textChanged, this, &DialogTriangle::NamePointChanged);
-    connect(ui->comboBoxFirstPoint, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
-            this, &DialogTriangle::PointNameChanged);
-    connect(ui->comboBoxSecondPoint, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
-            this, &DialogTriangle::PointNameChanged);
-    connect(ui->comboBoxAxisP1, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
-            this, &DialogTriangle::PointNameChanged);
-    connect(ui->comboBoxAxisP2, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
-            this, &DialogTriangle::PointNameChanged);
+    connect(ui->lineEditNamePoint,   &QLineEdit::textChanged,        this, &DialogTriangle::NamePointChanged);
+    connect(ui->comboBoxFirstPoint,  &QComboBox::currentTextChanged, this, &DialogTriangle::PointNameChanged);
+    connect(ui->comboBoxSecondPoint, &QComboBox::currentTextChanged, this, &DialogTriangle::PointNameChanged);
+    connect(ui->comboBoxAxisP1,      &QComboBox::currentTextChanged, this, &DialogTriangle::PointNameChanged);
+    connect(ui->comboBoxAxisP2,      &QComboBox::currentTextChanged, this, &DialogTriangle::PointNameChanged);
 
     vis = new VisToolTriangle(data);
 }

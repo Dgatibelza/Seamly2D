@@ -54,16 +54,18 @@
 #include <QApplication>
 #include <QDate>
 #include <QDir>
+#include <QFont>
 #include <QLocale>
 #include <QMessageLogger>
+#include <QSound>
 #include <QStaticStringData>
 #include <QStringData>
 #include <QStringDataPtr>
 #include <QVariant>
 #include <QtDebug>
 #include <QTextCodec>
-#include <QFont>
 
+#include "../ifc/ifcdef.h"
 #include "../vmisc/def.h"
 #include "../vmisc/vmath.h"
 #include "../vpatterndb/pmsystems.h"
@@ -78,14 +80,33 @@ const QString settingPathsLabelTemplate                  = QStringLiteral("paths
 const QString settingConfigurationOsSeparator            = QStringLiteral("configuration/osSeparator");
 const QString settingConfigurationAutosaveState          = QStringLiteral("configuration/autosave/state");
 const QString settingConfigurationAutosaveTime           = QStringLiteral("configuration/autosave/time");
+
+const QString settingConfigurationUseModeType            = QStringLiteral("configuration/autosave/useModeType");
+const QString settingConfigurationUseLastExportFormat    = QStringLiteral("configuration/autosave/useLastExportFormat");
+const QString settingConfigurationExportFormat           = QStringLiteral("configuration/autosave/exportFormat");
+
 const QString settingConfigurationSendReportState        = QStringLiteral("configuration/send_report/state");
 const QString settingConfigurationLocale                 = QStringLiteral("configuration/locale");
 const QString settingPMSystemCode                        = QStringLiteral("configuration/pmscode");
 const QString settingConfigurationUnit                   = QStringLiteral("configuration/unit");
 const QString settingConfigurationConfirmItemDeletion    = QStringLiteral("configuration/confirm_item_deletion");
 const QString settingConfigurationConfirmFormatRewriting = QStringLiteral("configuration/confirm_format_rewriting");
+const QString settingConfigurationMoveSuffix             = QStringLiteral("configuration/moveSuffix");
+const QString settingConfigurationRotateSuffix           = QStringLiteral("configuration/rotateSuffix");
+const QString settingConfigurationMirrorByAxisSuffix     = QStringLiteral("configuration/mirrorByAxisSuffix");
+const QString settingConfigurationMirrorByLineSuffix     = QStringLiteral("configuration/mirrorByLineSuffix");
 
 const QString settingGraphicsViewToolBarStyle            = QStringLiteral("graphicsview/tool_bar_style");
+const QString settingGraphicsViewShowToolsToolBar        = QStringLiteral("graphicsview/showToolsToolbar");
+const QString settingGraphicsViewShowPointToolBar        = QStringLiteral("graphicsview/showPointToolbar");
+const QString settingGraphicsViewShowLineToolBar         = QStringLiteral("graphicsview/showLineToolbar");
+const QString settingGraphicsViewShowCurveToolBar        = QStringLiteral("graphicsview/showCurveToolbar");
+const QString settingGraphicsViewShowArcToolBar          = QStringLiteral("graphicsview/showArcToolbar");
+const QString settingGraphicsViewShowOpsToolBar          = QStringLiteral("graphicsview/showOpsToolbar");
+const QString settingGraphicsViewShowPieceToolBar        = QStringLiteral("graphicsview/showPieceToolbar");
+const QString settingGraphicsViewShowDetailsToolBar      = QStringLiteral("graphicsview/showDetailsToolbar");
+const QString settingGraphicsViewShowLayoutToolBar       = QStringLiteral("graphicsview/showLayoutToolbar");
+
 const QString settingGraphicsViewShowScrollBars          = QStringLiteral("graphicsview/showScrollBars");
 const QString settingGraphicsViewScrollBarWidth          = QStringLiteral("graphicsview/scrollBarWidth");
 const QString settingGraphicsViewScrollDuration          = QStringLiteral("graphicsview/scrollDuration");
@@ -95,23 +116,79 @@ const QString settingGraphicsViewPixelDelta              = QStringLiteral("graph
 const QString settingGraphicsViewAngleDelta              = QStringLiteral("graphicsview/angleDelta");
 const QString settingGraphicsViewZoomModKey              = QStringLiteral("graphicsview/zoomModKey");
 const QString settingGraphicsViewZoomDoubleClick         = QStringLiteral("graphicsview/zoomDoubleClick");
+const QString settingGraphicsViewPanActiveSpaceKey       = QStringLiteral("graphicsview/panActiveSpaceKey");
 const QString settingGraphicsViewZoomSpeedFactor         = QStringLiteral("graphicsview/zoomSpeedFactor");
+const QString settingGraphicsViewExportQuality           = QStringLiteral("graphicsview/exportQuality");
 const QString settingGraphicsViewZoomRBPositiveColor     = QStringLiteral("graphicsview/zoomRBPositiveColor");
 const QString settingGraphicsViewZoomRBNegativeColor     = QStringLiteral("graphicsview/zoomRBNegativeColor");
+const QString settingGraphicsViewPointNameColor          = QStringLiteral("graphicsview/pointNameColor");
+const QString settingGraphicsViewPointNameHoverColor     = QStringLiteral("graphicsview/pointNameHoverColor");
+const QString settingGraphicsViewAxisOrginColor          = QStringLiteral("graphicsview/axisOrginColor");
+const QString settingGraphicsViewDefaultLineColor        = QStringLiteral("graphicsview/defaultLineColor");
+const QString settingGraphicsViewDefaultLineWeight       = QStringLiteral("graphicsview/defaultLineWeight");
+const QString settingGraphicsViewDefaultLineType         = QStringLiteral("graphicsview/defaultLineType");
+const QString settingGraphicsViewPrimaryColor            = QStringLiteral("graphicsview/primarySupportColor");
+const QString settingGraphicsViewSecondaryColor          = QStringLiteral("graphicsview/secondarySupportColor");
+const QString settingGraphicsViewTertiaryColor           = QStringLiteral("graphicsview/tertiarySupportColor");
+
 const QString settingGraphicsViewConstrainValue          = QStringLiteral("graphicsview/constrainValue");
 const QString settingGraphicsViewConstrainModKey         = QStringLiteral("graphicsview/constrainModKey");
 
+const QString settingGraphicsViewPointNameSize           = QStringLiteral("graphicsview/pointNameSize");
+const QString settingGraphicsViewGuiFontSize             = QStringLiteral("graphicsview/guiFontSize");
+const QString settingGraphicsViewHidePointNames          = QStringLiteral("graphicsview/hidePointNames");
+const QString settingGraphicsViewShowAxisOrigin          = QStringLiteral("graphicsview/showAxisOrigin");
+const QString settingGraphicsViewWireframe               = QStringLiteral("graphicsview/wireframe");
+const QString settingGraphicsViewShowControlPoints       = QStringLiteral("graphicsview/showControlPoints");
+const QString settingGraphicsViewShowAnchorPoints        = QStringLiteral("graphicsview/showAnchorPoints");
+const QString settingGraphicsUseToolColor                = QStringLiteral("graphicsview/useToolColor");
+
 const QString settingPatternUndo                         = QStringLiteral("pattern/undo");
+const QString settingSelectionSound                      = QStringLiteral("pattern/selectionSound");
 const QString settingPatternForbidFlipping               = QStringLiteral("pattern/forbidFlipping");
-const QString settingPatternHideMainPath                 = QStringLiteral("pattern/hideMainPath");
+const QString settingPatternHideSeamLine                 = QStringLiteral("pattern/hideMainPath");
 
 const QString settingDefaultNotchLength                  = QStringLiteral("pattern/defaultNotchLength");
 const QString settingDefaultNotchWidth                   = QStringLiteral("pattern/defaultNotchWidth");
 const QString settingDefaultNotchType                    = QStringLiteral("pattern/defaultNotchType");
-const QString settingDoubleNotch                         = QStringLiteral("pattern/doubleNotch");
+const QString settingDefaultNotchColor                   = QStringLiteral("pattern/defaultNotchColor");
+const QString settingSeamlineNotch                       = QStringLiteral("pattern/doubleNotch");
+const QString settingSeamAllowanceNotch                  = QStringLiteral("pattern/showSeamAllowanceNotch");
 
 const QString settingPatternDefaultSeamAllowance         = QStringLiteral("pattern/defaultSeamAllowance");
+const QString settingDefaultSeamColor                    = QStringLiteral("pattern/defaultSeamColor");
+const QString settingDefaultSeamLinetype                 = QStringLiteral("pattern/defaultSeamLinetype");
+const QString settingDefaultSeamLineweight               = QStringLiteral("pattern/defaultSeamLineweight");
+const QString settingDefaultCutColor                     = QStringLiteral("pattern/defaultCutColor");
+const QString settingDefaultCutLinetype                  = QStringLiteral("pattern/defaultCutLinetype");
+const QString settingDefaultCutLineweight                = QStringLiteral("pattern/defaultCutLineweight");
+const QString settingDefaultInternalColor                = QStringLiteral("pattern/defaultInternalColor");
+const QString settingDefaultInternalLinetype             = QStringLiteral("pattern/defaultInternalLinetype");
+const QString settingDefaultInternalLineweight           = QStringLiteral("pattern/defaultInternalLineweight");
+const QString settingDefaultCutoutColor                  = QStringLiteral("pattern/defaultCutoutColor");
+const QString settingDefaultCutoutLinetype               = QStringLiteral("pattern/defaultCutoutLinetype");
+const QString settingDefaultCutoutLineweight             = QStringLiteral("pattern/defaultCutoutLineweight");
+
+const QString settingShowSeamAllowances                  = QStringLiteral("pattern/showShowSeamAllowances");
+const QString settingDefaultSeamAllowanceVisibilty       = QStringLiteral("pattern/defaultSeamAllowanceVisibilty");
+const QString settingShowGrainlines                      = QStringLiteral("pattern/showGrainlines");
+const QString settingDefaultGrainlineVisibilty           = QStringLiteral("pattern/defaultGrainlineVisibilty");
+const QString settingDefaultGrainlineLength              = QStringLiteral("pattern/defaultGrainlineLength");
+const QString settingDefaultGrainlineColor               = QStringLiteral("pattern/defaultGrainlineColor");
+const QString settingDefaultGrainlineLineweight          = QStringLiteral("pattern/defaultGrainlineLineweight");
+
+const QString settingShowLabels                          = QStringLiteral("pattern/showLabels");
+const QString settingShowPatternLabels                   = QStringLiteral("pattern/showPatternLabels");
+const QString settingShowPieceLabels                     = QStringLiteral("pattern/showPieceLabels");
+const QString settingDefaultLabelWidth                   = QStringLiteral("pattern/defaultLabelWidth");
+const QString settingDefaultLabelHeight                  = QStringLiteral("pattern/defaultLabelHeight");
+const QString settingDefaultLabelColor                   = QStringLiteral("pattern/defaultLabelColor");
+const QString settingDefaultPatternTemplate              = QStringLiteral("pattern/defaultPatternTemplate");
+const QString settingDefaultPieceTemplate                = QStringLiteral("pattern/defaultPieceTemplate");
+
 const QString settingPatternLabelFont                    = QStringLiteral("pattern/labelFont");
+const QString settingPatternGuiFont                      = QStringLiteral("pattern/guiFont");
+const QString settingPatternPointNameFont                = QStringLiteral("pattern/pointNameFont");
 
 const QString settingGeneralRecentFileList               = QStringLiteral("recentFileList");
 const QString settingGeneralRestoreFileList              = QStringLiteral("restoreFileList");
@@ -133,6 +210,8 @@ const QString settingLabelDateFormat                     = QStringLiteral("label
 const QString settingLabelUserDateFormats                = QStringLiteral("label/userDateFormats");
 const QString settingLabelTimeFormat                     = QStringLiteral("label/timeFormat");
 const QString settingLabelUserTimeFormats                = QStringLiteral("label/userTimeFormats");
+
+int pointNameSize = 0;
 
 //---------------------------------------------------------------------------------------------------------------------
 QStringList ClearFormats(const QStringList &predefinedFormats, QStringList formats)
@@ -387,9 +466,33 @@ QString VCommonSettings::GetPathLabelTemplate() const
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void VCommonSettings::SetPathLabelTemplate(const QString &value)
+void VCommonSettings::SetPathLabelTemplate(const QString &text)
 {
-    setValue(settingPathsLabelTemplate, value);
+    setValue(settingPathsLabelTemplate, text);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VCommonSettings::getDefaultPatternTemplate() const
+{
+    return value(settingDefaultPatternTemplate, GetPathLabelTemplate() + "default_pattern_label.xml").toString();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setDefaultPatternTemplate(const QString &text)
+{
+    setValue(settingDefaultPatternTemplate, text);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VCommonSettings::getDefaultPieceTemplate() const
+{
+    return value(settingDefaultPieceTemplate, GetPathLabelTemplate() + "default_piece_label.xml").toString();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setDefaultPieceTemplate(const QString &value)
+{
+    setValue(settingDefaultPieceTemplate, value);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -417,7 +520,7 @@ void VCommonSettings::SetAutosaveState(const bool &value)
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-int VCommonSettings::GetAutosaveTime() const
+int VCommonSettings::getAutosaveInterval() const
 {
     bool ok = false;
     int val = value(settingConfigurationAutosaveTime, 1).toInt(&ok);
@@ -431,9 +534,45 @@ int VCommonSettings::GetAutosaveTime() const
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void VCommonSettings::SetAutosaveTime(const int &value)
+void VCommonSettings::setAutosaveInterval(const int &value)
 {
     setValue(settingConfigurationAutosaveTime, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+bool VCommonSettings::useModeType() const
+{
+    return value(settingConfigurationUseModeType, true).toBool();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setUseModeType(const bool &value)
+{
+    setValue(settingConfigurationUseModeType, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+bool VCommonSettings::useLastExportFormat() const
+{
+    return value(settingConfigurationUseLastExportFormat, true).toBool();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setUseLastExportFormat(const bool &value)
+{
+    setValue(settingConfigurationUseLastExportFormat, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VCommonSettings::getExportFormat() const
+{
+    return value(settingConfigurationExportFormat, "SVG").toString();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setExportFormat(const QString &value)
+{
+    setValue(settingConfigurationExportFormat, value);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -486,33 +625,82 @@ void VCommonSettings::SetUnit(const QString &value)
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-bool VCommonSettings::GetConfirmItemDelete() const
+bool VCommonSettings::getConfirmItemDelete() const
 {
     return value(settingConfigurationConfirmItemDeletion, 1).toBool();
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void VCommonSettings::SetConfirmItemDelete(const bool &value)
+void VCommonSettings::setConfirmItemDelete(const bool &value)
 {
     setValue(settingConfigurationConfirmItemDeletion, value);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-bool VCommonSettings::GetConfirmFormatRewriting() const
+bool VCommonSettings::getConfirmFormatRewriting() const
 {
     return value(settingConfigurationConfirmFormatRewriting, 1).toBool();
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void VCommonSettings::SetConfirmFormatRewriting(const bool &value)
+void VCommonSettings::setConfirmFormatRewriting(const bool &value)
 {
     setValue(settingConfigurationConfirmFormatRewriting, value);
+}
+
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VCommonSettings::getMoveSuffix() const
+{
+    return value(settingConfigurationMoveSuffix, "").toString();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setMoveSuffix(const QString &value)
+{
+    setValue(settingConfigurationMoveSuffix, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VCommonSettings::getRotateSuffix() const
+{
+    return value(settingConfigurationRotateSuffix, "").toString();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setRotateSuffix(const QString &value)
+{
+    setValue(settingConfigurationRotateSuffix, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VCommonSettings::getMirrorByAxisSuffix() const
+{
+    return value(settingConfigurationMirrorByAxisSuffix, "").toString();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setMirrorByAxisSuffix(const QString &value)
+{
+    setValue(settingConfigurationMirrorByAxisSuffix, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VCommonSettings::getMirrorByLineSuffix() const
+{
+    return value(settingConfigurationMirrorByLineSuffix, "").toString();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setMirrorByLineSuffix(const QString &value)
+{
+    setValue(settingConfigurationMirrorByLineSuffix, value);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
 bool VCommonSettings::getToolBarStyle() const
 {
-    return value(settingGraphicsViewToolBarStyle, 1).toBool();
+    return value(settingGraphicsViewToolBarStyle, true).toBool();
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -521,6 +709,113 @@ void VCommonSettings::setToolBarStyle(const bool &value)
     setValue(settingGraphicsViewToolBarStyle, value);
 }
 
+//---------------------------------------------------------------------------------------------------------------------
+bool VCommonSettings::getShowToolsToolBar() const
+{
+    return value(settingGraphicsViewShowToolsToolBar, false).toBool();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setShowToolsToolBar(const bool &value)
+{
+    setValue(settingGraphicsViewShowToolsToolBar, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+bool VCommonSettings::getShowPointToolBar() const
+{
+    return value(settingGraphicsViewShowPointToolBar, false).toBool();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setShowPointToolBar(const bool &value)
+{
+    setValue(settingGraphicsViewShowPointToolBar, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+bool VCommonSettings::getShowLineToolBar() const
+{
+    return value(settingGraphicsViewShowLineToolBar, false).toBool();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setShowLineToolBar(const bool &value)
+{
+    setValue(settingGraphicsViewShowLineToolBar, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+bool VCommonSettings::getShowCurveToolBar() const
+{
+    return value(settingGraphicsViewShowCurveToolBar, false).toBool();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setShowCurveToolBar(const bool &value)
+{
+    setValue(settingGraphicsViewShowCurveToolBar, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+bool VCommonSettings::getShowArcToolBar() const
+{
+    return value(settingGraphicsViewShowArcToolBar, false).toBool();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setShowArcToolBar(const bool &value)
+{
+    setValue(settingGraphicsViewShowArcToolBar, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+bool VCommonSettings::getShowOpsToolBar() const
+{
+    return value(settingGraphicsViewShowOpsToolBar, false).toBool();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setShowOpsToolBar(const bool &value)
+{
+    setValue(settingGraphicsViewShowOpsToolBar, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+bool VCommonSettings::getShowPieceToolBar() const
+{
+    return value(settingGraphicsViewShowPieceToolBar, false).toBool();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setShowPieceToolBar(const bool &value)
+{
+    setValue(settingGraphicsViewShowPieceToolBar, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+bool VCommonSettings::getShowDetailsToolBar() const
+{
+    return value(settingGraphicsViewShowDetailsToolBar, false).toBool();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setShowDetailsToolBar(const bool &value)
+{
+    setValue(settingGraphicsViewShowDetailsToolBar, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+bool VCommonSettings::getShowLayoutToolBar() const
+{
+    return value(settingGraphicsViewShowLayoutToolBar, false).toBool();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setShowLayoutToolBar(const bool &value)
+{
+    setValue(settingGraphicsViewShowLayoutToolBar, value);
+}
 
 //---------------------------------------------------------------------------------------------------------------------
 bool  VCommonSettings::getShowScrollBars() const
@@ -586,7 +881,7 @@ void VCommonSettings::setScrollSpeedFactor(const int &factor)
 //---------------------------------------------------------------------------------------------------------------------
 bool VCommonSettings::getZoomModKey() const
 {
-    return value(settingGraphicsViewZoomModKey, 1).toBool();
+    return value(settingGraphicsViewZoomModKey, true).toBool();
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -598,7 +893,7 @@ void VCommonSettings::setZoomModKey(const bool &value)
 //---------------------------------------------------------------------------------------------------------------------
 bool VCommonSettings::isZoomDoubleClick() const
 {
-    return value(settingGraphicsViewZoomDoubleClick, 1).toBool();
+    return value(settingGraphicsViewZoomDoubleClick, true).toBool();
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -608,21 +903,45 @@ void VCommonSettings::setZoomDoubleClick(const bool &value)
 }
 
 //---------------------------------------------------------------------------------------------------------------------
+bool VCommonSettings::isPanActiveSpaceKey() const
+{
+    return value(settingGraphicsViewPanActiveSpaceKey, false).toBool();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setPanActiveSpaceKey(const bool &value)
+{
+    setValue(settingGraphicsViewPanActiveSpaceKey, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
 int  VCommonSettings::getZoomSpeedFactor() const
 {
     return value(settingGraphicsViewZoomSpeedFactor, 16).toInt();
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void VCommonSettings::setZoomSpeedFactor(const int  &factor)
+void VCommonSettings::setZoomSpeedFactor(const int  &value)
 {
-    setValue(settingGraphicsViewZoomSpeedFactor, factor);
+    setValue(settingGraphicsViewZoomSpeedFactor, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+int  VCommonSettings::getExportQuality() const
+{
+    return value(settingGraphicsViewExportQuality, 75).toInt();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setExportQuality(const int  &value)
+{
+    setValue(settingGraphicsViewExportQuality, value);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
 QString VCommonSettings::getZoomRBPositiveColor() const
 {
-    return value(settingGraphicsViewZoomRBPositiveColor, "blue").toString();
+    return value(settingGraphicsViewZoomRBPositiveColor, "Blue").toString();
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -634,13 +953,121 @@ void VCommonSettings::setZoomRBPositiveColor(const QString &value)
 //---------------------------------------------------------------------------------------------------------------------
 QString VCommonSettings::getZoomRBNegativeColor() const
 {
-    return value(settingGraphicsViewZoomRBNegativeColor, "green").toString();
+    return value(settingGraphicsViewZoomRBNegativeColor, "Green").toString();
 }
 
 //---------------------------------------------------------------------------------------------------------------------
 void VCommonSettings::setZoomRBNegativeColor(const QString &value)
 {
     setValue(settingGraphicsViewZoomRBNegativeColor, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VCommonSettings::getPointNameColor() const
+{
+    return value(settingGraphicsViewPointNameColor, "Black").toString();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setPointNameColor(const QString &value)
+{
+    setValue(settingGraphicsViewPointNameColor, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VCommonSettings::getPointNameHoverColor() const
+{
+    return value(settingGraphicsViewPointNameHoverColor, "Magenta").toString();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setPointNameHoverColor(const QString &value)
+{
+    setValue(settingGraphicsViewPointNameHoverColor, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VCommonSettings::getAxisOrginColor() const
+{
+    return value(settingGraphicsViewAxisOrginColor, "Magenta").toString();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setAxisOrginColor(const QString &value)
+{
+    setValue(settingGraphicsViewAxisOrginColor, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VCommonSettings::getDefaultLineColor() const
+{
+    return value(settingGraphicsViewDefaultLineColor, "black").toString();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setDefaultLineColor(const QString &value)
+{
+    setValue(settingGraphicsViewDefaultLineColor, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+qreal VCommonSettings::getDefaultLineWeight() const
+{
+    return value(settingGraphicsViewDefaultLineWeight, 1.20).toReal();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setDefaultLineWeight(const qreal &value)
+{
+    setValue(settingGraphicsViewDefaultLineWeight, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VCommonSettings::getDefaultLineType() const
+{
+    return value(settingGraphicsViewDefaultLineType, "solidLine").toString();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setDefaultLineType(const QString &value)
+{
+    setValue(settingGraphicsViewDefaultLineType, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VCommonSettings::getPrimarySupportColor() const
+{
+    return value(settingGraphicsViewPrimaryColor, "Magenta").toString();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setPrimarySupportColor(const QString &value)
+{
+    setValue(settingGraphicsViewPrimaryColor, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VCommonSettings::getSecondarySupportColor() const
+{
+    return value(settingGraphicsViewSecondaryColor, "Forest Green").toString();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setSecondarySupportColor(const QString &value)
+{
+    setValue(settingGraphicsViewSecondaryColor, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VCommonSettings::getTertiarySupportColor() const
+{
+    return value(settingGraphicsViewTertiaryColor, "Navy").toString();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setTertiarySupportColor(const QString &value)
+{
+    setValue(settingGraphicsViewTertiaryColor, value);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -685,6 +1112,24 @@ int VCommonSettings::GetUndoCount() const
 void VCommonSettings::SetUndoCount(const int &value)
 {
     setValue(settingPatternUndo, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VCommonSettings::getSound() const
+{
+    return value(settingSelectionSound, "silent").toString();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VCommonSettings::getSelectionSound() const
+{
+    return QStringLiteral("qrc:/sounds/") + value(settingSelectionSound, "silent").toString() + QStringLiteral(".wav");
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setSelectionSound(const QString &value)
+{
+    setValue(settingSelectionSound, value);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -771,13 +1216,13 @@ void VCommonSettings::setPreferenceDialogSize(const QSize& sz)
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-QSize VCommonSettings::GetToolSeamAllowanceDialogSize() const
+QSize VCommonSettings::getPatternPieceDialogSize() const
 {
     return value(settingToolSeamAllowanceDialogSize, QSize(0, 0)).toSize();
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void VCommonSettings::SetToolSeamAllowanceDialogSize(const QSize &sz)
+void VCommonSettings::setPatternPieceDialogSize(const QSize &sz)
 {
     setValue(settingToolSeamAllowanceDialogSize, sz);
 }
@@ -837,41 +1282,52 @@ void VCommonSettings::SetDateOfLastRemind(const QDate &date)
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-bool VCommonSettings::GetForbidWorkpieceFlipping() const
+bool VCommonSettings::getForbidPieceFlipping() const
 {
     return value(settingPatternForbidFlipping, false).toBool();
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void VCommonSettings::SetForbidWorkpieceFlipping(bool value)
+void VCommonSettings::setForbidPieceFlipping(bool value)
 {
     setValue(settingPatternForbidFlipping, value);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-bool VCommonSettings::IsHideMainPath() const
+bool VCommonSettings::isHideSeamLine() const
 {
-    return value(settingPatternHideMainPath, false).toBool();
+    return value(settingPatternHideSeamLine, false).toBool();
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void VCommonSettings::SetHideMainPath(bool value)
+void VCommonSettings::setHideSeamLine(bool value)
 {
-    setValue(settingPatternHideMainPath, value);
+    setValue(settingPatternHideSeamLine, value);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-bool VCommonSettings::showSecondNotch() const
+bool VCommonSettings::showSeamlineNotch() const
 {
-    return value(settingDoubleNotch, false).toBool();
+    return value(settingSeamlineNotch, false).toBool();
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void VCommonSettings::setShowSecondNotch(bool value)
+void VCommonSettings::setShowSeamlineNotch(bool value)
 {
-    setValue(settingDoubleNotch, value);
+    setValue(settingSeamlineNotch, value);
 }
 
+//---------------------------------------------------------------------------------------------------------------------
+bool VCommonSettings::showSeamAllowanceNotch() const
+{
+    return value(settingSeamAllowanceNotch, false).toBool();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setShowSeamAllowanceNotch(bool value)
+{
+    setValue(settingSeamAllowanceNotch, value);
+}
 
 //---------------------------------------------------------------------------------------------------------------------
 qreal VCommonSettings::getDefaultNotchLength() const
@@ -900,13 +1356,25 @@ void VCommonSettings::setDefaultNotchWidth(const qreal &value)
 //---------------------------------------------------------------------------------------------------------------------
 QString VCommonSettings::getDefaultNotchType() const
 {
-   return value(settingDefaultNotchType, "slit").toString();
+   return value(settingDefaultNotchType, "Slit").toString();
 }
 
 //---------------------------------------------------------------------------------------------------------------------
 void VCommonSettings::setDefaultNotchType(const QString &value)
 {
     setValue(settingDefaultNotchType, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VCommonSettings::getDefaultNotchColor() const
+{
+   return value(settingDefaultNotchColor, "black").toString();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setDefaultNotchColor(const QString &value)
+{
+    setValue(settingDefaultNotchColor, value);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -1048,15 +1516,444 @@ double VCommonSettings::GetDefaultSeamAllowance()
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-QFont VCommonSettings::GetLabelFont() const
+QString VCommonSettings::getDefaultSeamColor() const
+{
+   return value(settingDefaultSeamColor, "black").toString();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setDefaultSeamColor(const QString &value)
+{
+    setValue(settingDefaultSeamColor, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VCommonSettings::getDefaultSeamLinetype() const
+{
+   return value(settingDefaultSeamLinetype, "solidLine").toString();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setDefaultSeamLinetype(const QString &value)
+{
+    setValue(settingDefaultSeamLinetype, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+qreal VCommonSettings::getDefaultSeamLineweight() const
+{
+   return value(settingDefaultSeamLineweight, 1.20).toReal();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setDefaultSeamLineweight(const qreal &value)
+{
+    setValue(settingDefaultSeamLineweight, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VCommonSettings::getDefaultCutColor() const
+{
+   return value(settingDefaultCutColor, "black").toString();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setDefaultCutColor(const QString &value)
+{
+    setValue(settingDefaultCutColor, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VCommonSettings::getDefaultCutLinetype() const
+{
+   return value(settingDefaultCutLinetype, "solidLine").toString();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setDefaultCutLinetype(const QString &value)
+{
+    setValue(settingDefaultCutLinetype, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+qreal VCommonSettings::getDefaultCutLineweight() const
+{
+   return value(settingDefaultCutLineweight, 1.20).toReal();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setDefaultCutLineweight(const qreal &value)
+{
+    setValue(settingDefaultCutLineweight, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VCommonSettings::getDefaultInternalColor() const
+{
+   return value(settingDefaultInternalColor, "black").toString();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setDefaultInternalColor(const QString &value)
+{
+    setValue(settingDefaultInternalColor, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VCommonSettings::getDefaultInternalLinetype() const
+{
+   return value(settingDefaultInternalLinetype, "solidLine").toString();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setDefaultInternalLinetype(const QString &value)
+{
+    setValue(settingDefaultInternalLinetype, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+qreal VCommonSettings::getDefaultInternalLineweight() const
+{
+   return value(settingDefaultInternalLineweight, 1.20).toReal();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setDefaultInternalLineweight(const qreal &value)
+{
+    setValue(settingDefaultInternalLineweight, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VCommonSettings::getDefaultCutoutColor() const
+{
+   return value(settingDefaultCutoutColor, "black").toString();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setDefaultCutoutColor(const QString &value)
+{
+    setValue(settingDefaultCutoutColor, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VCommonSettings::getDefaultCutoutLinetype() const
+{
+   return value(settingDefaultCutoutLinetype, "solidLine").toString();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setDefaultCutoutLinetype(const QString &value)
+{
+    setValue(settingDefaultCutoutLinetype, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+qreal VCommonSettings::getDefaultCutoutLineweight() const
+{
+   return value(settingDefaultCutoutLineweight, 1.20).toReal();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setDefaultCutoutLineweight(const qreal &value)
+{
+    setValue(settingDefaultCutoutLineweight, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+bool VCommonSettings::showSeamAllowances() const
+{
+    return value(settingShowSeamAllowances, true).toBool();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setShowSeamAllowances(const bool &value)
+{
+    setValue(settingShowSeamAllowances, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+bool VCommonSettings::getDefaultSeamAllowanceVisibilty() const
+{
+    return value(settingDefaultSeamAllowanceVisibilty, true).toBool();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setDefaultSeamAllowanceVisibilty(const bool &value)
+{
+    setValue(settingDefaultSeamAllowanceVisibilty, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+bool VCommonSettings::showGrainlines() const
+{
+    return value(settingShowGrainlines, true).toBool();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setShowGrainlines(const bool &value)
+{
+    setValue(settingShowGrainlines, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+bool VCommonSettings::getDefaultGrainlineVisibilty() const
+{
+    return value(settingDefaultGrainlineVisibilty, true).toBool();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setDefaultGrainlineVisibilty(const bool &value)
+{
+    setValue(settingDefaultGrainlineVisibilty, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+qreal VCommonSettings::getDefaultGrainlineLength() const
+{
+   return value(settingDefaultGrainlineLength, 2).toReal();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setDefaultGrainlineLength(const qreal &value)
+{
+    setValue(settingDefaultGrainlineLength, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VCommonSettings::getDefaultGrainlineColor() const
+{
+   return value(settingDefaultGrainlineColor, "black").toString();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setDefaultGrainlineColor(const QString &value)
+{
+    setValue(settingDefaultGrainlineColor, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+qreal VCommonSettings::getDefaultGrainlineLineweight() const
+{
+   return value(settingDefaultGrainlineLineweight, 0.25).toReal();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setDefaultGrainlineLineweight(const qreal &value)
+{
+    setValue(settingDefaultGrainlineLineweight, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+bool VCommonSettings::showLabels() const
+{
+    return value(settingShowLabels, true).toBool();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setShowLabels(const bool &value)
+{
+    setValue(settingShowLabels, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+bool VCommonSettings::showPatternLabels() const
+{
+    return value(settingShowPatternLabels, true).toBool();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setShowPatternLabels(const bool &value)
+{
+    setValue(settingShowPatternLabels, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+bool VCommonSettings::showPieceLabels() const
+{
+    return value(settingShowPieceLabels, true).toBool();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setShowPieceLabels(const bool &value)
+{
+    setValue(settingShowPieceLabels, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+qreal VCommonSettings::getDefaultLabelWidth() const
+{
+   return value(settingDefaultLabelWidth, 3).toReal();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setDefaultLabelWidth(const qreal &value)
+{
+    setValue(settingDefaultLabelWidth, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+qreal VCommonSettings::getDefaultLabelHeight() const
+{
+   return value(settingDefaultLabelHeight, 2).toReal();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setDefaultLabelHeight(const qreal &value)
+{
+    setValue(settingDefaultLabelHeight, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VCommonSettings::getDefaultLabelColor() const
+{
+   return value(settingDefaultLabelColor, "black").toString();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setDefaultLabelColor(const QString &value)
+{
+    setValue(settingDefaultLabelColor, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QFont VCommonSettings::getLabelFont() const
 {
     return qvariant_cast<QFont>(value(settingPatternLabelFont, QApplication::font()));
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void VCommonSettings::SetLabelFont(const QFont &f)
+void VCommonSettings::setLabelFont(const QFont &f)
 {
     setValue(settingPatternLabelFont, f);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QFont VCommonSettings::getGuiFont() const
+{
+    return qvariant_cast<QFont>(value(settingPatternGuiFont, QApplication::font()));
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setGuiFont(const QFont &f)
+{
+    setValue(settingPatternGuiFont, f);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QFont VCommonSettings::getPointNameFont() const
+{
+    return qvariant_cast<QFont>(value(settingPatternPointNameFont, QApplication::font()));
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setPointNameFont(const QFont &f)
+{
+    setValue(settingPatternPointNameFont, f);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+bool VCommonSettings::getHidePointNames() const
+{
+    return value(settingGraphicsViewHidePointNames, true).toBool();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setHidePointNames(bool value)
+{
+    setValue(settingGraphicsViewHidePointNames, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+bool VCommonSettings::getShowAxisOrigin() const
+{
+    return value(settingGraphicsViewShowAxisOrigin, true).toBool();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setShowAxisOrigin(bool value)
+{
+    setValue(settingGraphicsViewShowAxisOrigin, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+bool VCommonSettings::isWireframe() const
+{
+    return value(settingGraphicsViewWireframe, false).toBool();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setWireframe(bool value)
+{
+    setValue(settingGraphicsViewWireframe, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+bool VCommonSettings::getShowControlPoints() const
+{
+    return value(settingGraphicsViewShowControlPoints, false).toBool();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setShowControlPoints(bool value)
+{
+    setValue(settingGraphicsViewShowControlPoints, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+bool VCommonSettings::getShowAnchorPoints() const
+{
+    return value(settingGraphicsViewShowAnchorPoints, false).toBool();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setShowAnchorPoints(bool value)
+{
+    setValue(settingGraphicsViewShowAnchorPoints, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+bool VCommonSettings::getUseToolColor() const
+{
+    return value(settingGraphicsUseToolColor, false).toBool();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setUseToolColor(bool value)
+{
+    setValue(settingGraphicsUseToolColor, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+int VCommonSettings::getPointNameSize() const
+{
+    if (pointNameSize <= 0)
+    {
+        bool ok = false;
+        pointNameSize = value(settingGraphicsViewPointNameSize, 32).toInt(&ok);
+        if (not ok)
+        {
+            pointNameSize = 32;
+        }
+    }
+    return pointNameSize;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setPointNameSize(int value)
+{
+    setValue(settingGraphicsViewPointNameSize, value);
+    pointNameSize = value;
+}
+
+int VCommonSettings::getGuiFontSize() const
+{
+    return value(settingGraphicsViewGuiFontSize, 9).toInt();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VCommonSettings::setGuiFontSize(int value)
+{
+    setValue(settingGraphicsViewGuiFontSize, value);
 }
 
 //---------------------------------------------------------------------------------------------------------------------

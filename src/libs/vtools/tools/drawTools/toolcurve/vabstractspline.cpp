@@ -2,7 +2,7 @@
  *                                                                         *
  *   Copyright (C) 2017  Seamly, LLC                                       *
  *                                                                         *
- *   https://github.com/fashionfreedom/seamly2d                             *
+ *   https://github.com/fashionfreedom/seamly2d                            *
  *                                                                         *
  ***************************************************************************
  **
@@ -78,12 +78,12 @@
 
 //---------------------------------------------------------------------------------------------------------------------
 VAbstractSpline::VAbstractSpline(VAbstractPattern *doc, VContainer *data, quint32 id, QGraphicsItem *parent)
-    :VDrawTool(doc, data, id),
-      QGraphicsPathItem(parent),
-      controlPoints(),
-      sceneType(SceneObject::Unknown),
-      m_isHovered(false),
-      detailsMode(false)
+    : VDrawTool(doc, data, id)
+    , QGraphicsPathItem(parent)
+    , controlPoints()
+    , sceneType(SceneObject::Unknown)
+    , m_isHovered(false)
+    , m_piecesMode(qApp->Settings()->getShowControlPoints())
 {
     InitDefShape();
     setAcceptHoverEvents(true);
@@ -92,8 +92,8 @@ VAbstractSpline::VAbstractSpline(VAbstractPattern *doc, VContainer *data, quint3
 //---------------------------------------------------------------------------------------------------------------------
 QPainterPath VAbstractSpline::shape() const
 {
-    const QSharedPointer<VAbstractCurve> curve = VAbstractTool::data.GeometricObject<VAbstractCurve>(id);
-    const QVector<QPointF> points = curve->GetPoints();
+    const QSharedPointer<VAbstractCurve> curve = VAbstractTool::data.GeometricObject<VAbstractCurve>(m_id);
+    const QVector<QPointF> points = curve->getPoints();
 
     QPainterPath path;
     for (qint32 i = 0; i < points.count()-1; ++i)
@@ -102,11 +102,11 @@ QPainterPath VAbstractSpline::shape() const
         path.lineTo(points.at(i+1));
     }
 
-    if (m_isHovered || detailsMode)
+    if (m_isHovered || m_piecesMode)
     {
         path.addPath(VAbstractCurve::ShowDirection(curve->DirectionArrows(),
-                                                   ScaleWidth(VAbstractCurve::lengthCurveDirectionArrow,
-                                                              SceneScale(scene()))));
+                                                   scaleWidth(VAbstractCurve::lengthCurveDirectionArrow,
+                                                              sceneScale(scene()))));
     }
     path.setFillRule(Qt::WindingFill);
     return ItemShapeFromPath(path, pen());
@@ -115,14 +115,19 @@ QPainterPath VAbstractSpline::shape() const
 //---------------------------------------------------------------------------------------------------------------------
 void VAbstractSpline::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    const qreal width = ScaleWidth(m_isHovered ? widthMainLine : widthHairLine, SceneScale(scene()));
+    //const qreal width = scaleWidth(m_isHovered ? widthMainLine : widthHairLine, sceneScale(scene()));
 
-    const QSharedPointer<VAbstractCurve> curve = VAbstractTool::data.GeometricObject<VAbstractCurve>(id);
-    setPen(QPen(CorrectColor(this, curve->GetColor()), width, LineStyleToPenStyle(curve->GetPenStyle()), Qt::RoundCap));
 
-    RefreshCtrlPoints();
+    const QSharedPointer<VAbstractCurve> curve = VAbstractTool::data.GeometricObject<VAbstractCurve>(m_id);
+    const qreal weight = ToPixel(doc->useGroupLineWeight(m_id, curve->getLineWeight()).toDouble(), Unit::Mm);
+    const qreal width  = scaleWidth(m_isHovered ? weight + 4 : weight, sceneScale(scene()));
 
-    if (m_isHovered || detailsMode)
+    setPen(QPen(correctColor(this, doc->useGroupColor(m_id, curve->getLineColor())), width,
+           lineTypeToPenStyle(doc->useGroupLineType(m_id, curve->GetPenStyle())), Qt::RoundCap));
+
+    refreshCtrlPoints();
+
+    if (m_isHovered || m_piecesMode)
     {
         painter->save();
 
@@ -133,8 +138,8 @@ void VAbstractSpline::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
         painter->setBrush(brush());
 
         painter->drawPath(VAbstractCurve::ShowDirection(curve->DirectionArrows(),
-                                                        ScaleWidth(VAbstractCurve::lengthCurveDirectionArrow,
-                                                                   SceneScale(scene()))));
+                                                        scaleWidth(VAbstractCurve::lengthCurveDirectionArrow,
+                                                                   sceneScale(scene()))));
 
         painter->restore();
     }
@@ -159,19 +164,19 @@ void VAbstractSpline::FullUpdateFromFile()
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void VAbstractSpline::Disable(bool disable, const QString &namePP)
+void VAbstractSpline::Disable(bool disable, const QString &draftBlockName)
 {
-    const bool enabled = !CorrectDisable(disable, namePP);
+    const bool enabled = !CorrectDisable(disable, draftBlockName);
     this->setEnabled(enabled);
     emit setEnabledPoint(enabled);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void VAbstractSpline::DetailsMode(bool mode)
+void VAbstractSpline::piecesMode(bool mode)
 {
-    detailsMode = mode;
+    m_piecesMode = mode;
     RefreshGeometry();
-    ShowHandles(detailsMode);
+    ShowHandles(m_piecesMode);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -187,16 +192,20 @@ void VAbstractSpline::AllowSelecting(bool enabled)
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-QString VAbstractSpline::MakeToolTip() const
+QString VAbstractSpline::makeToolTip() const
 {
-    const QSharedPointer<VAbstractCurve> curve = VAbstractTool::data.GeometricObject<VAbstractCurve>(id);
+    const QSharedPointer<VAbstractCurve> curve = VAbstractTool::data.GeometricObject<VAbstractCurve>(m_id);
 
     const QString toolTip = QString("<table>"
+                                    "<tr> <td><b>  %4:</b> %5</td> </tr>"
                                     "<tr> <td><b>%1:</b> %2 %3</td> </tr>"
                                     "</table>")
-            .arg(tr("Length"))
-            .arg(qApp->fromPixel(curve->GetLength()))
-            .arg(UnitsToStr(qApp->patternUnit(), true));
+                                    .arg(tr("Length"))
+                                    .arg(qApp->fromPixel(curve->GetLength()))
+                                    .arg(UnitsToStr(qApp->patternUnit(), true))
+                                    .arg(tr("Name"))
+                                    .arg(curve->name());
+
     return toolTip;
 }
 
@@ -215,7 +224,7 @@ void VAbstractSpline::ShowTool(quint32 id, bool enable)
 void VAbstractSpline::RefreshGeometry()
 {
     InitDefShape();
-    RefreshCtrlPoints();
+    refreshCtrlPoints();
     SetVisualization();
 }
 
@@ -228,7 +237,7 @@ void VAbstractSpline::RefreshGeometry()
 void VAbstractSpline::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     m_isHovered = true;
-    setToolTip(MakeToolTip());
+    setToolTip(makeToolTip());
     QGraphicsPathItem::hoverEnterEvent(event);
 }
 
@@ -255,7 +264,7 @@ QVariant VAbstractSpline::itemChange(QGraphicsItem::GraphicsItemChange change, c
 {
     if (change == QGraphicsItem::ItemSelectedChange)
     {
-        emit ChangedToolSelection(value.toBool(), id, id);
+        emit ChangedToolSelection(value.toBool(), m_id, m_id);
     }
 
     return QGraphicsPathItem::itemChange(change, value);
@@ -273,7 +282,7 @@ void VAbstractSpline::keyReleaseEvent(QKeyEvent *event)
         case Qt::Key_Delete:
             try
             {
-                DeleteTool();
+                deleteTool();
             }
             catch(const VExceptionToolWasDeleted &e)
             {
@@ -311,7 +320,7 @@ void VAbstractSpline::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton)
     {
-        emit ChoosedTool(id, sceneType);
+        emit chosenTool(m_id, sceneType);
     }
     QGraphicsPathItem::mouseReleaseEvent(event);
 }
@@ -328,14 +337,21 @@ void VAbstractSpline::SaveOptions(QDomElement &tag, QSharedPointer<VGObject> &ob
     VDrawTool::SaveOptions(tag, obj);
 
     const QSharedPointer<VAbstractCurve> curve = qSharedPointerCast<VAbstractCurve>(obj);
-    doc->SetAttribute(tag, AttrColor, curve->GetColor());
-    doc->SetAttribute(tag, AttrPenStyle, curve->GetPenStyle());
+    doc->SetAttribute(tag, AttrColor,      curve->getLineColor());
+    doc->SetAttribute(tag, AttrPenStyle,   curve->GetPenStyle());
+    doc->SetAttribute(tag, AttrLineWeight, curve->getLineWeight());
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void VAbstractSpline::RefreshCtrlPoints()
+void VAbstractSpline::refreshCtrlPoints()
 {
     // do nothing
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VAbstractSpline::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+    showContextMenu(event);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -409,7 +425,7 @@ VSpline VAbstractSpline::CorrectedSpline(const VSpline &spline, const SplinePoin
 //---------------------------------------------------------------------------------------------------------------------
 void VAbstractSpline::InitDefShape()
 {
-    const QSharedPointer<VAbstractCurve> curve = VAbstractTool::data.GeometricObject<VAbstractCurve>(id);
+    const QSharedPointer<VAbstractCurve> curve = VAbstractTool::data.GeometricObject<VAbstractCurve>(m_id);
     this->setPath(curve->GetPath());
 }
 
@@ -423,17 +439,17 @@ void VAbstractSpline::ShowHandles(bool show)
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-QString VAbstractSpline::GetLineColor() const
+QString VAbstractSpline::getLineColor() const
 {
-    const QSharedPointer<VAbstractCurve> curve = VAbstractTool::data.GeometricObject<VAbstractCurve>(id);
-    return curve->GetColor();
+    const QSharedPointer<VAbstractCurve> curve = VAbstractTool::data.GeometricObject<VAbstractCurve>(m_id);
+    return curve->getLineColor();
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void VAbstractSpline::SetLineColor(const QString &value)
+void VAbstractSpline::setLineColor(const QString &value)
 {
-    QSharedPointer<VAbstractCurve> curve = VAbstractTool::data.GeometricObject<VAbstractCurve>(id);
-    curve->SetColor(value);
+    QSharedPointer<VAbstractCurve> curve = VAbstractTool::data.GeometricObject<VAbstractCurve>(m_id);
+    curve->setLineColor(value);
     QSharedPointer<VGObject> obj = qSharedPointerCast<VGObject>(curve);
     SaveOption(obj);
 }
@@ -441,15 +457,39 @@ void VAbstractSpline::SetLineColor(const QString &value)
 //---------------------------------------------------------------------------------------------------------------------
 QString VAbstractSpline::GetPenStyle() const
 {
-    const QSharedPointer<VAbstractCurve> curve = VAbstractTool::data.GeometricObject<VAbstractCurve>(id);
+    const QSharedPointer<VAbstractCurve> curve = VAbstractTool::data.GeometricObject<VAbstractCurve>(m_id);
     return curve->GetPenStyle();
 }
 
 //---------------------------------------------------------------------------------------------------------------------
 void VAbstractSpline::SetPenStyle(const QString &value)
 {
-    QSharedPointer<VAbstractCurve> curve = VAbstractTool::data.GeometricObject<VAbstractCurve>(id);
+    QSharedPointer<VAbstractCurve> curve = VAbstractTool::data.GeometricObject<VAbstractCurve>(m_id);
     curve->SetPenStyle(value);
+    QSharedPointer<VGObject> obj = qSharedPointerCast<VGObject>(curve);
+    SaveOption(obj);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+ * @brief getLineWeight return line weight of the spline
+ * @return line weight
+ */
+QString VAbstractSpline::getLineWeight() const
+{
+    const QSharedPointer<VAbstractCurve> curve = VAbstractTool::data.GeometricObject<VAbstractCurve>(m_id);
+    return curve->getLineWeight();
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+ * @brief setLineWeight set line weight of the spline
+ * @param value line weight
+ */
+void VAbstractSpline::setLineWeight(const QString &value)
+{
+    const QSharedPointer<VAbstractCurve> curve = VAbstractTool::data.GeometricObject<VAbstractCurve>(m_id);
+    curve->setLineWeight(value);
     QSharedPointer<VGObject> obj = qSharedPointerCast<VGObject>(curve);
     SaveOption(obj);
 }
@@ -457,7 +497,7 @@ void VAbstractSpline::SetPenStyle(const QString &value)
 //---------------------------------------------------------------------------------------------------------------------
 QString VAbstractSpline::name() const
 {
-    return ObjectName<VAbstractCurve>(id);
+    return ObjectName<VAbstractCurve>(m_id);
 }
 
 //---------------------------------------------------------------------------------------------------------------------

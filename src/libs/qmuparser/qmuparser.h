@@ -27,7 +27,6 @@
 #include <QtGlobal>
 #include <locale>
 
-#include "qmuparser_global.h"
 #include "qmuparserbase.h"
 
 /**
@@ -47,7 +46,7 @@ namespace qmu
     * muparser(at)gmx.de
     * </small>
     */
-    /* final */ class QMUPARSERSHARED_EXPORT QmuParser : public QmuParserBase
+    /* final */ class QmuParser : public QmuParserBase
     {
     public:
         QmuParser();
@@ -64,7 +63,7 @@ namespace qmu
         static qreal Sinh(qreal);
         static qreal Cosh(qreal);
         static qreal Tanh(qreal);
-        // arcus hyperbolic functions
+        // inverse hyperbolic functions
         static qreal ASinh(qreal);
         static qreal ACosh(qreal);
         static qreal ATanh(qreal);

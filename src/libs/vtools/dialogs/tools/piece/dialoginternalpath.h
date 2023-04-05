@@ -74,8 +74,8 @@ public:
     quint32                 GetPieceId() const;
     void                    SetPieceId(quint32 id);
 
-    QString                 GetFormulaSAWidth() const;
-    void                    SetFormulaSAWidth(const QString &formula);
+    QString                 getSeamAllowanceWidthFormula() const;
+    void                    setSeamAllowanceWidthFormula(const QString &formula);
 
     virtual void            SetPiecesList(const QVector<quint32> &list) Q_DECL_OVERRIDE;
 
@@ -92,28 +92,28 @@ private slots:
     void                    ShowContextMenu(const QPoint &pos);
     void                    ListChanged();
     void                    NameChanged();
-    void                    NodeChanged(int index);
+    void                    nodeChanged(int index);
     void                    notchChanged(int index);
-    void                    ReturnDefBefore();
-    void                    ReturnDefAfter();
+    void                    enableDefaultBeforeButton();
+    void                    enableDefaultAfterButton();
     void                    notchTypeChanged(int id);
     void                    notchSubTypeChanged(int id);
 
-    void                    EvalWidth();
-    void                    EvalWidthBefore();
-    void                    EvalWidthAfter();
+    void                    evaluateDefaultWidth();
+    void                    evaluateBeforeWidth();
+    void                    evaluateAfterWidth();
 
-    void                    FXWidth();
-    void                    FXWidthBefore();
-    void                    FXWidthAfter();
+    void                    editDefaultSeamAllowanceWidth();
+    void                    editBeforeSeamAllowanceWidth();
+    void                    editAfterSeamAllowanceWidth();
 
-    void                    WidthChanged();
-    void                    WidthBeforeChanged();
-    void                    WidthAfterChanged();
+    void                    defaultWidthChanged();
+    void                    beforeWidthChanged();
+    void                    afterWidthChanged();
 
-    void                    DeployWidthFormulaTextEdit();
-    void                    DeployWidthBeforeFormulaTextEdit();
-    void                    DeployWidthAfterFormulaTextEdit();
+    void                    expandWidthFormulaTextEdit();
+    void                    expandWidthBeforeFormulaTextEdit();
+    void                    expandWidthAfterFormulaTextEdit();
 
 private:
     Q_DISABLE_COPY(DialogInternalPath)
@@ -133,9 +133,9 @@ private:
     void                    InitSeamAllowanceTab();
     void                    InitNotchesTab();
     void                    InitPathTypes();
-    void                    InitNodesList();
-    void                    InitNotchesList();
-    void                    NodeAngleChanged(int index);
+    void                    initializeNodesList();
+    void                    initializeNotchesList();
+    void                    nodeAngleChanged(int index);
 
     VPiecePath              CreatePath() const;
 
@@ -152,18 +152,18 @@ private:
     bool                    IsCutPath() const;
     void                    SetCutPath(bool value);
 
-    QListWidgetItem        *GetItemById(quint32 id);
+    QListWidgetItem        *getItemById(quint32 id);
 
     quint32                 GetLastId() const;
 
     void                    SetCurrentSABefore(const QString &formula);
-    void                    SetCurrentSAAfter(const QString &formula);
+    void                    setCurrentAfterSeamAllowance(const QString &formula);
 
-    void                    UpdateNodeSABefore(const QString &formula);
-    void                    UpdateNodeSAAfter(const QString &formula);
+    void                    updateNodeBeforeSeamAllowance(const QString &formula);
+    void                    updateNodeAfterSeamAllowance(const QString &formula);
 
-    QString                 GetFormulaSAWidthBefore() const;
-    QString                 GetFormulaSAWidthAfter() const;
+    QString                 getSeamAllowanceWidthFormulaBefore() const;
+    QString                 getSeamAllowanceWidthFormulaAfter() const;
 
     void                    setMoveExclusions();
 };

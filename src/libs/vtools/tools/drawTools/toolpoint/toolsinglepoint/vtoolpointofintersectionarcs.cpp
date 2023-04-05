@@ -2,7 +2,7 @@
  *                                                                         *
  *   Copyright (C) 2017  Seamly, LLC                                       *
  *                                                                         *
- *   https://github.com/fashionfreedom/seamly2d                             *
+ *   https://github.com/fashionfreedom/seamly2d                            *
  *                                                                         *
  ***************************************************************************
  **
@@ -51,27 +51,29 @@
 
 #include "vtoolpointofintersectionarcs.h"
 
+#include "vtoolsinglepoint.h"
+#include "../ifc/ifcdef.h"
+#include "../ifc/exception/vexception.h"
+#include "../vgeometry/varc.h"
+#include "../vgeometry/vgobject.h"
+#include "../vgeometry/vpointf.h"
+#include "../vmisc/vabstractapplication.h"
+#include "../vpatterndb/vcontainer.h"
+#include "../vwidgets/vmaingraphicsscene.h"
+#include "../../vdrawtool.h"
+#include "../../../vabstracttool.h"
+#include "../../../../dialogs/tools/dialogtool.h"
+#include "../../../../dialogs/tools/dialogpointofintersectionarcs.h"
+#include "../../../../visualization/visualization.h"
+#include "../../../../visualization/line/vistoolpointofintersectionarcs.h"
+
 #include <QLineF>
+#include <QMessageBox>
 #include <QSharedPointer>
 #include <QStaticStringData>
 #include <QStringData>
 #include <QStringDataPtr>
 #include <new>
-
-#include "../../../../dialogs/tools/dialogpointofintersectionarcs.h"
-#include "../../../../visualization/line/vistoolpointofintersectionarcs.h"
-#include "../ifc/exception/vexception.h"
-#include "../ifc/ifcdef.h"
-#include "../vgeometry/varc.h"
-#include "../vgeometry/vgobject.h"
-#include "../vgeometry/vpointf.h"
-#include "../vpatterndb/vcontainer.h"
-#include "../vwidgets/vmaingraphicsscene.h"
-#include "../../../../dialogs/tools/dialogtool.h"
-#include "../../../../visualization/visualization.h"
-#include "../../../vabstracttool.h"
-#include "../../vdrawtool.h"
-#include "vtoolsinglepoint.h"
 
 template <class T> class QSharedPointer;
 
@@ -82,7 +84,10 @@ VToolPointOfIntersectionArcs::VToolPointOfIntersectionArcs(VAbstractPattern *doc
                                                            const quint32 &firstArcId, const quint32 &secondArcId,
                                                            CrossCirclesPoint pType, const Source &typeCreation,
                                                            QGraphicsItem *parent)
-    :VToolSinglePoint(doc, data, id, parent), firstArcId(firstArcId), secondArcId(secondArcId), crossPoint(pType)
+    : VToolSinglePoint(doc, data, id, QColor(qApp->Settings()->getPointNameColor()), parent)
+    , firstArcId(firstArcId)
+    , secondArcId(secondArcId)
+    , crossPoint(pType)
 {
     ToolCreation(typeCreation);
 }
@@ -93,7 +98,7 @@ void VToolPointOfIntersectionArcs::setDialog()
     SCASSERT(not m_dialog.isNull())
     QSharedPointer<DialogPointOfIntersectionArcs> dialogTool = m_dialog.objectCast<DialogPointOfIntersectionArcs>();
     SCASSERT(not dialogTool.isNull())
-    const QSharedPointer<VPointF> p = VAbstractTool::data.GeometricObject<VPointF>(id);
+    const QSharedPointer<VPointF> p = VAbstractTool::data.GeometricObject<VPointF>(m_id);
     dialogTool->SetFirstArcId(firstArcId);
     dialogTool->SetSecondArcId(secondArcId);
     dialogTool->SetCrossArcPoint(crossPoint);
@@ -125,7 +130,7 @@ VToolPointOfIntersectionArcs *VToolPointOfIntersectionArcs::Create(QSharedPointe
 VToolPointOfIntersectionArcs *VToolPointOfIntersectionArcs::Create(const quint32 _id, const QString &pointName,
                                                                    const quint32 &firstArcId,
                                                                    const quint32 &secondArcId, CrossCirclesPoint pType,
-                                                                   const qreal &mx, const qreal &my,
+                                                                   qreal mx, qreal my,
                                                                    VMainGraphicsScene *scene, VAbstractPattern *doc,
                                                                    VContainer *data, const Document &parse,
                                                                    const Source &typeCreation)
@@ -134,6 +139,23 @@ VToolPointOfIntersectionArcs *VToolPointOfIntersectionArcs::Create(const quint32
     const QSharedPointer<VArc> secondArc = data->GeometricObject<VArc>(secondArcId);
 
     const QPointF point = FindPoint(firstArc.data(), secondArc.data(), pType);
+
+    if (point == QPointF())
+    {
+        const QString msg = tr("<b><big>Can't find intersection point %1 of Arcs</big></b><br>"
+                               "Using origin point as a place holder until pattern is corrected.")
+                               .arg(pointName);
+
+        QMessageBox msgBox(qApp->getMainWindow());
+        msgBox.setWindowTitle(tr("Point Intersect Arcs"));
+        msgBox.setWindowFlags(msgBox.windowFlags() & ~Qt::WindowContextHelpButtonHint);
+        msgBox.setWindowIcon(QIcon(":/toolicon/32x32/point_of_intersection_arcs.png"));
+        msgBox.setIcon(QMessageBox::Warning);
+        msgBox.setText(msg);
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.exec();
+    }
+
     quint32 id = _id;
     if (typeCreation == Source::FromGui)
     {
@@ -270,7 +292,7 @@ void VToolPointOfIntersectionArcs::SetFirstArcId(const quint32 &value)
     {
         firstArcId = value;
 
-        QSharedPointer<VGObject> obj = VAbstractTool::data.GetGObject(id);
+        QSharedPointer<VGObject> obj = VAbstractTool::data.GetGObject(m_id);
         SaveOption(obj);
     }
 }
@@ -288,7 +310,7 @@ void VToolPointOfIntersectionArcs::SetSecondArcId(const quint32 &value)
     {
         secondArcId = value;
 
-        QSharedPointer<VGObject> obj = VAbstractTool::data.GetGObject(id);
+        QSharedPointer<VGObject> obj = VAbstractTool::data.GetGObject(m_id);
         SaveOption(obj);
     }
 }
@@ -302,10 +324,10 @@ CrossCirclesPoint VToolPointOfIntersectionArcs::GetCrossCirclesPoint() const
 //---------------------------------------------------------------------------------------------------------------------
 void VToolPointOfIntersectionArcs::SetCrossCirclesPoint(const CrossCirclesPoint &value)
 {
-    crossPoint = value;
+        crossPoint = value;
 
-    QSharedPointer<VGObject> obj = VAbstractTool::data.GetGObject(id);
-    SaveOption(obj);
+        QSharedPointer<VGObject> obj = VAbstractTool::data.GetGObject(m_id);
+        SaveOption(obj);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -325,11 +347,11 @@ void VToolPointOfIntersectionArcs::RemoveReferens()
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void VToolPointOfIntersectionArcs::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+void VToolPointOfIntersectionArcs::showContextMenu(QGraphicsSceneContextMenuEvent *event, quint32 id)
 {
     try
     {
-        ContextMenu<DialogPointOfIntersectionArcs>(this, event);
+        ContextMenu<DialogPointOfIntersectionArcs>(event, id);
     }
     catch(const VExceptionToolWasDeleted &e)
     {

@@ -1,27 +1,22 @@
-/***************************************************************************
- *                                                                         *
- *   Copyright (C) 2017  Seamly, LLC                                       *
- *                                                                         *
- *   https://github.com/fashionfreedom/seamly2d                            *
- *                                                                         *
- ***************************************************************************
+/******************************************************************************
+ *   @file   mainwindow.h
+ **  @author Douglas S Caskey
+ **  @date   29 Mar, 2023
+ **
+ **  @brief
+ **  @copyright
+ **  This source code is part of the Seamly2D project, a pattern making
+ **  program to create and model patterns of clothing.
+ **  Copyright (C) 2017-2023 Seamly2D project
+ **  <https://github.com/fashionfreedom/seamly2d> All Rights Reserved.
  **
  **  Seamly2D is free software: you can redistribute it and/or modify
- **  it under the terms of the GNU General Public License as published by
- **  the Free Software Foundation, either version 3 of the License, or
- **  (at your option) any later version.
- **
- **  Seamly2D is distributed in the hope that it will be useful,
- **  but WITHOUT ANY WARRANTY; without even the implied warranty of
- **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- **  GNU General Public License for more details.
- **
  **  You should have received a copy of the GNU General Public License
  **  along with Seamly2D.  If not, see <http://www.gnu.org/licenses/>.
  **
- **************************************************************************
+ *****************************************************************************/
 
- ************************************************************************
+/************************************************************************
  **
  **  @file   mainwindow.h
  **  @author Roman Telezhynskyi <dismine(at)gmail.com>
@@ -29,23 +24,23 @@
  **
  **  @brief
  **  @copyright
- **  This source code is part of the Valentine project, a pattern making
+ **  This source code is part of the Valentina project, a pattern making
  **  program, whose allow create and modeling patterns of clothing.
- **  Copyright (C) 2013-2015 Seamly2D project
- **  <https://github.com/fashionfreedom/seamly2d> All Rights Reserved.
+ **  Copyright (C) 2013 Valentina project
+ **  <https://bitbucket.org/dismine/valentina> All Rights Reserved.
  **
- **  Seamly2D is free software: you can redistribute it and/or modify
+ **  Valentina is free software: you can redistribute it and/or modify
  **  it under the terms of the GNU General Public License as published by
  **  the Free Software Foundation, either version 3 of the License, or
  **  (at your option) any later version.
  **
- **  Seamly2D is distributed in the hope that it will be useful,
+ **  Valentina is distributed in the hope that it will be useful,
  **  but WITHOUT ANY WARRANTY; without even the implied warranty of
  **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  **  GNU General Public License for more details.
  **
  **  You should have received a copy of the GNU General Public License
- **  along with Seamly2D.  If not, see <http://www.gnu.org/licenses/>.
+ **  along with Valentina.  If not, see <http://www.gnu.org/licenses/>.
  **
  *************************************************************************/
 
@@ -69,11 +64,21 @@ class QFileSystemWatcher;
 class QLabel;
 class DialogVariables;
 class DialogTool;
-class DialogHistory;
-class VWidgetGroups;
-class VWidgetDetails;
+class HistoryDialog;
+class CalculatorDialog;
+class DecimalChartDialog;
+class ShowInfoDialog;
+class ShortcutsDialog;
+class GroupsWidget;
+class PiecesWidget;
+class DraftToolBox;
+class PieceToolBox;
+class LayoutToolBox;
 class QToolButton;
 class QDoubleSpinBox;
+class QFontComboBox;
+class MouseCoordinates;
+class PenToolBar;
 
 /**
  * @brief The MainWindow class main windows.
@@ -89,9 +94,19 @@ public:
 
 public slots:
     void ProcessCMD();
+    void penChanged(Pen pen);
 
     virtual void ShowToolTip(const QString &toolTip) Q_DECL_OVERRIDE;
+    virtual void updateGroups() Q_DECL_OVERRIDE;
     virtual void zoomToSelected() Q_DECL_OVERRIDE;
+    void         showAllGroups();
+    void         hideAllGroups();
+    void         lockAllGroups();
+    void         unlockAllGroups();
+    void         addGroupToList();
+    void         deleteGroupFromList();
+    void         editGroup();
+    void         addSelectedItemsToGroup();
 
 signals:
     void RefreshHistory();
@@ -107,7 +122,7 @@ signals:
     void EnableSplinePathSelection(bool enable) const;
     void EnableNodeLabelSelection(bool enable) const;
     void EnableNodePointSelection(bool enable) const;
-    void EnableDetailSelection(bool enable) const;
+    void enablePieceSelection(bool enable) const;
 
     void EnableLabelHover(bool enable) const;
     void EnablePointHover(bool enable) const;
@@ -118,13 +133,14 @@ signals:
     void EnableSplinePathHover(bool enable) const;
     void EnableNodeLabelHover(bool enable) const;
     void EnableNodePointHover(bool enable) const;
-    void EnableDetailHover(bool enable) const;
+    void enablePieceHover(bool enable) const;
 
     void signalZoomToAreaActive(bool enable) const;
     void signalZoomPanActive(bool enable) const;
 
 protected:
     virtual void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
+    virtual void keyReleaseEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     virtual void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
     virtual void changeEvent(QEvent* event) Q_DECL_OVERRIDE;
     virtual void closeEvent(QCloseEvent *event) Q_DECL_OVERRIDE;
@@ -141,8 +157,9 @@ private slots:
     void LastUsedTool();
     void FullParseFile();
     void SetEnabledGUI(bool enabled);
-    void GlobalChangePP(const QString &patternPiece);
+    void GlobalchangeDraftBlock(const QString &patternPiece);
     void ToolBarStyles();
+    void resetOrigins();
     void showLayoutPages(int index);
     void Preferences();
 #if defined(Q_OS_MAC)
@@ -150,8 +167,9 @@ private slots:
 #endif
     void exportLayoutAs();
     void exportPiecesAs();
+    void exportDraftBlocksAs();
 
-    void handleArrowTool();
+    void handleArrowTool(bool checked);
     void handlePointAtDistanceAngleTool(bool checked);
     void handleAlongLineTool(bool checked);
     void handleMidpointTool(bool checked);
@@ -162,7 +180,7 @@ private slots:
     void handleTriangleTool(bool checked);
     void handleLineIntersectAxisTool(bool checked);
     void handlePointOfContactTool(bool checked);
-    void handlePointOfIntersectionTool(bool checked);
+    void handlePointIntersectXYTool(bool checked);
 
     void handleLineTool(bool checked);
     void handleLineIntersectTool(bool checked);
@@ -196,31 +214,34 @@ private slots:
 
     void handleInternalPathTool(bool checked);
     void handleAnchorPointTool(bool checked);
-    void handleInsertNodeTool(bool checked);
+    void handleInsertNodesTool(bool checked);
 
     void handlePatternPieceTool(bool checked);
-    void handleUnionDetailsTool(bool checked);
+    void handleUnionTool(bool checked);
 
     void handleNewLayout(bool checked);
 
-    void draftMode_Action(bool checked);
-    void ActionDetails(bool checked);
-    void ActionLayout(bool checked);
+    void showDraftMode(bool checked);
+    void showPieceMode(bool checked);
+    void showLayoutMode(bool checked);
 
     void New();
     bool SaveAs();
     bool Save();
     void Open();
 
-    void ClosedDialogUnionDetails(int result);
-    void ClosedDialogGroup(int result);
+    void closeUnionDialog(int result);
+    void ClosedEditGroupDialog(int result);
     void ClosedDialogInternalPath(int result);
     void ClosedDialogAnchorPoint(int result);
-    void ClosedDialogInsertNode(int result);
+    void ClosedInsertNodesDialog(int result);
 
     void zoomToPrevious();
-    void zoomToArea();
-    void zoomPan();
+    void zoomToArea(bool checked);
+    void zoomPan(bool checked);
+
+    void zoomToPoint(const QString& pointName);
+    void showZoomToPointDialog();
 
     void LoadIndividual();
     void LoadMultisize();
@@ -232,8 +253,8 @@ private slots:
     void OpenAt(QAction *where);
 #endif //defined(Q_OS_MAC)
 
-    void ChangedSize(const QString &text);
-    void ChangedHeight(const QString &text);
+    void ChangedSize(int index);
+    void ChangedHeight(int index);
 
 private:
     Q_DISABLE_COPY(MainWindow)
@@ -248,14 +269,16 @@ private:
     /** @brief tool last used tool */
     Tool                              lastUsedTool;
 
-    /** @brief sceneDraw draw scene. */
-    VMainGraphicsScene               *sceneDraw;
+    /** @brief draftScene draft block scene. */
+    VMainGraphicsScene               *draftScene;
 
-    /** @brief sceneDetails details scene. */
-    VMainGraphicsScene               *sceneDetails;
+    /** @brief pieceScene pattern piece scene. */
+    VMainGraphicsScene               *pieceScene;
 
-    /** @brief mouseCoordinate pointer to label who show mouse coordinate. */
-    QPointer<QLabel>                  mouseCoordinate;
+    /** @brief mouseCoordinates pointer to label who show mouse coordinate. */
+    QPointer<MouseCoordinates>        mouseCoordinates;
+
+    QPointer<QToolButton>             infoToolButton;
 
     /** @brief helpLabel help show tooltip. */
     QLabel                           *helpLabel;
@@ -271,28 +294,20 @@ private:
 
     QPointer<DialogVariables>         dialogTable;
     QSharedPointer<DialogTool>        dialogTool;
-    QPointer<DialogHistory>           dialogHistory;
+    QPointer<HistoryDialog>           historyDialog;
 
-    /** @brief comboBoxDraws comboc who show name of pattern peaces. */
-    QComboBox                        *comboBoxDraws;
-    QLabel                           *patternPieceLabel;
-
-    /** @brief mode keep current draw mode. */
-    Draw                              mode;
-
-    /** @brief currentDrawIndex save current selected pattern peace. */
-    qint32                            currentDrawIndex;
-
-    /** @brief currentToolBoxIndex save current set of tools. */
-    qint32                            currentToolBoxIndex;
-
+    QFontComboBox                    *fontComboBox;
+    QComboBox                        *fontSizeComboBox;
+    QComboBox                        *draftBlockComboBox;  /** @brief draftBlockComboBox stores names of draft blocks.*/
+    QLabel                           *draftBlockLabel;
+    Draw                              mode;                /** @brief mode stores current draw mode. */
+    qint32                            currentBlockIndex;   /** @brief currentBlockIndex  current selected draft block.*/
+    qint32                            currentToolBoxIndex; /** @brief currentToolBoxIndex  current set of tools. */
     bool                              isToolOptionsDockVisible;
     bool                              isGroupsDockVisible;
     bool                              isLayoutsDockVisible;
     bool                              isToolboxDockVisible;
-
-    /** @brief drawMode true if we current draw scene. */
-    bool                              drawMode;
+    bool                              drawMode;            /** @brief drawMode true if draft scene active. */
 
     enum { MaxRecentFiles = 5 };
     QAction                          *recentFileActs[MaxRecentFiles];
@@ -307,20 +322,27 @@ private:
     QPointer<QLabel>                  gradationHeightsLabel;
     QPointer<QLabel>                  gradationSizesLabel;
     VToolOptionsPropertyBrowser      *toolProperties;
-    VWidgetGroups                    *groupsWidget;
-    VWidgetDetails                   *patternPiecesWidget;
+    GroupsWidget                     *groupsWidget;
+    PiecesWidget                     *patternPiecesWidget;
     std::shared_ptr<VLockGuard<char>> lock;
 
-    QList<QToolButton*>               toolButtonPointerList;
     QDoubleSpinBox                   *zoomScaleSpinBox;
+    PenToolBar                       *m_penToolBar; //!< for selecting the current pen
+    PenToolBar                       *m_penReset;
+    QComboBox                        *m_zoomToPointComboBox;
 
     void                              SetDefaultHeight();
     void                              SetDefaultSize();
 
-    void                              initStatusToolBar();
+    void                              initStatusBar();
     void                              initModesToolBar();
     void                              initDraftToolBar();
+    void                              initPointNameToolBar();
     void                              initToolsToolBar();
+    void                              initToolBarVisibility();
+    void                              initPenToolBar();
+    void                              updateToolBarVisibility();
+    void                              setToolBarVisibility(QToolBar *toolbar, bool visible);
     void                              InitToolButtons();
 
     void                              handlePointsMenu();
@@ -328,10 +350,9 @@ private:
     void                              handleArcsMenu();
     void                              handleCurvesMenu();
     void                              handleCirclesMenu();
-    void                              handleEllipsesMenu();
-    void                              handleModifyMenu();
+    void                              handleOperationsMenu();
     void                              handlePatternPiecesMenu();
-    void                              handleDetailsMenu();
+    void                              handlePieceMenu();
     void                              handleLayoutMenu();
     void                              handleImagesMenu();
 
@@ -363,9 +384,9 @@ private:
     template <typename DrawTool>
     void ApplyDrawDialog();
     template <typename DrawTool>
-    void ClosedDetailsDialogWithApply(int result);
+    void ClosedPiecesDialogWithApply(int result);
     template <typename DrawTool>
-    void ApplyDetailsDialog();
+    void applyPiecesDialog();
 
     bool               SavePattern(const QString &fileName, QString &error);
     void               AutoSavePattern();
@@ -379,10 +400,10 @@ private:
     void               CreateMenus();
     void               CreateActions();
     void               InitAutoSave();
-    QString            PatternPieceName(const QString &text);
+    QString            createDraftBlockName(const QString &text);
     QString            CheckPathToMeasurements(const QString &patternPath, const QString &path);
-    QComboBox          *SetGradationList(QLabel *label, const QStringList &list);
-    void               ChangePP(int index, bool zoomBestFit = true);
+    QComboBox         *SetGradationList(QLabel *label, const QStringList &list);
+    void               changeDraftBlock(int index, bool zoomBestFit = true);
     /**
      * @brief EndVisualization try show dialog after and working with tool visualization.
      */
@@ -397,8 +418,8 @@ private:
     void               FileClosedCorrect();
     QStringList        GetUnlokedRestoreFileList()const;
 
-    void               AddPP(const QString &PPName);
-    QPointF            StartPositionNewPP() const;
+    void               addDraftBlock(const QString &blockName);
+    QPointF            draftBlockStartPosition() const;
 
     void               InitScenes();
 
@@ -417,6 +438,13 @@ private:
     QString            GetMeasurementFileName();
 
     void               UpdateWindowTitle();
+    void               upDateScenes();
+    void               updateViewToolbar();
+    void               resetPanShortcuts();
+
+    QStringList        draftPointNamesList();
+
+    void               updateZoomToPointComboBox(QStringList namesList);
 
     bool               IgnoreLocking(int error, const QString &path);
 
@@ -428,10 +456,10 @@ private:
     void ToolSelectArc() const;
     void ToolSelectPointArc() const;
     void ToolSelectCurve() const;
-    void ToolSelectAllDrawObjects() const;
+    void selectAllDraftObjectsTool() const;
     void ToolSelectOperationObjects() const;
     void ToolSelectGroupObjects() const;
-    void ToolSelectDetail() const;
+    void selectPieceTool() const;
 };
 
 #endif // MAINWINDOW_H

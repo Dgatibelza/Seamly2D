@@ -18,7 +18,7 @@ public:
                                           A4,
                                           Letter,
                                           Legal,
-                                          Roll24in = 7, // Be carefull when change order roll type
+                                          Roll24in = 7, // Be careful when changing order roll type
                                           Roll30in,     // Used also for showing icon
                                           Roll36in,
                                           Roll42in,
@@ -32,10 +32,10 @@ protected:
         const static  FormatsVector pageFormatNames;
         typedef int VIndexType;
 
-        QSizeF GetTemplateSize(const PaperSizeTemplate &tmpl, const Unit &unit) const;
+        QSizeF getTemplateSize(const PaperSizeTemplate &tmpl, const Unit &unit) const;
         QSizeF RoundTemplateSize(qreal width, qreal height, Unit unit) const;
 
-        void InitTemplates(QComboBox *comboBoxTemplates);
+        void initTemplates(QComboBox *comboBoxTemplates);
 
 
 };

@@ -51,9 +51,9 @@
 
 #include "mainwindow.h"
 #include "core/vapplication.h"
-#include "../fervor/fvupdater.h"
 #include "../vpatterndb/vpiecenode.h"
 
+#include <QApplication>
 #include <QMessageBox> // For QT_REQUIRE_VERSION
 #include <QTimer>
 
@@ -68,11 +68,19 @@ int main(int argc, char *argv[])
     Q_INIT_RESOURCE(flags);
     Q_INIT_RESOURCE(icons);
     Q_INIT_RESOURCE(toolicon);
+    Q_INIT_RESOURCE(sounds);
 
-    QT_REQUIRE_VERSION(argc, argv, "5.2.0")
+    QT_REQUIRE_VERSION(argc, argv, "5.15.2");
 
     // Need to internally move a node inside a piece main path
     qRegisterMetaTypeStreamOperators<VPieceNode>("VPieceNode");
+
+    //------------------------------------------------------------------------
+    // On macOS, correct WebView / QtQuick compositing and stacking requires running
+    // Qt in layer-backed mode, which again requires rendering on the Gui thread.
+    qWarning("Seamly2D: Setting QT_MAC_WANTS_LAYER=1 and QSG_RENDER_LOOP=basic");
+    qputenv("QT_MAC_WANTS_LAYER", "1");
+    //------------------------------------------------------------------------
 
 #ifndef Q_OS_MAC // supports natively
     InitHighDpiScaling(argc, argv);
@@ -81,19 +89,6 @@ int main(int argc, char *argv[])
     VApplication app(argc, argv);
 
     app.InitOptions();
-
-    // Due to unknown reasons version checker cause a crash. See issue #633.
-    // Before we will find what cause such crashes it will stay disabled in Release mode.
-#ifndef V_NO_ASSERT
-    if (VApplication::IsGUIMode())
-    {
-        // Set feed URL before doing anything else
-        FvUpdater::sharedUpdater()->SetFeedURL(defaultFeedURL);
-
-        // Check for updates automatically
-        FvUpdater::sharedUpdater()->CheckForUpdatesSilent();
-    }
-#endif // V_NO_ASSERT
 
     MainWindow w;
 #if !defined(Q_OS_MAC)

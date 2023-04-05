@@ -2,7 +2,7 @@
  *                                                                         *
  *   Copyright (C) 2017  Seamly, LLC                                       *
  *                                                                         *
- *   https://github.com/fashionfreedom/seamly2d                             *
+ *   https://github.com/fashionfreedom/seamly2d                            *
  *                                                                         *
  ***************************************************************************
  **
@@ -85,7 +85,9 @@ const QString VToolNormal::ToolType = QStringLiteral("normal");
  * @param doc dom document container.
  * @param data container with variables.
  * @param id object id in container.
- * @param typeLine line type.
+ * @param lineType line type.
+ * @param lineWeight line weight.
+ * @param lineColor line color.
  * @param formula string with formula normal length.
  * @param angle additional angle.
  * @param firstPointId id first line point.
@@ -93,11 +95,12 @@ const QString VToolNormal::ToolType = QStringLiteral("normal");
  * @param typeCreation way we create this tool.
  * @param parent parent object.
  */
-VToolNormal::VToolNormal(VAbstractPattern *doc, VContainer *data, const quint32 &id, const QString &typeLine,
-                         const QString &lineColor, const QString &formula, const qreal &angle,
+VToolNormal::VToolNormal(VAbstractPattern *doc, VContainer *data, const quint32 &id, const QString &lineType,
+                         const QString &lineWeight, const QString &lineColor, const QString &formula,
+                         const qreal &angle,
                          const quint32 &firstPointId, const quint32 &secondPointId, const Source &typeCreation,
                          QGraphicsItem *parent)
-    :VToolLinePoint(doc, data, id, typeLine, lineColor, formula, firstPointId, angle, parent),
+    :VToolLinePoint(doc, data, id, lineType, lineWeight, lineColor, formula, firstPointId, angle, parent),
     secondPointId(secondPointId)
 {
 
@@ -113,8 +116,10 @@ void VToolNormal::setDialog()
     SCASSERT(not m_dialog.isNull())
     QSharedPointer<DialogNormal> dialogTool = m_dialog.objectCast<DialogNormal>();
     SCASSERT(not dialogTool.isNull())
-    const QSharedPointer<VPointF> p = VAbstractTool::data.GeometricObject<VPointF>(id);
-    dialogTool->SetTypeLine(m_lineType);
+    const QSharedPointer<VPointF> p = VAbstractTool::data.GeometricObject<VPointF>(m_id);
+    dialogTool->setLineType(m_lineType);
+    dialogTool->setLineWeight(m_lineWeight);
+    dialogTool->setLineColor(lineColor);
     dialogTool->SetFormula(formulaLength);
     dialogTool->SetAngle(angle);
     dialogTool->SetFirstPointId(basePointId);
@@ -137,14 +142,15 @@ VToolNormal* VToolNormal::Create(QSharedPointer<DialogTool> dialog, VMainGraphic
     QSharedPointer<DialogNormal> dialogTool = dialog.objectCast<DialogNormal>();
     SCASSERT(not dialogTool.isNull())
     QString formula = dialogTool->GetFormula();
-    const quint32 firstPointId = dialogTool->GetFirstPointId();
+    const quint32 firstPointId  = dialogTool->GetFirstPointId();
     const quint32 secondPointId = dialogTool->GetSecondPointId();
-    const QString typeLine = dialogTool->GetTypeLine();
-    const QString lineColor = dialogTool->GetLineColor();
-    const QString pointName = dialogTool->getPointName();
-    const qreal angle = dialogTool->GetAngle();
-    VToolNormal *point = Create(0, formula, firstPointId, secondPointId, typeLine, lineColor, pointName, angle, 5, 10,
-                                scene, doc, data, Document::FullParse, Source::FromGui);
+    const QString lineType      = dialogTool->getLineType();
+    const QString lineWeight    = dialogTool->getLineWeight();
+    const QString lineColor     = dialogTool->getLineColor();
+    const QString pointName     = dialogTool->getPointName();
+    const qreal   angle         = dialogTool->GetAngle();
+    VToolNormal *point = Create(0, formula, firstPointId, secondPointId, lineType, lineWeight, lineColor, pointName, angle,
+                                5, 10, true, scene, doc, data, Document::FullParse, Source::FromGui);
     if (point != nullptr)
     {
         point->m_dialog = dialogTool;
@@ -159,20 +165,24 @@ VToolNormal* VToolNormal::Create(QSharedPointer<DialogTool> dialog, VMainGraphic
  * @param formula string with formula normal length.
  * @param firstPointId id first line point.
  * @param secondPointId id second line point.
- * @param typeLine line type.
+ * @param lineType line type.
+ * @param lineWeight line weight.
+ * @param lineColor line color.
  * @param pointName point name.
  * @param angle additional angle.
  * @param mx label bias x axis.
  * @param my label bias y axis.
+ * @param showPointName show/hide point name text.
  * @param scene pointer to scene.
  * @param doc dom document container.
  * @param data container with variables.
  * @param parse parser file mode.
  * @param typeCreation way we create this tool.
  */
-VToolNormal* VToolNormal::Create(const quint32 _id, QString &formula, const quint32 &firstPointId,
-                                 const quint32 &secondPointId, const QString &typeLine, const QString &lineColor,
-                                 const QString &pointName, const qreal angle, const qreal &mx, const qreal &my,
+VToolNormal* VToolNormal::Create(const quint32 _id, QString &formula, quint32 firstPointId,
+                                 quint32 secondPointId, const QString &lineType, const QString &lineWeight,
+                                 const QString &lineColor,
+                                 const QString &pointName, qreal angle, qreal mx, qreal my, bool showPointName,
                                  VMainGraphicsScene *scene, VAbstractPattern *doc, VContainer *data,
                                  const Document &parse,
                                  const Source &typeCreation)
@@ -185,14 +195,17 @@ VToolNormal* VToolNormal::Create(const quint32 _id, QString &formula, const quin
     QPointF fPoint = VToolNormal::FindPoint(static_cast<QPointF>(*firstPoint), static_cast<QPointF>(*secondPoint),
                                             qApp->toPixel(result), angle);
     quint32 id = _id;
+    VPointF *p = new VPointF(fPoint, pointName, mx, my);
+    p->setShowPointName(showPointName);
+
     if (typeCreation == Source::FromGui)
     {
-        id = data->AddGObject(new VPointF(fPoint, pointName, mx, my));
+        id = data->AddGObject(p);
         data->AddLine(firstPointId, id);
     }
     else
     {
-        data->UpdateGObject(id, new VPointF(fPoint, pointName, mx, my));
+        data->UpdateGObject(id, p);
         data->AddLine(firstPointId, id);
         if (parse != Document::FullParse)
         {
@@ -203,7 +216,7 @@ VToolNormal* VToolNormal::Create(const quint32 _id, QString &formula, const quin
     if (parse == Document::FullParse)
     {
         VDrawTool::AddRecord(id, Tool::Normal, doc);
-        VToolNormal *point = new VToolNormal(doc, data, id, typeLine, lineColor, formula, angle, firstPointId,
+        VToolNormal *point = new VToolNormal(doc, data, id, lineType, lineWeight, lineColor, formula, angle, firstPointId,
                                              secondPointId, typeCreation);
         scene->addItem(point);
         InitToolConnections(scene, point);
@@ -245,11 +258,11 @@ QString VToolNormal::SecondPointName() const
  * @brief contextMenuEvent handle context menu events.
  * @param event context menu event.
  */
-void VToolNormal::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+void VToolNormal::showContextMenu(QGraphicsSceneContextMenuEvent *event, quint32 id)
 {
     try
     {
-        ContextMenu<DialogNormal>(this, event);
+        ContextMenu<DialogNormal>(event, id);
     }
     catch(const VExceptionToolWasDeleted &e)
     {
@@ -278,12 +291,13 @@ void VToolNormal::SaveDialog(QDomElement &domElement)
     SCASSERT(not m_dialog.isNull())
     QSharedPointer<DialogNormal> dialogTool = m_dialog.objectCast<DialogNormal>();
     SCASSERT(not dialogTool.isNull())
-    doc->SetAttribute(domElement, AttrName, dialogTool->getPointName());
-    doc->SetAttribute(domElement, AttrLineType, dialogTool->GetTypeLine());
-    doc->SetAttribute(domElement, AttrLineColor, dialogTool->GetLineColor());
-    doc->SetAttribute(domElement, AttrLength, dialogTool->GetFormula());
-    doc->SetAttribute(domElement, AttrAngle, QString().setNum(dialogTool->GetAngle()));
-    doc->SetAttribute(domElement, AttrFirstPoint, QString().setNum(dialogTool->GetFirstPointId()));
+    doc->SetAttribute(domElement, AttrName,        dialogTool->getPointName());
+    doc->SetAttribute(domElement, AttrLineType,    dialogTool->getLineType());
+    doc->SetAttribute(domElement, AttrLineWeight,  dialogTool->getLineWeight());
+    doc->SetAttribute(domElement, AttrLineColor,   dialogTool->getLineColor());
+    doc->SetAttribute(domElement, AttrLength,      dialogTool->GetFormula());
+    doc->SetAttribute(domElement, AttrAngle,       QString().setNum(dialogTool->GetAngle()));
+    doc->SetAttribute(domElement, AttrFirstPoint,  QString().setNum(dialogTool->GetFirstPointId()));
     doc->SetAttribute(domElement, AttrSecondPoint, QString().setNum(dialogTool->GetSecondPointId()));
 }
 
@@ -302,12 +316,13 @@ void VToolNormal::SaveOptions(QDomElement &tag, QSharedPointer<VGObject> &obj)
 //---------------------------------------------------------------------------------------------------------------------
 void VToolNormal::ReadToolAttributes(const QDomElement &domElement)
 {
-    m_lineType = doc->GetParametrString(domElement, AttrLineType, LineTypeSolidLine);
-    lineColor = doc->GetParametrString(domElement, AttrLineColor, ColorBlack);
+    m_lineType    = doc->GetParametrString(domElement, AttrLineType, LineTypeSolidLine);
+    m_lineWeight  = doc->GetParametrString(domElement, AttrLineWeight,  "0.35");
+    lineColor     = doc->GetParametrString(domElement, AttrLineColor, ColorBlack);
     formulaLength = doc->GetParametrString(domElement, AttrLength, "");
-    basePointId = doc->GetParametrUInt(domElement, AttrFirstPoint, NULL_ID_STR);
+    basePointId   = doc->GetParametrUInt(domElement, AttrFirstPoint, NULL_ID_STR);
     secondPointId = doc->GetParametrUInt(domElement, AttrSecondPoint, NULL_ID_STR);
-    angle = doc->GetParametrDouble(domElement, AttrAngle, "0");
+    angle         = doc->GetParametrDouble(domElement, AttrAngle, "0");
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -322,7 +337,8 @@ void VToolNormal::SetVisualization()
         visual->setObject2Id(secondPointId);
         visual->setLength(qApp->TrVars()->FormulaToUser(formulaLength, qApp->Settings()->GetOsSeparator()));
         visual->SetAngle(angle);
-        visual->setLineStyle(LineStyleToPenStyle(m_lineType));
+        visual->setLineStyle(lineTypeToPenStyle(m_lineType));
+        visual->setLineWeight(m_lineWeight);
         visual->RefreshGeometry();
     }
 }
@@ -340,7 +356,7 @@ void VToolNormal::SetSecondPointId(const quint32 &value)
     {
         secondPointId = value;
 
-        QSharedPointer<VGObject> obj = VAbstractTool::data.GetGObject(id);
+        QSharedPointer<VGObject> obj = VAbstractTool::data.GetGObject(m_id);
         SaveOption(obj);
     }
 }

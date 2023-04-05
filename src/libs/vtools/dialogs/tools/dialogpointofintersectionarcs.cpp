@@ -66,9 +66,12 @@
 //---------------------------------------------------------------------------------------------------------------------
 DialogPointOfIntersectionArcs::DialogPointOfIntersectionArcs(const VContainer *data, const quint32 &toolId,
                                                              QWidget *parent)
-    :DialogTool(data, toolId, parent), ui(new Ui::DialogPointOfIntersectionArcs)
+    : DialogTool(data, toolId, parent)
+    , ui(new Ui::DialogPointOfIntersectionArcs)
 {
     ui->setupUi(this);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+    setWindowIcon(QIcon(":/toolicon/32x32/point_of_intersection_arcs.png"));
 
     ui->lineEditNamePoint->setClearButtonEnabled(true);
 
@@ -82,11 +85,9 @@ DialogPointOfIntersectionArcs::DialogPointOfIntersectionArcs(const VContainer *d
     FillComboBoxArcs(ui->comboBoxArc2);
     FillComboBoxCrossCirclesPoints(ui->comboBoxResult);
 
-    connect(ui->lineEditNamePoint, &QLineEdit::textChanged, this, &DialogPointOfIntersectionArcs::NamePointChanged);
-    connect(ui->comboBoxArc1, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
-            this, &DialogPointOfIntersectionArcs::ArcChanged);
-    connect(ui->comboBoxArc1, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
-            this, &DialogPointOfIntersectionArcs::ArcChanged);
+    connect(ui->lineEditNamePoint, &QLineEdit::textChanged,  this, &DialogPointOfIntersectionArcs::NamePointChanged);
+    connect(ui->comboBoxArc1,      &QComboBox::currentTextChanged, this, &DialogPointOfIntersectionArcs::ArcChanged);
+    connect(ui->comboBoxArc1,      &QComboBox::currentTextChanged, this, &DialogPointOfIntersectionArcs::ArcChanged);
 
     vis = new VisToolPointOfIntersectionArcs(data);
 }

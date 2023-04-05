@@ -61,7 +61,7 @@
 #include "../xml/vpattern.h"
 #include "../vpatterndb/vcontainer.h"
 #include "../core/vapplication.h"
-#include "../vtools/dialogs/support/dialogeditlabel.h"
+#include "../vtools/dialogs/support/editlabeltemplate_dialog.h"
 
 // calc how many combinations we have
 static const int heightsCount = (static_cast<int>(GHeights::H200) -
@@ -99,7 +99,7 @@ DialogPatternProperties::DialogPatternProperties(VPattern *doc,  VContainer *pat
     VSettings *settings = qApp->Seamly2DSettings();
     settings->GetOsSeparator() ? setLocale(QLocale()) : setLocale(QLocale::c());
 
-    if (qApp->GetPPath().isEmpty())
+    if (qApp->getFilePath().isEmpty())
     {
         ui->lineEditPathToFile->setText(tr("<Empty>"));
         ui->lineEditPathToFile->setToolTip(tr("File was not saved yet."));
@@ -107,15 +107,15 @@ DialogPatternProperties::DialogPatternProperties(VPattern *doc,  VContainer *pat
     }
     else
     {
-        ui->lineEditPathToFile->setText(QDir::toNativeSeparators(qApp->GetPPath()));
-        ui->lineEditPathToFile->setToolTip(QDir::toNativeSeparators(qApp->GetPPath()));
+        ui->lineEditPathToFile->setText(QDir::toNativeSeparators(qApp->getFilePath()));
+        ui->lineEditPathToFile->setToolTip(QDir::toNativeSeparators(qApp->getFilePath()));
         ui->pushButtonShowInExplorer->setEnabled(true);
     }
     ui->lineEditPathToFile->setCursorPosition(0);
 
     connect(ui->pushButtonShowInExplorer, &QPushButton::clicked, this, [this]()
     {
-        ShowInGraphicalShell(qApp->GetPPath());
+        ShowInGraphicalShell(qApp->getFilePath());
     });
 #if defined(Q_OS_MAC)
     ui->pushButtonShowInExplorer->setText(tr("Show in Finder"));
@@ -632,7 +632,7 @@ void DialogPatternProperties::SaveTemplateData()
 {
     if (templateDataChanged)
     {
-        doc->SetPatternLabelTemplate(templateLines);
+        doc->setPatternLabelTemplate(templateLines);
         templateDataChanged = false;
         emit doc->patternChanged(false);
         emit doc->UpdatePatternLabel();
@@ -913,9 +913,9 @@ void DialogPatternProperties::EditLabel()
         }
     }
 
-    DialogEditLabel editor(doc);
+    EditLabelTemplateDialog editor(doc);
 
-    templateDataChanged ? editor.SetTemplate(templateLines) : editor.SetTemplate(doc->GetPatternLabelTemplate());
+    templateDataChanged ? editor.SetTemplate(templateLines) : editor.SetTemplate(doc->getPatternLabelTemplate());
 
     if (QDialog::Accepted == editor.exec())
     {

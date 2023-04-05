@@ -2,7 +2,7 @@
  *                                                                         *
  *   Copyright (C) 2017  Seamly, LLC                                       *
  *                                                                         *
- *   https://github.com/fashionfreedom/seamly2d                             *
+ *   https://github.com/fashionfreedom/seamly2d                            *
  *                                                                         *
  ***************************************************************************
  **
@@ -76,8 +76,8 @@ const QString VNodeSpline::ToolType = QStringLiteral("modelingSpline");
  * @param qoParent QObject parent.
  */
 VNodeSpline::VNodeSpline(VAbstractPattern *doc, VContainer *data, quint32 id, quint32 idSpline,
-                         const Source &typeCreation, const QString &drawName, const quint32 &idTool, QObject *qoParent)
-    :VAbstractNode(doc, data, id, idSpline, drawName, idTool, qoParent)
+                         const Source &typeCreation, const QString &blockName, const quint32 &idTool, QObject *qoParent)
+    :VAbstractNode(doc, data, id, idSpline, blockName, idTool, qoParent)
 {
     ToolCreation(typeCreation);
 }
@@ -96,13 +96,13 @@ VNodeSpline::VNodeSpline(VAbstractPattern *doc, VContainer *data, quint32 id, qu
  */
 VNodeSpline *VNodeSpline::Create(VAbstractPattern *doc, VContainer *data, quint32 id,
                                  quint32 idSpline, const Document &parse,
-                                 const Source &typeCreation, const QString &drawName, const quint32 &idTool)
+                                 const Source &typeCreation, const QString &blockName, const quint32 &idTool)
 {
     VNodeSpline *spl = nullptr;
     if (parse == Document::FullParse)
     {
         VAbstractTool::AddRecord(id, Tool::NodeSpline, doc);
-        spl = new VNodeSpline(doc, data, id, idSpline, typeCreation, drawName, idTool, doc);
+        spl = new VNodeSpline(doc, data, id, idSpline, typeCreation, blockName, idTool, doc);
 
         VAbstractPattern::AddTool(id, spl);
         if (idTool != NULL_ID)
@@ -147,13 +147,13 @@ void VNodeSpline::AllowSelecting(bool enabled)
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
- * @brief AddToFile add tag with informations about tool into file.
+ * @brief AddToFile add tag with Information about tool into file.
  */
 void VNodeSpline::AddToFile()
 {
     QDomElement domElement = doc->createElement(getTagName());
 
-    doc->SetAttribute(domElement, VDomDocument::AttrId, id);
+    doc->SetAttribute(domElement, VDomDocument::AttrId, m_id);
     doc->SetAttribute(domElement, AttrType, ToolType);
     doc->SetAttribute(domElement, AttrIdObject, idNode);
     if (idTool != NULL_ID)

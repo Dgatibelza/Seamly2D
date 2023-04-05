@@ -81,17 +81,18 @@ public:
     QTransform    transform() const;
     void          setCurrentTransform(const QTransform &transform);
     void          swapTransforms();
-    void          SetDisableTools(bool disable, const QString &namePP);
+    void          SetDisableTools(bool disable, const QString &draftBlockName);
     QPointF       getScenePos() const;
 
     QRectF        visibleItemsBoundingRect() const;
     void          InitOrigins();
     void          setOriginsVisible(bool visible);
+
 public slots:
-    void          ChoosedItem(quint32 id, const SceneObject &type);
+    void          chosenItem(quint32 id, const SceneObject &type);
     void          SelectedItem(bool selected, quint32 object, quint32 tool);
     void          EnableItemMove(bool move);
-    void          EnableDetailsMode(bool mode);
+    void          enablePiecesMode(bool mode);
     void          ItemsSelection(const SelectionType &type);
     void          HighlightItem(quint32 id);
 
@@ -104,7 +105,7 @@ public slots:
     void          ToggleSplinePathSelection(bool enabled);
     void          ToggleNodeLabelSelection(bool enabled);
     void          ToggleNodePointSelection(bool enabled);
-    void          ToggleDetailSelection(bool enabled);
+    void          togglePieceSelection(bool enabled);
 
     void          ToggleLabelHover(bool enabled);
     void          TogglePointHover(bool enabled);
@@ -115,11 +116,13 @@ public slots:
     void          ToggleSplinePathHover(bool enabled);
     void          ToggleNodeLabelHover(bool enabled);
     void          ToggleNodePointHover(bool enabled);
-    void          ToggleDetailHover(bool enabled);
+    void          togglePieceHover(bool enabled);
+
 protected:
     virtual void  mouseMoveEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
     virtual void  mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
     virtual void  mouseReleaseEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
+
 signals:
     /**
      * @brief mouseMove send new mouse position.
@@ -132,19 +135,20 @@ signals:
     void          ItemClicked(QGraphicsItem* pItem);
 
     /**
-     * @brief ChoosedObject send option choosed object.
+     * @brief ChosenObject send option choosed object.
      * @param id object id.
      * @param type object scene type.
      */
-    void          ChoosedObject(quint32 id, SceneObject type);
+    void          ChosenObject(quint32 id, SceneObject type);
     void          SelectedObject(bool selected, quint32 object, quint32 tool);
-    void          DisableItem(bool disable, const QString &namePP);
+    void          DisableItem(bool disable, const QString &draftBlockName);
     void          EnableToolMove(bool move);
-    void          CurveDetailsMode(bool mode);
+    void          pieceLockedChanged(quint32 id, bool lock);
+    void          curvePiecesMode(bool mode);
     void          ItemSelection(const SelectionType &type);
-    void          HighlightDetail(quint32 id);
+    void          highlightPiece(quint32 id);
 
-    void          EnableLabelItemSelection(bool enable);
+    void          enableTextItemSelection(bool enable);
     void          EnablePointItemSelection(bool enable);
     void          EnableLineItemSelection(bool enable);
     void          EnableArcItemSelection(bool enable);
@@ -155,7 +159,7 @@ signals:
     void          EnableNodePointItemSelection(bool enabled);
     void          EnableDetailItemSelection(bool enabled);
 
-    void          EnableLabelItemHover(bool enable);
+    void          enableTextItemHover(bool enable);
     void          EnablePointItemHover(bool enable);
     void          EnableArcItemHover(bool enable);
     void          EnableElArcItemHover(bool enable);

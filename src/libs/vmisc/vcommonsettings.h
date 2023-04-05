@@ -93,14 +93,29 @@ public:
     QString              GetPathLabelTemplate() const;
     void                 SetPathLabelTemplate(const QString &value);
 
+    QString              getDefaultPatternTemplate() const;
+    void                 setDefaultPatternTemplate(const QString &text);
+
+    QString              getDefaultPieceTemplate() const;
+    void                 setDefaultPieceTemplate(const QString &text);
+
     bool                 GetOsSeparator() const;
     void                 SetOsSeparator(const bool &value);
 
     bool                 GetAutosaveState() const;
     void                 SetAutosaveState(const bool &value);
 
-    int                  GetAutosaveTime() const;
-    void                 SetAutosaveTime(const int &value);
+    int                  getAutosaveInterval() const;
+    void                 setAutosaveInterval(const int &value);
+
+    bool                 useModeType() const;
+    void                 setUseModeType(const bool &value);
+
+    bool                 useLastExportFormat() const;
+    void                 setUseLastExportFormat(const bool &value);
+
+    QString              getExportFormat() const;
+    void                 setExportFormat(const QString &value);
 
     bool                 GetSendReportState() const;
     void                 SetSendReportState(const bool &value);
@@ -114,14 +129,53 @@ public:
     QString              GetUnit() const;
     void                 SetUnit(const QString &value);
 
-    bool                 GetConfirmItemDelete() const;
-    void                 SetConfirmItemDelete(const bool &value);
+    bool                 getConfirmItemDelete() const;
+    void                 setConfirmItemDelete(const bool &value);
 
-    bool                 GetConfirmFormatRewriting() const;
-    void                 SetConfirmFormatRewriting(const bool &value);
+    bool                 getConfirmFormatRewriting() const;
+    void                 setConfirmFormatRewriting(const bool &value);
+
+    QString              getMoveSuffix() const;
+    void                 setMoveSuffix(const QString &value);
+
+    QString              getRotateSuffix() const;
+    void                 setRotateSuffix(const QString &value);
+
+    QString              getMirrorByAxisSuffix() const;
+    void                 setMirrorByAxisSuffix(const QString &value);
+
+    QString              getMirrorByLineSuffix() const;
+    void                 setMirrorByLineSuffix(const QString &value);
 
     bool                 getToolBarStyle() const;
     void                 setToolBarStyle(const bool &value);
+
+    bool                 getShowToolsToolBar() const;
+    void                 setShowToolsToolBar(const bool &value);
+
+    bool                 getShowPointToolBar() const;
+    void                 setShowPointToolBar(const bool &value);
+
+    bool                 getShowLineToolBar() const;
+    void                 setShowLineToolBar(const bool &value);
+
+    bool                 getShowCurveToolBar() const;
+    void                 setShowCurveToolBar(const bool &value);
+
+    bool                 getShowArcToolBar() const;
+    void                 setShowArcToolBar(const bool &value);
+
+    bool                 getShowOpsToolBar() const;
+    void                 setShowOpsToolBar(const bool &value);
+
+    bool                 getShowPieceToolBar() const;
+    void                 setShowPieceToolBar(const bool &value);
+
+    bool                 getShowDetailsToolBar() const;
+    void                 setShowDetailsToolBar(const bool &value);
+
+    bool                 getShowLayoutToolBar() const;
+    void                 setShowLayoutToolBar(const bool &value);
 
     bool                 getShowScrollBars() const;
     void                 setShowScrollBars(const bool &value);
@@ -144,15 +198,47 @@ public:
     bool                 isZoomDoubleClick() const;
     void                 setZoomDoubleClick(const bool &value);
 
+    bool                 isPanActiveSpaceKey() const;
+    void                 setPanActiveSpaceKey(const bool &value);
+
     int                  getZoomSpeedFactor() const;
     void                 setZoomSpeedFactor(const int &factor);
 
+    int                  getExportQuality() const;
+    void                 setExportQuality(const int &value);
 
     QString              getZoomRBPositiveColor() const;
     void                 setZoomRBPositiveColor(const QString &value);
 
     QString              getZoomRBNegativeColor() const;
     void                 setZoomRBNegativeColor(const QString &value);
+
+    QString              getPointNameColor() const;
+    void                 setPointNameColor(const QString &value);
+
+    QString              getPointNameHoverColor() const;
+    void                 setPointNameHoverColor(const QString &value);
+
+    QString              getAxisOrginColor() const;
+    void                 setAxisOrginColor(const QString &value);
+
+    QString              getDefaultLineColor() const;
+    void                 setDefaultLineColor(const QString &value);
+
+    qreal                getDefaultLineWeight() const;
+    void                 setDefaultLineWeight(const qreal &value);
+
+    QString              getDefaultLineType() const;
+    void                 setDefaultLineType(const QString &value);
+
+    QString              getPrimarySupportColor() const;
+    void                 setPrimarySupportColor(const QString &value);
+
+    QString              getSecondarySupportColor() const;
+    void                 setSecondarySupportColor(const QString &value);
+
+    QString              getTertiarySupportColor() const;
+    void                 setTertiarySupportColor(const QString &value);
 
     qreal                getConstrainValue() const;
     void                 setConstrainValue(const qreal &value);
@@ -162,6 +248,10 @@ public:
 
     int                  GetUndoCount() const;
     void                 SetUndoCount(const int &value);
+
+    QString              getSound() const;
+    QString              getSelectionSound() const;
+    void                 setSelectionSound(const QString &value);
 
     QStringList          GetRecentFileList() const;
     void                 SetRecentFileList(const QStringList &value);
@@ -181,8 +271,8 @@ public:
     QSize                getPreferenceDialogSize() const;
     void                 setPreferenceDialogSize(const QSize& sz);
 
-    QSize                GetToolSeamAllowanceDialogSize() const;
-    void                 SetToolSeamAllowanceDialogSize(const QSize& sz);
+    QSize                getPatternPieceDialogSize() const;
+    void                 setPatternPieceDialogSize(const QSize& sz);
 
     QSize                GetFormulaWizardDialogSize() const;
     void                 SetFormulaWizardDialogSize(const QSize& sz);
@@ -196,14 +286,17 @@ public:
     QDate                GetDateOfLastRemind() const;
     void                 SetDateOfLastRemind(const QDate &date);
 
-    bool                 GetForbidWorkpieceFlipping() const;
-    void                 SetForbidWorkpieceFlipping(bool value);
+    bool                 getForbidPieceFlipping() const;
+    void                 setForbidPieceFlipping(bool value);
 
-    bool                 IsHideMainPath() const;
-    void                 SetHideMainPath(bool value);
+    bool                 isHideSeamLine() const;
+    void                 setHideSeamLine(bool value);
 
-    bool                 showSecondNotch() const;
-    void                 setShowSecondNotch(bool value);
+    bool                 showSeamlineNotch() const;
+    void                 setShowSeamlineNotch(bool value);
+
+    bool                 showSeamAllowanceNotch() const;
+    void                 setShowSeamAllowanceNotch(bool value);
 
     qreal                getDefaultNotchLength() const;
     void                 setDefaultNotchLength(const qreal &value);
@@ -213,6 +306,9 @@ public:
 
     QString              getDefaultNotchType() const;
     void                 setDefaultNotchType(const QString &value);
+
+    QString              getDefaultNotchColor() const;
+    void                 setDefaultNotchColor(const QString &value);
 
     void                 SetCSVWithHeader(bool withHeader);
     bool                 GetCSVWithHeader() const;
@@ -229,12 +325,117 @@ public:
     void                 SetDefaultSeamAllowance(double value);
     double               GetDefaultSeamAllowance();
 
-    QFont                GetLabelFont() const;
-    void                 SetLabelFont(const QFont &f);
+    QString              getDefaultSeamColor() const;
+    void                 setDefaultSeamColor(const QString &value);
+
+    QString              getDefaultSeamLinetype() const;
+    void                 setDefaultSeamLinetype(const QString &value);
+
+    qreal                getDefaultSeamLineweight() const;
+    void                 setDefaultSeamLineweight(const qreal &value);
+
+    QString              getDefaultCutColor() const;
+    void                 setDefaultCutColor(const QString &value);
+
+    QString              getDefaultCutLinetype() const;
+    void                 setDefaultCutLinetype(const QString &value);
+
+    qreal                getDefaultCutLineweight() const;
+    void                 setDefaultCutLineweight(const qreal &value);
+
+    QString              getDefaultInternalColor() const;
+    void                 setDefaultInternalColor(const QString &value);
+
+    QString              getDefaultInternalLinetype() const;
+    void                 setDefaultInternalLinetype(const QString &value);
+
+    qreal                getDefaultInternalLineweight() const;
+    void                 setDefaultInternalLineweight(const qreal &value);
+
+    QString              getDefaultCutoutColor() const;
+    void                 setDefaultCutoutColor(const QString &value);
+
+    QString              getDefaultCutoutLinetype() const;
+    void                 setDefaultCutoutLinetype(const QString &value);
+
+    qreal                getDefaultCutoutLineweight() const;
+    void                 setDefaultCutoutLineweight(const qreal &value);
+
+    bool                 showSeamAllowances() const;
+    void                 setShowSeamAllowances(const bool &value);
+
+    bool                 getDefaultSeamAllowanceVisibilty() const;
+    void                 setDefaultSeamAllowanceVisibilty(const bool &value);
+
+    bool                 showGrainlines() const;
+    void                 setShowGrainlines(const bool &value);
+
+    bool                 getDefaultGrainlineVisibilty() const;
+    void                 setDefaultGrainlineVisibilty(const bool &value);
+
+    qreal                getDefaultGrainlineLength() const;
+    void                 setDefaultGrainlineLength(const qreal &value);
+
+    QString              getDefaultGrainlineColor() const;
+    void                 setDefaultGrainlineColor(const QString &value);
+
+    qreal                getDefaultGrainlineLineweight() const;
+    void                 setDefaultGrainlineLineweight(const qreal &value);
+
+    bool                 showLabels() const;
+    void                 setShowLabels(const bool &value);
+
+    bool                 showPatternLabels() const;
+    void                 setShowPatternLabels(const bool &value);
+
+    bool                 showPieceLabels() const;
+    void                 setShowPieceLabels(const bool &value);
+
+    qreal                getDefaultLabelWidth() const;
+    void                 setDefaultLabelWidth(const qreal &value);
+
+    qreal                getDefaultLabelHeight() const;
+    void                 setDefaultLabelHeight(const qreal &value);
+
+    QString              getDefaultLabelColor() const;
+    void                 setDefaultLabelColor(const QString &value);
+
+    QFont                getLabelFont() const;
+    void                 setLabelFont(const QFont &f);
+
+    QFont                getGuiFont() const;
+    void                 setGuiFont(const QFont &f);
+
+    QFont                getPointNameFont() const;
+    void                 setPointNameFont(const QFont &f);
 
 #if !defined(Q_OS_WIN)
     static const QString unixStandardSharePath;
 #endif
+
+    int                  getPointNameSize() const;
+    void                 setPointNameSize(int value);
+
+    bool                 getHidePointNames() const;
+    void                 setHidePointNames(bool value);
+
+    bool                 getShowAxisOrigin() const;
+    void                 setShowAxisOrigin(bool value);
+
+    bool                 isWireframe() const;
+    void                 setWireframe(bool value);
+
+    bool                 getShowControlPoints() const;
+    void                 setShowControlPoints(bool value);
+
+    bool                 getShowAnchorPoints() const;
+    void                 setShowAnchorPoints(bool value);
+
+    bool                 getUseToolColor() const;
+    void                 setUseToolColor(bool value);
+
+    int                  getGuiFontSize() const;
+    void                 setGuiFontSize(int value);
 
     QString              GetLabelDateFormat() const;
     void                 SetLabelDateFormat(const QString &format);

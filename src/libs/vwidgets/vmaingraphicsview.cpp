@@ -70,8 +70,10 @@
 #include <QWheelEvent>
 #include <QGesture>
 #include <QWidget>
-#include <QDesktopWidget>
+#include <QGuiApplication>
+#include <QScreen>
 #include <QAbstractScrollArea>
+#include <QScreen>
 
 #include "../vmisc/logging.h"
 #include "../vmisc/def.h"
@@ -102,6 +104,12 @@ GraphicsViewZoom::GraphicsViewZoom(QGraphicsView* view)
     , m_numScheduledVerticalScrollings(0)
     , horizontalScrollAnim(new QTimeLine(300, this))
     , m_numScheduledHorizontalScrollings(0)
+    , pan(nullptr)
+    , pinch(nullptr)
+    , horizontalOffset(0.0)
+    , verticalOffset(0.0)
+    , scaleFactor(0.0)
+    , currentScaleFactor(0.0)
 {
     m_view->viewport()->installEventFilter(this);
 
@@ -267,7 +275,7 @@ bool GraphicsViewZoom::eventFilter(QObject *object, QEvent *event)
         SCASSERT(wheel_event != nullptr)
         if (QApplication::keyboardModifiers() == m_modifiers)
         {
-            if (wheel_event->orientation() == Qt::Vertical)
+            if (wheel_event->angleDelta().y() != 0)
             {
                 const double angle = wheel_event->angleDelta().y();
                 const double factor = qPow(m_zoomSpeedFactor, angle);
@@ -403,7 +411,7 @@ bool GraphicsViewZoom::startVerticalScrollings(QWheelEvent *wheel_event)
         m_numScheduledVerticalScrollings = numSteps;
     }
 
-    m_numScheduledVerticalScrollings *= qreal(qApp->Settings()->getScrollSpeedFactor())/10.0;
+    m_numScheduledVerticalScrollings *= qint32(qApp->Settings()->getScrollSpeedFactor()/10.0);
 
     if (verticalScrollAnim->state() != QTimeLine::Running)
     {
@@ -440,7 +448,7 @@ bool GraphicsViewZoom::startHorizontalScrollings(QWheelEvent *wheel_event)
         m_numScheduledHorizontalScrollings = numSteps;
     }
 
-    m_numScheduledHorizontalScrollings *= qreal(qApp->Settings()->getScrollSpeedFactor())/10.0;
+    m_numScheduledHorizontalScrollings *= qint32(qApp->Settings()->getScrollSpeedFactor()/10.0);
 
     if (horizontalScrollAnim->state() != QTimeLine::Running)
     {
@@ -464,8 +472,16 @@ VMainGraphicsView::VMainGraphicsView(QWidget *parent)
     , showScrollBars()
     , isallowRubberBand(true)
     , isZoomToAreaActive(false)
+    , isRubberBandActive(false)
+    , isRubberBandColorSet(false)
     , isZoomPanActive(false)
-    , m_ptStartPos()
+    , isPanDragActive(false)
+    , rubberBand(nullptr)
+    , rubberBandRect(nullptr)
+    , startPoint(QPoint())
+    , endPoint(QPoint())
+    , m_ptStartPos(QPoint())
+    , cursorPos(QPoint())
 {
     initScrollBars();
 
@@ -786,7 +802,7 @@ void VMainGraphicsView::mouseDoubleClickEvent(QMouseEvent *event)
 //---------------------------------------------------------------------------------------------------------------------
 qreal VMainGraphicsView::MinScale()
 {
-    const QRect screenRect = QApplication::desktop()->availableGeometry();
+    const QRect screenRect(QGuiApplication::primaryScreen()->availableGeometry());
     const qreal screenSize = qMin(screenRect.width(), screenRect.height());
 
     return screenSize / maxSceneSize;
@@ -795,7 +811,7 @@ qreal VMainGraphicsView::MinScale()
 //---------------------------------------------------------------------------------------------------------------------
 qreal VMainGraphicsView::MaxScale()
 {
-    const QRect screenRect = QApplication::desktop()->availableGeometry();
+    const QRect screenRect(QGuiApplication::primaryScreen()->availableGeometry());
     const qreal screenSize = qMin(screenRect.width(), screenRect.height());
 
     return maxSceneSize / screenSize;
@@ -819,21 +835,28 @@ void VMainGraphicsView::allowRubberBand(bool value)
  * @param sc scene.
  * @param view view.
  */
-void VMainGraphicsView::NewSceneRect(QGraphicsScene *sc, QGraphicsView *view)
-{
+ void VMainGraphicsView::NewSceneRect(QGraphicsScene *sc, QGraphicsView *view, QGraphicsItem *item)
+ {
     SCASSERT(sc != nullptr)
     SCASSERT(view != nullptr)
 
-    //Calculate view rect
-    const QRectF viewRect = SceneVisibleArea(view);
+    if (item == nullptr)
+    {
+        //Calculate view rect
+        const QRectF viewRect = SceneVisibleArea(view);
 
-    //Calculate scene rect
-    VMainGraphicsScene *currentScene = qobject_cast<VMainGraphicsScene *>(sc);
-    SCASSERT(currentScene)
-    const QRectF itemsRect = currentScene->visibleItemsBoundingRect();
+        //Calculate scene rect
+        VMainGraphicsScene *currentScene = qobject_cast<VMainGraphicsScene *>(sc);
+        SCASSERT(currentScene)
+        const QRectF itemsRect = currentScene->visibleItemsBoundingRect();
 
-    //Unite two rects
-    sc->setSceneRect(itemsRect.united(viewRect));
+        //Unite two rects
+        sc->setSceneRect(itemsRect.united(viewRect));
+    }
+    else if (not sc->sceneRect().contains(item->sceneBoundingRect()))
+    {
+        sc->setSceneRect(sc->sceneRect().united(item->sceneBoundingRect()));
+    }
 }
 
 //---------------------------------------------------------------------------------------------------------------------

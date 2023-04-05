@@ -77,8 +77,9 @@ public:
     static VToolMove      *Create(QSharedPointer<DialogTool> dialog, VMainGraphicsScene *scene,
                                   VAbstractPattern *doc, VContainer *data);
 
-    static VToolMove      *Create(quint32 _id, QString &formulaAngle, QString &formulaLength, const QString &suffix,
-                                  const QVector<quint32> &source, const QVector<DestinationItem> &destination,
+    static VToolMove      *Create(quint32 _id, QString &formulaAngle, QString &formulaLength, QString &formulaRotation,
+                                  quint32 &rotationOriginId, const QString &suffix, const QVector<SourceItem> &source,
+                                  const QVector<DestinationItem> &destination,
                                   VMainGraphicsScene *scene, VAbstractPattern *doc, VContainer *data,
                                   const Document &parse, const Source &typeCreation);
 
@@ -93,54 +94,70 @@ public:
     VFormula               GetFormulaLength() const;
     void                   SetFormulaLength(const VFormula &value);
 
+    VFormula               getFormulaRotation() const;
+    void                   setFormulaRotation(const VFormula &value);
+
+    QString                getOriginPointName() const;
+    quint32                getOriginPointId() const;
+    void                   setOriginPointId(const quint32 &value);
+    
     virtual void           ShowVisualization(bool show) Q_DECL_OVERRIDE;
+
+protected slots:
+    virtual void           showContextMenu(QGraphicsSceneContextMenuEvent *event, quint32 id=NULL_ID) Q_DECL_OVERRIDE;
 
 protected:
     virtual void           SetVisualization() Q_DECL_OVERRIDE;
     virtual void           SaveDialog(QDomElement &domElement) Q_DECL_OVERRIDE;
     virtual void           ReadToolAttributes(const QDomElement &domElement) Q_DECL_OVERRIDE;
     virtual void           SaveOptions(QDomElement &tag, QSharedPointer<VGObject> &obj) Q_DECL_OVERRIDE;
-    virtual void           contextMenuEvent ( QGraphicsSceneContextMenuEvent * event ) Q_DECL_OVERRIDE;
+    virtual QString        makeToolTip() const Q_DECL_OVERRIDE;
 
 private:
     Q_DISABLE_COPY(VToolMove)
     QString                formulaAngle;
     QString                formulaLength;
+    QString                formulaRotation;
+    quint32                m_originPointId;
 
                            VToolMove(VAbstractPattern *doc, VContainer *data, quint32 id, const QString &formulaAngle,
-                                    const QString &formulaLength, const QString &suffix, const QVector<quint32> &source,
-                                    const QVector<DestinationItem> &destination, const Source &typeCreation,
-                                    QGraphicsItem *parent = nullptr);
+                                    const QString &formulaLength, const QString &formulaRotation,
+                                    const quint32 &originPointId, const QString &suffix,
+                                    const QVector<SourceItem> &source, const QVector<DestinationItem> &destination,
+                                    const Source &typeCreation, QGraphicsItem *parent = nullptr);
 
-    static DestinationItem createPoint(quint32 idTool, quint32 idItem, qreal angle, qreal length, const QString &suffix,
-                                       VContainer *data);
+    static DestinationItem createPoint(quint32 idTool, quint32 idItem, qreal angle, qreal length, qreal rotation,
+                                       const QPointF &rotationOrigin, const QString &suffix, VContainer *data);
 
     template <class Item>
-    static DestinationItem createItem(quint32 idTool, quint32 idItem, qreal angle, qreal length, const QString &suffix,
-                                      VContainer *data);
+    static DestinationItem createItem(quint32 idTool, quint32 idItem, qreal angle, qreal length, qreal rotation,
+                                      const QPointF &rotationOrigin, const QString &suffix, VContainer *data);
     template <class Item>
-    static DestinationItem createArc(quint32 idTool, quint32 idItem, qreal angle, qreal length, const QString &suffix,
-                                     VContainer *data);
+    static DestinationItem createArc(quint32 idTool, quint32 idItem, qreal angle, qreal length, qreal rotation,
+                                     const QPointF &rotationOrigin, const QString &suffix, VContainer *data);
     template <class Item>
-    static DestinationItem createCurve(quint32 idTool, quint32 idItem, qreal angle, qreal length, const QString &suffix,
-                                       VContainer *data);
+    static DestinationItem createCurve(quint32 idTool, quint32 idItem, qreal angle, qreal length, qreal rotation,
+                                       const QPointF &rotationOrigin, const QString &suffix, VContainer *data);
     template <class Item>
     static DestinationItem createCurveWithSegments(quint32 idTool, quint32 idItem, qreal angle, qreal length,
+                                                   qreal rotation, const QPointF &rotationOrigin,
                                                    const QString &suffix, VContainer *data);
 
-    static void updatePoint(quint32 idTool, quint32 idItem, qreal angle, qreal length, const QString &suffix,
-                            VContainer *data, quint32 id, qreal mx, qreal my);
+    static void updatePoint(quint32 idTool, quint32 idItem, qreal angle, qreal length, qreal rotation,
+                            const QPointF &rotationOrigin, const QString &suffix, VContainer *data,
+                            const DestinationItem &item);
     template <class Item>
-    static void updateItem(quint32 idTool, quint32 idItem, qreal angle, qreal length, const QString &suffix,
-                           VContainer *data, quint32 id);
+    static void updateItem(quint32 idTool, quint32 idItem, qreal angle, qreal length, qreal rotation,
+                           const QPointF &rotationOrigin, const QString &suffix, VContainer *data, quint32 id);
     template <class Item>
-    static void updateArc(quint32 idTool, quint32 idItem, qreal angle, qreal length, const QString &suffix,
-                          VContainer *data, quint32 id);
+    static void updateArc(quint32 idTool, quint32 idItem, qreal angle, qreal length, qreal rotation,
+                          const QPointF &rotationOrigin, const QString &suffix, VContainer *data, quint32 id);
     template <class Item>
-    static void updateCurve(quint32 idTool, quint32 idItem, qreal angle, qreal length, const QString &suffix,
-                            VContainer *data, quint32 id);
+    static void updateCurve(quint32 idTool, quint32 idItem, qreal angle, qreal length, qreal rotation,
+                            const QPointF &rotationOrigin, const QString &suffix, VContainer *data, quint32 id);
     template <class Item>
     static void updateCurveWithSegments(quint32 idTool, quint32 idItem, qreal angle, qreal length,
+                                        qreal rotation, const QPointF &rotationOrigin,
                                         const QString &suffix, VContainer *data, quint32 id);
 };
 

@@ -2,7 +2,7 @@
  *                                                                         *
  *   Copyright (C) 2017  Seamly, LLC                                       *
  *                                                                         *
- *   https://github.com/fashionfreedom/seamly2d                             *
+ *   https://github.com/fashionfreedom/seamly2d                            *
  *                                                                         *
  ***************************************************************************
  **
@@ -55,13 +55,16 @@
 #include <QGraphicsLineItem>
 
 #include "../vmisc/def.h"
+#include "vcurvepathitem.h"
+
+class VCurvePathItem;
 
 class VScaledLine : public QGraphicsLineItem
 {
 public:
-    explicit VScaledLine(QGraphicsItem * parent = nullptr);
-    VScaledLine(const QLineF &line, QGraphicsItem * parent = nullptr);
-    virtual ~VScaledLine() = default;
+    explicit     VScaledLine(QGraphicsItem * parent = nullptr);
+                 VScaledLine(const QLineF &line, QGraphicsItem * parent = nullptr);
+    virtual     ~VScaledLine() = default;
 
     virtual int  type() const Q_DECL_OVERRIDE {return Type;}
     enum { Type = UserType + static_cast<int>(Vis::ScaledLine)};
@@ -69,20 +72,39 @@ public:
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                        QWidget *widget = nullptr) Q_DECL_OVERRIDE;
 
-    qreal GetBasicWidth() const;
-    void  SetBasicWidth(const qreal &value);
+    qreal        GetBasicWidth() const;
+    void         setBasicWidth(const qreal &value);
 
 private:
     Q_DISABLE_COPY(VScaledLine)
 
-    qreal basicWidth;
+    qreal        basicWidth;
+};
+
+class ArrowedLineItem : public QGraphicsLineItem
+{
+public:
+    explicit     ArrowedLineItem(QGraphicsItem * parent = nullptr);
+                 ArrowedLineItem(const QLineF &line, QGraphicsItem * parent = nullptr);
+    virtual     ~ArrowedLineItem() = default;
+
+    virtual int  type() const Q_DECL_OVERRIDE {return Type;}
+    enum { Type = UserType + static_cast<int>(Vis::ArrowedLineItem)};
+
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+                       QWidget *widget = nullptr) Q_DECL_OVERRIDE;
+
+private:
+    Q_DISABLE_COPY(ArrowedLineItem)
+    void           drawArrow(const QLineF &axis, QPainterPath &path, const qreal &arrow_size);
+    VCurvePathItem *m_arrows;
 };
 
 class VScaledEllipse : public QGraphicsEllipseItem
 {
 public:
-    explicit VScaledEllipse(QGraphicsItem * parent = nullptr);
-    virtual ~VScaledEllipse() = default;
+    explicit     VScaledEllipse(QGraphicsItem * parent = nullptr);
+    virtual     ~VScaledEllipse() = default;
 
     virtual int  type() const Q_DECL_OVERRIDE {return Type;}
     enum { Type = UserType + static_cast<int>(Vis::ScaledEllipse)};

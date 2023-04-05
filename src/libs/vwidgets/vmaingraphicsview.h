@@ -64,6 +64,7 @@
 #include <QRubberBand>
 #include <QColor>
 #include <Qt>
+#include <QSharedPointer>
 
 /*!
  * This class adds ability to zoom QGraphicsView using mouse wheel. The point under cursor
@@ -165,7 +166,7 @@ public:
     void                  zoomPanEnabled(bool value);
     void                  zoomToAreaEnabled(bool value);
 
-    static void           NewSceneRect(QGraphicsScene *sc, QGraphicsView *view);
+    static void           NewSceneRect(QGraphicsScene *sc, QGraphicsView *view, QGraphicsItem *item = nullptr);
     static QRectF         SceneVisibleArea(QGraphicsView *view);
 
     static qreal          MinScale();
@@ -203,7 +204,7 @@ protected:
     virtual void          mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     virtual void          mouseDoubleClickEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
 
-    std::unique_ptr<QCursor> curMagnifier;
+    QSharedPointer<QCursor> curMagnifier;
 
 private:
     Q_DISABLE_COPY(VMainGraphicsView)
@@ -211,13 +212,13 @@ private:
     bool                  showToolProperties;
     bool                  showScrollBars;
     bool                  isallowRubberBand;
-    bool                  isZoomToAreaActive{false};
-    bool                  isRubberBandActive{false};
-    bool                  isRubberBandColorSet{false};
-    bool                  isZoomPanActive{false};
-    bool                  isPanDragActive{false};
-    QRubberBand          *rubberBand=NULL;
-    QRect                *rubberBandRect=NULL;
+    bool                  isZoomToAreaActive;
+    bool                  isRubberBandActive;
+    bool                  isRubberBandColorSet;
+    bool                  isZoomPanActive;
+    bool                  isPanDragActive;
+    QRubberBand          *rubberBand;
+    QRect                *rubberBandRect;
     QPoint                startPoint;
     QPoint                endPoint;
     QPoint                m_ptStartPos;

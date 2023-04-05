@@ -2,7 +2,7 @@
  *                                                                         *
  *   Copyright (C) 2017  Seamly, LLC                                       *
  *                                                                         *
- *   https://github.com/fashionfreedom/seamly2d                             *
+ *   https://github.com/fashionfreedom/seamly2d                            *
  *                                                                         *
  ***************************************************************************
  **
@@ -72,55 +72,50 @@ class VToolLinePoint : public VToolSinglePoint
 {
     Q_OBJECT
 public:
-    VToolLinePoint(VAbstractPattern *doc, VContainer *data, const quint32 &id, const QString &typeLine, const
-                   QString &lineColor, const QString &formula, const quint32 &basePointId, const qreal &angle,
-                   QGraphicsItem * parent = nullptr);
-    virtual ~VToolLinePoint() Q_DECL_OVERRIDE;
+                      VToolLinePoint(VAbstractPattern *doc, VContainer *data, const quint32 &id,
+                                     const QString &lineType, const QString &lineWeight,
+                                     const QString &lineColor, const QString &formula,
+                                     const quint32 &basePointId, const qreal &angle, QGraphicsItem * parent = nullptr);
+    virtual          ~VToolLinePoint() Q_DECL_OVERRIDE;
+
     virtual int       type() const Q_DECL_OVERRIDE {return Type;}
-    enum { Type = UserType + static_cast<int>(Tool::LinePoint)};
+    enum              {Type = UserType + static_cast<int>(Tool::LinePoint)};
 
-    virtual void   paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-                         QWidget *widget = nullptr) Q_DECL_OVERRIDE;
+    virtual void      paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+                            QWidget *widget = nullptr) Q_DECL_OVERRIDE;
 
-    VFormula GetFormulaLength() const;
-    void     SetFormulaLength(const VFormula &value);
+    VFormula          GetFormulaLength() const;
+    void              SetFormulaLength(const VFormula &value);
 
-    QString BasePointName() const;
+    QString           BasePointName() const;
 
-    quint32 GetBasePointId() const;
-    void    SetBasePointId(const quint32 &value);
+    quint32           GetBasePointId() const;
+    void              SetBasePointId(const quint32 &value);
 
-    qreal   GetAngle() const;
-    void    SetAngle(const qreal &value);
+    qreal             GetAngle() const;
+    void              SetAngle(const qreal &value);
 
-    QString GetLineColor() const;
-    void    SetLineColor(const QString &value);
+    QString           getLineColor() const;
+    void              setLineColor(const QString &value);
 
 public slots:
-    virtual void      Disable(bool disable, const QString &namePP) Q_DECL_OVERRIDE;
+    virtual void      Disable(bool disable, const QString &draftBlockName) Q_DECL_OVERRIDE;
     virtual void      FullUpdateFromFile() Q_DECL_OVERRIDE;
+
 protected:
-    /** @brief formula string with length formula. */
-    QString           formulaLength;
-
-    /** @brief angle line angle. */
-    qreal             angle;
-
-    /** @brief basePointId id base line point. */
-    quint32           basePointId;
-
-    /** @brief mainLine line item. */
-    VScaledLine      *mainLine;
-
-    /** @brief lineColor color of a line. */
-    QString           lineColor;
+    QString           formulaLength; /** @brief formula string with length formula. */
+    qreal             angle; /** @brief angle line angle. */
+    quint32           basePointId; /** @brief basePointId id base line point. */
+    VScaledLine      *mainLine; /** @brief mainLine line item. */
+    QString           lineColor; /** @brief lineColor color of a line. */
 
     virtual void      RefreshGeometry();
     virtual void      RemoveReferens() Q_DECL_OVERRIDE;
     virtual void      SaveOptions(QDomElement &tag, QSharedPointer<VGObject> &obj) Q_DECL_OVERRIDE;
     virtual void      hoverEnterEvent(QGraphicsSceneHoverEvent *event) Q_DECL_OVERRIDE;
     virtual void      hoverLeaveEvent(QGraphicsSceneHoverEvent *event) Q_DECL_OVERRIDE;
-    virtual QString   MakeToolTip() const Q_DECL_OVERRIDE;
+    virtual QString   makeToolTip() const Q_DECL_OVERRIDE;
+
 private:
     Q_DISABLE_COPY(VToolLinePoint)
 };

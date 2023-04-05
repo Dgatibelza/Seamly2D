@@ -110,16 +110,6 @@ inline void noisyFailureMsgHandler(QtMsgType type, const QMessageLogContext &con
 #endif //defined(V_NO_ASSERT)
 
 #if defined(Q_OS_MAC)
-#   if QT_VERSION >= QT_VERSION_CHECK(5, 4, 0) && QT_VERSION < QT_VERSION_CHECK(5, 7, 0)
-        // Try hide very annoying, Qt related, warnings in Mac OS X
-        // QNSView mouseDragged: Internal mouse button tracking invalid (missing Qt::LeftButton)
-        // https://bugreports.qt.io/browse/QTBUG-42846
-        if ((type == QtWarningMsg) && msg.contains(QStringLiteral("QNSView")))
-        {
-            type = QtDebugMsg;
-        }
-#   endif
-
     // Hide Qt bug 'Assertion when reading an icns file'
     // https://bugreports.qt.io/browse/QTBUG-45537
     // Remove after Qt fix will be released
@@ -195,7 +185,7 @@ inline void noisyFailureMsgHandler(QtMsgType type, const QMessageLogContext &con
                 break;
         }
 
-        (*qApp->LogFile()) << debugdate <<  endl;
+        (*qApp->LogFile()) << debugdate << Qt::endl;
     }
 
     if (isGuiThread)
@@ -223,7 +213,7 @@ inline void noisyFailureMsgHandler(QtMsgType type, const QMessageLogContext &con
                 break;
             #if QT_VERSION > QT_VERSION_CHECK(5, 4, 2)
             case QtInfoMsg:
-                messageBox.setWindowTitle(QApplication::translate("vNoisyHandler", "InformationS"));
+                messageBox.setWindowTitle(QApplication::translate("vNoisyHandler", "Information"));
                 messageBox.setIcon(QMessageBox::Information);
                 break;
             #endif
@@ -283,11 +273,11 @@ const QString VApplication::GistFileName = QStringLiteral("gist.json");
  * @param argv command line.
  */
 VApplication::VApplication(int &argc, char **argv)
-    : VAbstractApplication(argc, argv),
-      trVars(nullptr),
-      autoSaveTimer(nullptr),
-      lockLog(),
-      out(nullptr)
+    : VAbstractApplication(argc, argv)
+    , trVars(nullptr)
+    , autoSaveTimer(nullptr)
+    , lockLog()
+    , out(nullptr)
 {
     //setApplicationDisplayName(VER_PRODUCTNAME_STR);
     setApplicationName(VER_INTERNALNAME_STR);
@@ -300,7 +290,7 @@ VApplication::VApplication(int &argc, char **argv)
 
     // making sure will create new instance...just in case we will ever do 2 objects of VApplication
     VCommandLine::Reset();
-    LoadTranslation(QLocale().name());// By default the console version uses system locale
+    loadTranslations(QLocale().name());// By default the console version uses system locale
     VCommandLine::Get(*this);
     undoStack = new QUndoStack(this);
 }
@@ -309,7 +299,7 @@ VApplication::VApplication(int &argc, char **argv)
 VApplication::~VApplication()
 {
     qCDebug(vApp, "Application closing.");
-    qInstallMessageHandler(nullptr); // Resore the message handler
+    qInstallMessageHandler(nullptr); // Restore the message handler
     delete trVars;
     VCommandLine::Reset();
 }
@@ -327,7 +317,7 @@ void VApplication::NewSeamly2D(const QString &fileName)
         qCDebug(vApp, "New process without arguments. program = %s",
                 qUtf8Printable(QCoreApplication::applicationFilePath()));
         // Path can contain spaces.
-        if (QProcess::startDetached("\""+QCoreApplication::applicationFilePath()+"\""))
+        if (QProcess::startDetached(QCoreApplication::applicationFilePath(), QStringList()))
         {
             qCDebug(vApp, "The process was started successfully.");
         }
@@ -340,7 +330,8 @@ void VApplication::NewSeamly2D(const QString &fileName)
     {
         const QString run = QString("\"%1\" \"%2\"").arg(QCoreApplication::applicationFilePath()).arg(fileName);
         qCDebug(vApp, "New process with arguments. program = %s", qUtf8Printable(run));
-        if (QProcess::startDetached(run))
+
+        if (QProcess::startDetached(QCoreApplication::applicationFilePath(), QStringList{fileName}))
         {
             qCDebug(vApp, "The process was started successfully.");
         }
@@ -548,7 +539,7 @@ void VApplication::ClearOldLogs() const
         {
             auto fn = allFiles.at(i);
             QFileInfo info(fn);
-            if (info.created().daysTo(QDateTime::currentDateTime()) >= DAYS_TO_KEEP_LOGS)
+            if (info.birthTime().daysTo(QDateTime::currentDateTime()) >= DAYS_TO_KEEP_LOGS)
             {
                 VLockGuard<QFile> tmp(info.absoluteFilePath(), [&fn](){return new QFile(fn);});
                 if (tmp.GetProtected() != nullptr)
@@ -596,7 +587,7 @@ void VApplication::InitOptions()
 
     if (VApplication::IsGUIMode())// By default console version uses system locale
     {
-        LoadTranslation(Seamly2DSettings()->GetLocale());
+        loadTranslations(Seamly2DSettings()->GetLocale());
     }
 
     static const char * GENERIC_ICON_TO_CHECK = "document-open";
@@ -766,7 +757,7 @@ void VApplication::ClearOldReports() const
             for (int i = 0; i < allFiles.size(); ++i)
             {
                 QFileInfo info(allFiles.at(i));
-                if (info.created().daysTo(now) > 30)
+                if (info.birthTime().daysTo(now) > 30)
                 {
                     QFile(allFiles.at(i)).remove();
                 }
@@ -805,19 +796,19 @@ void VApplication::GatherLogs() const
 
                 if (tmp.IsLocked())
                 {
-                    *out <<"--------------------------" << endl;
+                    *out <<"--------------------------" << Qt::endl;
                     if (tmp.GetProtected()->open(QIODevice::ReadOnly | QIODevice::Text))
                     {
                         QTextStream in(tmp.GetProtected().get());
                         while (!in.atEnd())
                         {
-                            *out << in.readLine() << endl;
+                            *out << in.readLine() << Qt::endl;
                         }
                         tmp.GetProtected()->close();
                     }
                     else
                     {
-                        *out << "Log file error:" + tmp.GetProtected()->errorString() << endl;
+                        *out << "Log file error:" + tmp.GetProtected()->errorString() << Qt::endl;
                     }
                 }
                 else
@@ -930,7 +921,7 @@ void VApplication::SendReport(const QString &reportName) const
     content.append(QString("Build revision:%1").arg(BUILD_REVISION)+"\r\n");
     content.append(QString("Based on Qt %1 (32 bit)").arg(QT_VERSION_STR)+"\r\n");
     content.append(QString("Built on %1 at %2").arg(__DATE__).arg(__TIME__)+"\r\n");
-    content.append(QString("Web site:http://fashionfreedom.eu/ ")+"\r\n");
+    content.append(QString("Web site:http://seamly.net/ ")+"\r\n");
     content.append("\r\n");
 
     // Creating json with report
@@ -1010,7 +1001,8 @@ void VApplication::SendReport(const QString &reportName) const
                             QString("\" -H \"Accept: application/json\" -H \"Content-type: application/json\" -X POST "
                                     "--data @gist.json https://api.github.com/gists");
         QProcess proc;
-        proc.start(arg);
+        QStringList args;
+        proc.start(arg, args);
         proc.waitForFinished(10000); // 10 sec
         reportFile.remove();// Clear after yourself
     }

@@ -1,11 +1,13 @@
 /***************************************************************************
- *                                                                         *
- *   Copyright (C) 2017  Seamly, LLC                                       *
- *                                                                         *
- *   https://github.com/fashionfreedom/seamly2d                            *
- *                                                                         *
- ***************************************************************************
+ **  @file   dialogtool.cpp
+ **  @author Douglas S Caskey
+ **  @date   Dec 11, 2022
  **
+ **  @copyright
+ **  Copyright (C) 2017 - 2022 Seamly, LLC
+ **  https://github.com/fashionfreedom/seamly2d
+ **
+ **  @brief
  **  Seamly2D is free software: you can redistribute it and/or modify
  **  it under the terms of the GNU General Public License as published by
  **  the Free Software Foundation, either version 3 of the License, or
@@ -17,35 +19,33 @@
  **  GNU General Public License for more details.
  **
  **  You should have received a copy of the GNU General Public License
- **  along with Seamly2D.  If not, see <http://www.gnu.org/licenses/>.
- **
- **************************************************************************
+ **  along with Seamly2D. If not, see <http://www.gnu.org/licenses/>.
+ **************************************************************************/
 
- ************************************************************************
+/**************************************************************************
  **
  **  @file   dialogtool.cpp
  **  @author Roman Telezhynskyi <dismine(at)gmail.com>
  **  @date   November 15, 2013
  **
- **  @brief
  **  @copyright
- **  This source code is part of the Valentine project, a pattern making
+ **  Copyright (C) 2013 Valentina project.
+ **  This source code is part of the Valentina project, a pattern making
  **  program, whose allow create and modeling patterns of clothing.
- **  Copyright (C) 2013-2015 Seamly2D project
- **  <https://github.com/fashionfreedom/seamly2d> All Rights Reserved.
+ **  <https://bitbucket.org/dismine/valentina> All Rights Reserved.
  **
- **  Seamly2D is free software: you can redistribute it and/or modify
- **  it under the terms of the GNU General Public License as published by
- **  the Free Software Foundation, either version 3 of the License, or
- **  (at your option) any later version.
+ **  Valentina is free software: you can redistribute it and/or modify
+ **  it under the terms of the GNU General Public License as published
+ **  by the Free Software Foundation, either version 3 of the License,
+ **  or (at your option) any later version.
  **
- **  Seamly2D is distributed in the hope that it will be useful,
+ **  Valentina is distributed in the hope that it will be useful,
  **  but WITHOUT ANY WARRANTY; without even the implied warranty of
  **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  **  GNU General Public License for more details.
  **
  **  You should have received a copy of the GNU General Public License
- **  along with Seamly2D.  If not, see <http://www.gnu.org/licenses/>.
+ **  along with Valentina.  If not, see <http://www.gnu.org/licenses/>.
  **
  *************************************************************************/
 
@@ -103,6 +103,7 @@ template <class T> class QSharedPointer;
 Q_LOGGING_CATEGORY(vDialog, "v.dialog")
 
 #define DIALOG_MAX_FORMULA_HEIGHT 64
+#define DIALOG_MIN_WIDTH 260
 
 namespace
 {
@@ -129,7 +130,7 @@ quint32 RowId(QListWidget *listWidget, int i)
  * @param data container with data
  * @param parent parent widget
  */
-DialogTool::DialogTool(const VContainer *data, const quint32 &toolId, QWidget *parent)
+DialogTool:: DialogTool(const VContainer *data, const quint32 &toolId, QWidget *parent)
     : QDialog(parent),
       data(data),
       isInitialized(false),
@@ -137,8 +138,8 @@ DialogTool::DialogTool(const VContainer *data, const quint32 &toolId, QWidget *p
       flagFormula(true),
       flagError(true),
       timerFormula(nullptr),
-      bOk(nullptr),
-      bApply(nullptr),
+      ok_Button(nullptr),
+      apply_Button(nullptr),
       spinBoxAngle(nullptr),
       plainTextEditFormula(nullptr),
       labelResultCalculation(nullptr),
@@ -421,7 +422,9 @@ void DialogTool::ChangeCurrentData(QComboBox *box, const QVariant &value) const
     const qint32 index = box->findData(value);
     if (index != -1)
     {
+        box->blockSignals(true);
         box->setCurrentIndex(index);
+        box->blockSignals(false);
     }
 }
 
@@ -546,7 +549,7 @@ int DialogTool::FindNotExcludedNodeUp(QListWidget *listWidget, int candidate)
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-bool DialogTool::FirstPointEqualLast(QListWidget *listWidget)
+bool DialogTool::isFirstPointSameAsLast(QListWidget *listWidget)
 {
     SCASSERT(listWidget != nullptr);
     if (listWidget->count() > 1)
@@ -559,7 +562,7 @@ bool DialogTool::FirstPointEqualLast(QListWidget *listWidget)
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-bool DialogTool::DoublePoints(QListWidget *listWidget)
+bool DialogTool::doublePointsExist(QListWidget *listWidget)
 {
     SCASSERT(listWidget != nullptr);
     for (int i=0, sz = listWidget->count()-1; i<sz; ++i)
@@ -577,7 +580,7 @@ bool DialogTool::DoublePoints(QListWidget *listWidget)
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-bool DialogTool::EachPointLabelIsUnique(QListWidget *listWidget)
+bool DialogTool::isEachPointNameUnique(QListWidget *listWidget)
 {
     SCASSERT(listWidget != nullptr);
     QSet<quint32> pointLabels;
@@ -614,8 +617,8 @@ QString DialogTool::DialogWarningIcon()
 //---------------------------------------------------------------------------------------------------------------------
 QFont DialogTool::NodeFont(bool nodeExcluded)
 {
-    QFont font = qApp->Settings()->GetLabelFont();
-    font.setPointSize(12);
+    QFont font = qApp->Settings()->getGuiFont();
+    font.setPointSize(qApp->Settings()->getGuiFontSize());
     font.setBold(true);
     font.setStrikeOut(nodeExcluded);
     return font;
@@ -636,11 +639,7 @@ NodeInfo DialogTool::getNodeInfo(const VPieceNode &node, bool showNotch) const
 
         if (node.GetReverse())
         {
-            info.icon = "://icon/24x24/counter_clockwise.png";
-        }
-        else
-        {
-            info.icon = "://icon/24x24/clockwise.png";
+            info.icon = "://icon/24x24/reverse.png";
         }
     }
     else if (showNotch && node.isNotch())
@@ -677,7 +676,7 @@ NodeInfo DialogTool::getNodeInfo(const VPieceNode &node, bool showNotch) const
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void DialogTool::NewNodeItem(QListWidget *listWidget, const VPieceNode &node)
+void DialogTool::newNodeItem(QListWidget *listWidget, const VPieceNode &node, bool nodeExcluded, bool isDuplicate)
 {
     SCASSERT(listWidget != nullptr);
     SCASSERT(node.GetId() > NULL_ID);
@@ -696,24 +695,17 @@ void DialogTool::NewNodeItem(QListWidget *listWidget, const VPieceNode &node)
             return;
     }
 
-    bool canAddNewPoint = false;
+    bool newNodeAllowed = false;
 
-    if(listWidget->count() == 0)
+    if(listWidget->count() == 0 || isDuplicate || RowId(listWidget, listWidget->count()-1) != node.GetId())
     {
-        canAddNewPoint = true;
-    }
-    else
-    {
-        if(RowId(listWidget, listWidget->count()-1) != node.GetId())
-        {
-            canAddNewPoint = true;
-        }
+        newNodeAllowed = true;
     }
 
-    if(canAddNewPoint)
+    if(newNodeAllowed)
     {
         QListWidgetItem *item = new QListWidgetItem(info.name);
-        item->setFont(NodeFont(node.isExcluded()));
+        item->setFont(NodeFont(nodeExcluded ? node.isExcluded() : false));
         item->setData(Qt::UserRole, QVariant::fromValue(node));
         item->setIcon(QIcon(info.icon));
         listWidget->addItem(item);
@@ -722,7 +714,7 @@ void DialogTool::NewNodeItem(QListWidget *listWidget, const VPieceNode &node)
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void DialogTool::InitNodeAngles(QComboBox *box)
+void DialogTool::initializeNodeAngles(QComboBox *box)
 {
     SCASSERT(box != nullptr);
     box->clear();
@@ -866,7 +858,7 @@ qreal DialogTool::Eval(const QString &text, bool &flag, QLabel *label, const QSt
                     label->setText(qApp->LocaleToString(result) + " " +postfix);
                     flag = true;
                     ChangeColor(labelEditFormula, okColor);
-                    label->setToolTip(tr("Value"));
+                    label->setToolTip(tr("Result Value"));
                     emit ToolTip("");
                 }
             }
@@ -887,6 +879,17 @@ qreal DialogTool::Eval(const QString &text, bool &flag, QLabel *label, const QSt
     }
     CheckState(); // Disable Ok and Apply buttons if something wrong.
     return result;
+}
+
+// Normalizes any number to an arbitrary range
+// by assuming the range wraps around when going below min or above max
+qreal DialogTool::normalize( const qreal value, const qreal start, const qreal end )
+{
+  const qreal range       = end - start   ;   //
+  const qreal offsetValue = value - start ;   // value relative to 0
+
+  return ( offsetValue - ( floor( offsetValue / range ) * range ) ) + start ;
+  // + start to reset back to start of original range
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -993,14 +996,9 @@ void DialogTool::DeployFormula(QPlainTextEdit *formula, QPushButton *buttonGrowL
 
     const QTextCursor cursor = formula->textCursor();
 
-    //Before deploy need to release dialog size
-    //I don't know why, but don't need to fixate again.
-    //A dialog will be lefted fixated. That's what we need.
-    setMaximumSize(QSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX));
-    setMinimumSize(QSize(0, 0));
-
     if (formula->height() < DIALOG_MAX_FORMULA_HEIGHT)
     {
+        setMaximumWidth(QWIDGETSIZE_MAX);
         formula->setFixedHeight(DIALOG_MAX_FORMULA_HEIGHT);
         //Set icon from theme (internal for Windows system)
         buttonGrowLength->setIcon(QIcon::fromTheme("go-up",
@@ -1008,10 +1006,11 @@ void DialogTool::DeployFormula(QPlainTextEdit *formula, QPushButton *buttonGrowL
     }
     else
     {
-       formula->setFixedHeight(formulaBaseHeight);
-       //Set icon from theme (internal for Windows system)
-       buttonGrowLength->setIcon(QIcon::fromTheme("go-down",
-                                                  QIcon(":/icons/win.icon.theme/16x16/actions/go-down.png")));
+        setMaximumWidth(DIALOG_MIN_WIDTH);
+        formula->setFixedHeight(formulaBaseHeight);
+        //Set icon from theme (internal for Windows system)
+        buttonGrowLength->setIcon(QIcon::fromTheme("go-down",
+                                                   QIcon(":/icons/win.icon.theme/16x16/actions/go-down.png")));
     }
 
     // I found that after change size of formula field, it was filed for angle formula, field for formula became black.
@@ -1075,12 +1074,12 @@ bool DialogTool::IsSpline(const QSharedPointer<VGObject> &obj) const
  */
 void DialogTool::CheckState()
 {
-    SCASSERT(bOk != nullptr)
-    bOk->setEnabled(flagFormula && flagName && flagError);
+    SCASSERT(ok_Button != nullptr)
+    ok_Button->setEnabled(flagFormula && flagName && flagError);
     // In case dialog hasn't apply button
-    if ( bApply != nullptr)
+    if (apply_Button != nullptr)
     {
-        bApply->setEnabled(bOk->isEnabled());
+        apply_Button->setEnabled(ok_Button->isEnabled());
     }
 }
 
@@ -1383,7 +1382,7 @@ void DialogTool::SetAssociatedTool(VAbstractTool *tool)
         data = tool->getData();
         if (not vis.isNull())
         {
-            vis->SetData(data);
+            vis->setData(data);
         }
     }
     else
@@ -1408,7 +1407,7 @@ void DialogTool::FillCombo(QComboBox *box, GOType gType, FillComboBox rule, cons
     {
         if (rule == FillComboBox::NoChildren)
         {
-            if (i.key() != toolId && i.key() != ch1 && i.key() != ch2)
+            if (i.key() != toolId && i.value()->getIdTool() != toolId && i.key() != ch1 && i.key() != ch2)
             {
                 QSharedPointer<VGObject> obj = i.value();
                 if (obj->getType() == gType && obj->getMode() == Draw::Calculation)
@@ -1419,7 +1418,7 @@ void DialogTool::FillCombo(QComboBox *box, GOType gType, FillComboBox rule, cons
         }
         else
         {
-            if (i.key() != toolId)
+            if (i.key() != toolId && i.value()->getIdTool() != toolId)
             {
                 QSharedPointer<VGObject> obj = i.value();
                 if (obj->getType() == gType && obj->getMode() == Draw::Calculation)

@@ -65,11 +65,11 @@ public:
 
 protected:
                            VAbstractMirror(VAbstractPattern *doc, VContainer *data, quint32 id, const QString &suffix,
-                                           const QVector<quint32> &source, const QVector<DestinationItem> &destination,
+                                           const QVector<SourceItem> &source, const QVector<DestinationItem> &destination,
                                            QGraphicsItem *parent = nullptr);
 
     static void            createDestination(Source typeCreation, quint32 &id, QVector<DestinationItem> &dest,
-                                             const QVector<quint32> &source, const QPointF &fPoint,
+                                             const QVector<SourceItem> &source, const QPointF &fPoint,
                                              const QPointF &sPoint, const QString &suffix, VAbstractPattern *doc,
                                              VContainer *data, const Document &parse);
 
@@ -90,7 +90,7 @@ protected:
                                                    const QPointF &secondPoint, const QString &suffix, VContainer *data);
 
     static void updatePoint(quint32 idTool, quint32 idItem, const QPointF &firstPoint, const QPointF &secondPoint,
-                            const QString &suffix, VContainer *data, quint32 id, qreal mx, qreal my);
+                            const QString &suffix, VContainer *data, const DestinationItem &item);
     template <class Item>
     static void updateItem(quint32 idTool, quint32 idItem, const QPointF &firstPoint, const QPointF &secondPoint,
                            const QString &suffix, VContainer *data, quint32 id);
@@ -104,7 +104,7 @@ protected:
     static void updateCurveWithSegments(quint32 idTool, quint32 idItem, const QPointF &firstPoint,
                                         const QPointF &secondPoint, const QString &suffix, VContainer *data,
                                         quint32 id);
-                                        
+
 private:
     Q_DISABLE_COPY(VAbstractMirror)
 };

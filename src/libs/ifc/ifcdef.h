@@ -1,10 +1,14 @@
-/***************************************************************************
- *                                                                         *
- *   Copyright (C) 2017  Seamly, LLC                                       *
- *                                                                         *
- *   https://github.com/fashionfreedom/seamly2d                             *
- *                                                                         *
- ***************************************************************************
+/******************************************************************************
+ *   @file   ifcdef.h
+ **  @author DS Caskey
+ **  @date   Feb 7, 2023
+ **
+ **  @brief
+ **  @copyright
+ **  This source code is part of the Seamly2D project, a pattern making
+ **  program, whose allow create and modeling patterns of clothing.
+ **  Copyright (C) 2017-2023 Seamly2D project
+ **  <https://github.com/fashionfreedom/seamly2d> All Rights Reserved.
  **
  **  Seamly2D is free software: you can redistribute it and/or modify
  **  it under the terms of the GNU General Public License as published by
@@ -19,9 +23,8 @@
  **  You should have received a copy of the GNU General Public License
  **  along with Seamly2D.  If not, see <http://www.gnu.org/licenses/>.
  **
- **************************************************************************
-
- ************************************************************************
+ *************************************************************************/
+/************************************************************************
  **
  **  @file   ifcdef.h
  **  @author Roman Telezhynskyi <dismine(at)gmail.com>
@@ -69,7 +72,7 @@ extern const QString CustomIncrSign;
 
 static const quint32 null_id = 0;
 
-#define NULL_ID null_id//use this value for initialization variables that keeps id values. 0 mean uknown id value.
+#define NULL_ID null_id//use this value for initialization variables that keeps id values. 0 mean Unknown id value.
 #define NULL_ID_STR "0"
 
 // Detect whether the compiler supports C++11 noexcept exception specifications.
@@ -105,6 +108,8 @@ extern const QString AttrDartP3;
 extern const QString AttrX;
 extern const QString AttrY;
 extern const QString AttrLineType;
+extern const QString AttrLineWeight;
+extern const QString AttrObjName;
 extern const QString AttrCut;
 extern const QString AttrLength;
 extern const QString AttrBasePoint;
@@ -163,7 +168,12 @@ extern const QString AttrArc;
 extern const QString AttrSuffix;
 extern const QString AttrIdObject;
 extern const QString AttrInLayout;
+extern const QString AttrPieceLocked;
 extern const QString AttrClosed;
+extern const QString AttrShowPointName;
+extern const QString AttrShowPointName1;
+extern const QString AttrShowPointName2;
+extern const QString AttrAlias;
 
 extern const QString LineTypeNone;
 extern const QString LineTypeSolidLine;
@@ -172,12 +182,16 @@ extern const QString LineTypeDotLine;
 extern const QString LineTypeDashDotLine;
 extern const QString LineTypeDashDotDotLine;
 
-QStringList          StylesList();
-Qt::PenStyle         LineStyleToPenStyle(const QString &lineType);
-QString              PenStyleToLineStyle(Qt::PenStyle penStyle);
-QMap<QString, QIcon> LineStylesPics();
-QMap<QString, QIcon> CurvePenStylesPics();
+QStringList            LineTypes();
+Qt::PenStyle           lineTypeToPenStyle(const QString &lineType);
+QString                PenStyleToLineType(Qt::PenStyle penStyle);
+QMap<QString, QString> LineTypeList();
+QMap<QString, QString> CurveLineTypeList();
 
+QMap<QString, QString> lineWeightList();
+
+extern const QString LineWeightByGroup;
+extern const QString LineTypeByGroup;
 extern const QString ColorByGroup;
 extern const QString ColorNone;
 extern const QString ColorBlack;
@@ -201,6 +215,22 @@ extern const QString ColorGray;
 extern const QString ColorDarkGray;
 extern const QString ColorLightGray;
 extern const QString ColorWhite;
+
+extern const QString FillNone;
+extern const QString FillSolid;
+extern const QString FillDense1;
+extern const QString FillDense2;
+extern const QString FillDense3;
+extern const QString FillDense4;
+extern const QString FillDense5;
+extern const QString FillDense6;
+extern const QString FillDense7;
+extern const QString FillHorizLines;
+extern const QString FillVertLines;
+extern const QString FillCross;
+extern const QString FillBackwardDiagonal;
+extern const QString FillForwardDiagonal;
+extern const QString FilldDiagonalCross;
 
 // variables name
 // Hacks for avoiding the linker error "undefined reference to"

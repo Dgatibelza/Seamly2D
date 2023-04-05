@@ -87,24 +87,26 @@
  * @param parent parent widget
  */
 DialogSpline::DialogSpline(const VContainer *data, const quint32 &toolId, QWidget *parent)
-    : DialogTool(data, toolId, parent),
-      ui(new Ui::DialogSpline),
-      spl(),
-      newDuplicate(-1),
-      formulaBaseHeightAngle1(0),
-      formulaBaseHeightAngle2(0),
-      formulaBaseHeightLength1(0),
-      formulaBaseHeightLength2(0),
-      timerAngle1(new QTimer(this)),
-      timerAngle2(new QTimer(this)),
-      timerLength1(new QTimer(this)),
-      timerLength2(new QTimer(this)),
-      flagAngle1(false),
-      flagAngle2(false),
-      flagLength1(false),
-      flagLength2(false)
+    : DialogTool(data, toolId, parent)
+    , ui(new Ui::DialogSpline)
+    , spl()
+    , newDuplicate(-1)
+    , formulaBaseHeightAngle1(0)
+    , formulaBaseHeightAngle2(0)
+    , formulaBaseHeightLength1(0)
+    , formulaBaseHeightLength2(0)
+    , timerAngle1(new QTimer(this))
+    , timerAngle2(new QTimer(this))
+    , timerLength1(new QTimer(this))
+    , timerLength2(new QTimer(this))
+    , flagAngle1(false)
+    , flagAngle2(false)
+    , flagLength1(false)
+    , flagLength2(false)
 {
     ui->setupUi(this);
+    setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+    setWindowIcon(QIcon(":/toolicon/32x32/spline.png"));
 
     plainTextEditFormula = ui->plainTextEditAngle1F;
 
@@ -127,15 +129,35 @@ DialogSpline::DialogSpline(const VContainer *data, const quint32 &toolId, QWidge
 
     FillComboBoxPoints(ui->comboBoxP1);
     FillComboBoxPoints(ui->comboBoxP4);
-    FillComboBoxLineColors(ui->comboBoxColor);
-    FillComboBoxTypeLine(ui->comboBoxPenStyle, CurvePenStylesPics());
+
+    int index = ui->lineType_ComboBox->findData(LineTypeNone);
+    if (index != -1)
+    {
+        ui->lineType_ComboBox->removeItem(index);
+    }
+
+    index = ui->lineColor_ComboBox->findData(qApp->getCurrentDocument()->getDefaultLineColor());
+    if (index != -1)
+    {
+        ui->lineColor_ComboBox->setCurrentIndex(index);
+    }
+
+    index = ui->lineWeight_ComboBox->findData(qApp->getCurrentDocument()->getDefaultLineWeight());
+    if (index != -1)
+    {
+        ui->lineWeight_ComboBox->setCurrentIndex(index);
+    }
+
+    index = ui->lineType_ComboBox->findData(qApp->getCurrentDocument()->getDefaultLineType());
+    if (index != -1)
+    {
+        ui->lineType_ComboBox->setCurrentIndex(index);
+    }
 
     CheckState();
 
-    connect(ui->comboBoxP1, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
-            this, &DialogSpline::PointNameChanged);
-    connect(ui->comboBoxP4, static_cast<void (QComboBox::*)(const QString &)>(&QComboBox::currentIndexChanged),
-            this, &DialogSpline::PointNameChanged);
+    connect(ui->comboBoxP1, &QComboBox::currentTextChanged, this, &DialogSpline::PointNameChanged);
+    connect(ui->comboBoxP4, &QComboBox::currentTextChanged, this, &DialogSpline::PointNameChanged);
 
     connect(ui->toolButtonExprAngle1, &QPushButton::clicked, this, &DialogSpline::FXAngle1);
     connect(ui->toolButtonExprAngle2, &QPushButton::clicked, this, &DialogSpline::FXAngle2);
@@ -575,12 +597,12 @@ void DialogSpline::ShowDialog(bool click)
 //---------------------------------------------------------------------------------------------------------------------
 void DialogSpline::CheckState()
 {
-    SCASSERT(bOk != nullptr)
-    bOk->setEnabled(flagAngle1 && flagAngle2 && flagLength1 && flagLength2 && flagError);
+    SCASSERT(ok_Button != nullptr)
+    ok_Button->setEnabled(flagAngle1 && flagAngle2 && flagLength1 && flagLength2 && flagError);
     // In case dialog hasn't apply button
-    if ( bApply != nullptr)
+    if (apply_Button != nullptr)
     {
-        bApply->setEnabled(bOk->isEnabled());
+        apply_Button->setEnabled(ok_Button->isEnabled());
     }
 }
 
@@ -634,25 +656,46 @@ void DialogSpline::SetSpline(const VSpline &spline)
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-QString DialogSpline::GetPenStyle() const
+QString DialogSpline::getPenStyle() const
 {
-    return GetComboBoxCurrentData(ui->comboBoxPenStyle, LineTypeSolidLine);
+    return GetComboBoxCurrentData(ui->lineType_ComboBox, LineTypeSolidLine);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void DialogSpline::SetPenStyle(const QString &value)
+void DialogSpline::setPenStyle(const QString &value)
 {
-    ChangeCurrentData(ui->comboBoxPenStyle, value);
+    ChangeCurrentData(ui->lineType_ComboBox, value);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-QString DialogSpline::GetColor() const
+QString DialogSpline::getLineColor() const
 {
-    return GetComboBoxCurrentData(ui->comboBoxColor, ColorBlack);
+    return GetComboBoxCurrentData(ui->lineColor_ComboBox, ColorBlack);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void DialogSpline::SetColor(const QString &value)
+void DialogSpline::setLineColor(const QString &value)
 {
-    ChangeCurrentData(ui->comboBoxColor, value);
+    ChangeCurrentData(ui->lineColor_ComboBox, value);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+ * @brief getLineWeight return weight of the lines
+ * @return type
+ */
+QString DialogSpline::getLineWeight() const
+{
+        return GetComboBoxCurrentData(ui->lineWeight_ComboBox, "0.35");
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+ * @brief setLineWeight set weight of the lines
+ * @param value type
+ */
+void DialogSpline::setLineWeight(const QString &value)
+{
+    ChangeCurrentData(ui->lineWeight_ComboBox, value);
+    vis->setLineWeight(value);
 }

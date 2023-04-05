@@ -154,14 +154,12 @@ void CheckableMessageBox::setText(const QString &t)
 }
 
 // cppcheck-suppress unusedFunction
+/*
 QPixmap CheckableMessageBox::iconPixmap() const
 {
-    if (const QPixmap *p = d->pixmapLabel->pixmap())
-    {
-        return QPixmap(*p);
-    }
-    return QPixmap();
+    return d->pixmapLabel->pixmap(Qt::ReturnByValueConstant::ReturnByValue);
 }
+*/
 
 void CheckableMessageBox::setIconPixmap(const QPixmap &p)
 {

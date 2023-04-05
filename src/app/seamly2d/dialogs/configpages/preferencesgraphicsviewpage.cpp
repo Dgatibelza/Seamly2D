@@ -31,8 +31,10 @@
 #include "../../core/vapplication.h"
 #include "../vpatterndb/pmsystems.h"
 #include "../vmisc/logging.h"
+#include "../vtools/tools/vabstracttool.h"
 #include "../vwidgets/vmaingraphicsview.h"
 
+#include <Qt>
 #include <QDir>
 #include <QDirIterator>
 #include <QMessageBox>
@@ -40,25 +42,58 @@
 #include <QtDebug>
 #include <QDoubleSpinBox>
 #include <QCheckBox>
+#include <QFontComboBox>
+#include <QPixmap>
 
 
 Q_LOGGING_CATEGORY(vGraphicsViewConfig, "vgraphicsviewconfig")
 //---------------------------------------------------------------------------------------------------------------------
 PreferencesGraphicsViewPage::PreferencesGraphicsViewPage (QWidget *parent)
     : QWidget(parent)
-    , ui(new Ui::PreferencesGraphicsViewPage )
+    , ui(new Ui::PreferencesGraphicsViewPage)
     , m_zrbPositiveColorChanged(false)
     , m_zrbNegativeColorChanged(false)
+    , m_pointNameColorChanged(false)
+    , m_pointNameHoverColorChanged(false)
+    , m_orginAxisColorChanged(false)
+    , m_primarySupportColorChanged(false)
+    , m_secondarySupportColorChanged(false)
+    , m_tertiarySupportColorChanged(false)
 {
     ui->setupUi(this);
-    // Appearance preferences
+// Appearance preferences
     // Toolbar
     ui->toolBarStyle_CheckBox->setChecked(qApp->Seamly2DSettings()->getToolBarStyle());
+    ui->toolsToolbar_CheckBox->setChecked(qApp->Seamly2DSettings()->getShowToolsToolBar());
+    ui->pointToolbar_CheckBox->setChecked(qApp->Seamly2DSettings()->getShowPointToolBar());
+    ui->lineToolbar_CheckBox->setChecked(qApp->Seamly2DSettings()->getShowLineToolBar());
+    ui->curveToolbar_CheckBox->setChecked(qApp->Seamly2DSettings()->getShowCurveToolBar());
+    ui->arcToolbar_CheckBox->setChecked(qApp->Seamly2DSettings()->getShowArcToolBar());
+    ui->operationToolbar_CheckBox->setChecked(qApp->Seamly2DSettings()->getShowOpsToolBar());
+    ui->pieceToolbar_CheckBox->setChecked(qApp->Seamly2DSettings()->getShowPieceToolBar());
+    ui->detailsToolbar_CheckBox->setChecked(qApp->Seamly2DSettings()->getShowDetailsToolBar());
+    ui->layoutToolbar_CheckBox->setChecked(qApp->Seamly2DSettings()->getShowLayoutToolBar());
 
     // Antialiasing
     ui->graphicsOutput_CheckBox->setChecked(qApp->Seamly2DSettings()->GetGraphicalOutput());
 
-    // Color preferences
+    ui->primarySupportColor_ComboBox->setItems(VAbstractTool::supportColorsList());
+    ui->secondarySupportColor_ComboBox->setItems(VAbstractTool::supportColorsList());
+    ui->tertiarySupportColor_ComboBox->setItems(VAbstractTool::supportColorsList());
+
+    /*
+    QPixmap pixmap = VAbstractTool::createColorIcon(ui->primarySupportColor_ComboBox->getIconWidth(),
+                                                    ui->primarySupportColor_ComboBox->getIconHeight(),
+                                                    "magenta");
+    ui->primarySupportColor_ComboBox->addItem(QIcon(pixmap),   tr("Magenta"), "magenta");
+    ui->primarySupportColor_ComboBox->model()->sort(0, Qt::AscendingOrder);
+    ui->secondarySupportColor_ComboBox->addItem(QIcon(pixmap), tr("Magenta"), "magenta");
+    ui->secondarySupportColor_ComboBox->model()->sort(0, Qt::AscendingOrder);
+    ui->tertiarySupportColor_ComboBox->addItem(QIcon(pixmap),  tr("Magenta"), "magenta");
+    ui->tertiarySupportColor_ComboBox->model()->sort(0, Qt::AscendingOrder);
+    */
+
+// Color preferences
     // Zoom Rubberband colors
     int index = ui->zrbPositiveColor_ComboBox->findText(qApp->Seamly2DSettings()->getZoomRBPositiveColor());
     if (index != -1)
@@ -80,7 +115,69 @@ PreferencesGraphicsViewPage::PreferencesGraphicsViewPage (QWidget *parent)
         m_zrbNegativeColorChanged = true;
     });
 
-    // Navigation preferences
+    index = ui->pointNameColor_ComboBox->findText(qApp->Seamly2DSettings()->getPointNameColor());
+    if (index != -1)
+    {
+        ui->pointNameColor_ComboBox->setCurrentIndex(index);
+    }
+    connect(ui->pointNameColor_ComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]()
+    {
+        m_pointNameColorChanged = true;
+    });
+
+    index = ui->pointNameHoverColor_ComboBox->findText(qApp->Seamly2DSettings()->getPointNameHoverColor());
+    if (index != -1)
+    {
+        ui->pointNameHoverColor_ComboBox->setCurrentIndex(index);
+    }
+    connect(ui->pointNameHoverColor_ComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]()
+    {
+        m_pointNameHoverColorChanged = true;
+    });
+
+    //----------------------- Axis Orgin Color
+    index = ui->axisOrginColor_ComboBox->findText(qApp->Seamly2DSettings()->getAxisOrginColor());
+    if (index != -1)
+    {
+        ui->axisOrginColor_ComboBox->setCurrentIndex(index);
+    }
+    connect(ui->axisOrginColor_ComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]()
+    {
+        m_orginAxisColorChanged = true;
+    });
+
+    //----------------------- Selection Support Colors
+    index = ui->primarySupportColor_ComboBox->findText(qApp->Seamly2DSettings()->getPrimarySupportColor());
+    if (index != -1)
+    {
+        ui->primarySupportColor_ComboBox->setCurrentIndex(index);
+    }
+    connect(ui->primarySupportColor_ComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]()
+    {
+        m_primarySupportColorChanged = true;
+    });
+
+    index = ui->secondarySupportColor_ComboBox->findText(qApp->Seamly2DSettings()->getSecondarySupportColor());
+    if (index != -1)
+    {
+        ui->secondarySupportColor_ComboBox->setCurrentIndex(index);
+    }
+    connect(ui->secondarySupportColor_ComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]()
+    {
+        m_secondarySupportColorChanged = true;
+    });
+
+    index = ui->tertiarySupportColor_ComboBox->findText(qApp->Seamly2DSettings()->getTertiarySupportColor());
+    if (index != -1)
+    {
+        ui->tertiarySupportColor_ComboBox->setCurrentIndex(index);
+    }
+    connect(ui->tertiarySupportColor_ComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [this]()
+    {
+        m_tertiarySupportColorChanged = true;
+    });
+
+// Navigation preferences
     // Show Scroll Bars
     ui->showScrollBars_CheckBox->setChecked(qApp->Seamly2DSettings()->getShowScrollBars());
 
@@ -97,13 +194,76 @@ PreferencesGraphicsViewPage::PreferencesGraphicsViewPage (QWidget *parent)
     // Zoom Speed
     ui->zoomSpeedFactor_Slider->setValue(qApp->Seamly2DSettings()->getZoomSpeedFactor());
 
-    // Behavior preferences
+    // Export Quality
+    ui->quality_Slider->setValue(qApp->Seamly2DSettings()->getExportQuality());
+
+// Behavior preferences
     // Constrain Angle Value & Modifier Key
     ui->constrainValue_DoubleSpinBox->setValue(qApp->Seamly2DSettings()->getConstrainValue());
     ui->constrainModKey_CheckBox->setChecked(qApp->Seamly2DSettings()->getConstrainModKey());
 
     // Zoom double mouse click to selected IsTestModeEnabled
     ui->zoomDoubleClick_CheckBox->setChecked(qApp->Seamly2DSettings()->isZoomDoubleClick());
+
+    // Pan Zoom while Space Key pressed
+    ui->panActiveSpacePressed_CheckBox->setChecked(qApp->Seamly2DSettings()->isPanActiveSpaceKey());
+
+// Font preferences
+    // Pattern piece labels font
+    //QFont labelFont = qApp->Seamly2DSettings()->getLabelFont();
+    //ui->labelFont_ComboBox->setCurrentFont(labelFont);
+    ui->labelFont_ComboBox->setCurrentFont(qApp->Seamly2DSettings()->getLabelFont());
+
+/*    labelFont.setPointSize(12);
+    ui->label_Label->setFont(labelFont);
+
+    connect(ui->labelFont_ComboBox,
+            static_cast<void(QFontComboBox::*)(const QFont &)>(&QFontComboBox::currentFontChanged),
+            this, [this](QFont labelFont)
+    {
+        labelFont.setPointSize(12);
+        ui->label_Label->setFont(labelFont);
+    });
+*/
+    // Point name font
+    QFont nameFont = qApp->Seamly2DSettings()->getPointNameFont();
+    ui->pointNameFont_ComboBox->setCurrentFont(nameFont);
+    nameFont.setPointSize(12);
+    ui->pointName_Label->setFont(nameFont);
+
+    connect(ui->pointNameFont_ComboBox,
+            static_cast<void(QFontComboBox::*)(const QFont &)>(&QFontComboBox::currentFontChanged),
+            this, [this](QFont nameFont)
+    {
+        nameFont.setPointSize(12);
+        ui->pointName_Label->setFont(nameFont);
+    });
+
+    index = ui->pointNameFontSize_ComboBox->findText(QString().setNum(qApp->Seamly2DSettings()->getPointNameSize()));
+    if (index != -1)
+    {
+        ui->pointNameFontSize_ComboBox->setCurrentIndex(index);
+    }
+
+    // GUI font
+    QFont guiFont = qApp->Seamly2DSettings()->getGuiFont();
+    ui->guiFont_ComboBox->setCurrentFont(guiFont);
+    guiFont.setPointSize(12);
+    ui->gui_Label->setFont(guiFont);
+
+    connect(ui->guiFont_ComboBox,
+            static_cast<void(QFontComboBox::*)(const QFont &)>(&QFontComboBox::currentFontChanged),
+            this, [this](QFont guiFont)
+    {
+        guiFont.setPointSize(12);
+        ui->gui_Label->setFont(guiFont);
+    });
+
+    index = ui->guiFontSize_ComboBox->findText(QString().setNum(qApp->Seamly2DSettings()->getGuiFontSize()));
+    if (index != -1)
+    {
+        ui->guiFontSize_ComboBox->setCurrentIndex(index);
+    }
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -118,6 +278,15 @@ void PreferencesGraphicsViewPage::Apply()
     VSettings *settings = qApp->Seamly2DSettings();
 
     settings->setToolBarStyle(ui->toolBarStyle_CheckBox->isChecked());
+    settings->setShowToolsToolBar(ui->toolsToolbar_CheckBox->isChecked());
+    settings->setShowPointToolBar(ui->pointToolbar_CheckBox->isChecked());
+    settings->setShowLineToolBar(ui->lineToolbar_CheckBox->isChecked());
+    settings->setShowCurveToolBar(ui->curveToolbar_CheckBox->isChecked());
+    settings->setShowArcToolBar(ui->arcToolbar_CheckBox->isChecked());
+    settings->setShowOpsToolBar(ui->operationToolbar_CheckBox->isChecked());
+    settings->setShowPieceToolBar(ui->pieceToolbar_CheckBox->isChecked());
+    settings->setShowDetailsToolBar(ui->detailsToolbar_CheckBox->isChecked());
+    settings->setShowLayoutToolBar(ui->layoutToolbar_CheckBox->isChecked());
 
     // Appearance preferences
     // Toolbar
@@ -140,6 +309,43 @@ void PreferencesGraphicsViewPage::Apply()
       m_zrbNegativeColorChanged = false;
     }
 
+    // Point Name colors
+    if (m_pointNameColorChanged)
+    {
+      settings->setPointNameColor(ui->pointNameColor_ComboBox->currentText());
+      m_pointNameColorChanged = false;
+    }
+
+    if (m_pointNameHoverColorChanged)
+    {
+      settings->setPointNameHoverColor(ui->pointNameHoverColor_ComboBox->currentText());
+      m_pointNameHoverColorChanged = false;
+    }
+
+    if (m_orginAxisColorChanged)
+    {
+      settings->setAxisOrginColor(ui->axisOrginColor_ComboBox->currentText());
+      m_orginAxisColorChanged = false;
+    }
+
+    if (m_primarySupportColorChanged)
+    {
+      settings->setPrimarySupportColor(ui->primarySupportColor_ComboBox->currentText());
+      m_primarySupportColorChanged = false;
+    }
+
+    if (m_secondarySupportColorChanged)
+    {
+      settings->setSecondarySupportColor(ui->secondarySupportColor_ComboBox->currentText());
+      m_secondarySupportColorChanged = false;
+    }
+
+    if (m_tertiarySupportColorChanged)
+    {
+      settings->setTertiarySupportColor(ui->tertiarySupportColor_ComboBox->currentText());
+      m_tertiarySupportColorChanged = false;
+    }
+
     // Navigation preferences
     // Scroll Bars
     settings->setShowScrollBars(ui->showScrollBars_CheckBox->isChecked());
@@ -152,6 +358,9 @@ void PreferencesGraphicsViewPage::Apply()
     settings->setZoomModKey(ui->zoomModKey_CheckBox->isChecked());
     settings->setZoomSpeedFactor(ui->zoomSpeedFactor_Slider->value());
 
+    // Export Quality
+    settings->setExportQuality(ui->quality_Slider->value());
+
     // Behavior preferences
     // Constrain Angle Value & Modifier Key
     settings->setConstrainValue(ui->constrainValue_DoubleSpinBox->value());
@@ -159,4 +368,16 @@ void PreferencesGraphicsViewPage::Apply()
 
     // Zoom double mouse click to selected IsTestModeEnabled
     settings->setZoomDoubleClick(ui->zoomDoubleClick_CheckBox->isChecked());
+
+    // Pan Zoom while Space key pressed
+    settings->setPanActiveSpaceKey(ui->panActiveSpacePressed_CheckBox->isChecked());
+
+    //Fonts
+    settings->setLabelFont(ui->labelFont_ComboBox->currentFont());
+
+    settings->setGuiFont(ui->guiFont_ComboBox->currentFont());
+    settings->setGuiFontSize(ui->guiFontSize_ComboBox->currentText().toInt());
+
+    settings->setPointNameFont(ui->pointNameFont_ComboBox->currentFont());
+    settings->setPointNameSize(ui->pointNameFontSize_ComboBox->currentText().toInt());
 }

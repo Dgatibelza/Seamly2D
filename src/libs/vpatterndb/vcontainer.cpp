@@ -1,11 +1,13 @@
 /***************************************************************************
- *                                                                         *
- *   Copyright (C) 2017  Seamly, LLC                                       *
- *                                                                         *
- *   https://github.com/fashionfreedom/seamly2d                             *
- *                                                                         *
- ***************************************************************************
+ **  @file   vcontainer.cpp
+ **  @author Douglas S Caskey
+ **  @date   Dec 11, 2022
  **
+ **  @copyright
+ **  Copyright (C) 2017 - 2022 Seamly, LLC
+ **  https://github.com/fashionfreedom/seamly2d
+ **
+ **  @brief
  **  Seamly2D is free software: you can redistribute it and/or modify
  **  it under the terms of the GNU General Public License as published by
  **  the Free Software Foundation, either version 3 of the License, or
@@ -17,11 +19,10 @@
  **  GNU General Public License for more details.
  **
  **  You should have received a copy of the GNU General Public License
- **  along with Seamly2D.  If not, see <http://www.gnu.org/licenses/>.
- **
- **************************************************************************
+ **  along with Seamly2D. If not, see <http://www.gnu.org/licenses/>.
+ **************************************************************************/
 
- ************************************************************************
+/************************************************************************
  **
  **  @file   vcontainer.cpp
  **  @author Roman Telezhynskyi <dismine(at)gmail.com>
@@ -29,10 +30,10 @@
  **
  **  @brief
  **  @copyright
- **  This source code is part of the Valentine project, a pattern making
+ **  This source code is part of the Valentina project, a pattern making
  **  program, whose allow create and modeling patterns of clothing.
- **  Copyright (C) 2013-2015 Seamly2D project
- **  <https://github.com/fashionfreedom/seamly2d> All Rights Reserved.
+ **  Copyright (C) 2013 Valentina project
+ **  <https://bitbucket.org/dismine/valentina> All Rights Reserved.
  **
  **  Seamly2D is free software: you can redistribute it and/or modify
  **  it under the terms of the GNU General Public License as published by
@@ -176,7 +177,7 @@ const val VContainer::GetObject(const QHash<key, val> &obj, key id) const
     }
     else
     {
-        throw VExceptionBadId(tr("Can't find object"), id);
+        throw VExceptionBadId(tr("Can't find object: "), id);
     }
 }
 
@@ -189,7 +190,7 @@ VPiece VContainer::GetPiece(quint32 id) const
     }
     else
     {
-        throw VExceptionBadId(tr("Can't find object"), id);
+        throw VExceptionBadId(tr("Can't find piece: "), id);
     }
 }
 
@@ -202,7 +203,7 @@ VPiecePath VContainer::GetPiecePath(quint32 id) const
     }
     else
     {
-        throw VExceptionBadId(tr("Can't find object"), id);
+        throw VExceptionBadId(tr("Can't find path: "), id);
     }
 }
 
@@ -221,10 +222,10 @@ quint32 VContainer::AddGObject(VGObject *obj)
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-quint32 VContainer::AddPiece(const VPiece &detail)
+quint32 VContainer::AddPiece(const VPiece &piece)
 {
     const quint32 id = getNextId();
-    d->pieces->insert(id, detail);
+    d->pieces->insert(id, piece);
     return id;
 }
 
@@ -271,27 +272,6 @@ void VContainer::UpdateId(quint32 newId)
     {
        _id = newId;
     }
-}
-
-//---------------------------------------------------------------------------------------------------------------------
-/**
- * @brief UpdateObject update object in container
- * @param obj container
- * @param id id of existing object
- * @param point object
- */
-template <typename val>
-void VContainer::UpdateObject(QHash<quint32, val> &obj, const quint32 &id, val point)
-{
-    Q_ASSERT_X(id != NULL_ID, Q_FUNC_INFO, "id == 0"); //-V654 //-V712
-    SCASSERT(point.isNull() == false)
-    point->setId(id);
-    if (d->gObjects.contains(id))
-    {
-        d->gObjects[id].clear();
-    }
-    obj[id] = point;
-    UpdateId(id);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -527,24 +507,10 @@ quint32 VContainer::AddObject(QHash<key, val> &obj, val value)
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-/**
- * @brief UpdateGObject update GObject by id
- * @param id id of existing GObject
- * @param obj object
- */
-void VContainer::UpdateGObject(quint32 id, VGObject* obj)
-{
-    SCASSERT(obj != nullptr)
-    QSharedPointer<VGObject> pointer(obj);
-    UpdateObject(d->gObjects, id, pointer);
-    uniqueNames.insert(obj->name());
-}
-
-//---------------------------------------------------------------------------------------------------------------------
-void VContainer::UpdatePiece(quint32 id, const VPiece &detail)
+void VContainer::UpdatePiece(quint32 id, const VPiece &piece)
 {
     Q_ASSERT_X(id != NULL_ID, Q_FUNC_INFO, "id == 0"); //-V654 //-V712
-    d->pieces->insert(id, detail);
+    d->pieces->insert(id, piece);
     UpdateId(id);
 }
 

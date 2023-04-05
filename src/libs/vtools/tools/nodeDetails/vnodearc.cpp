@@ -2,7 +2,7 @@
  *                                                                         *
  *   Copyright (C) 2017  Seamly, LLC                                       *
  *                                                                         *
- *   https://github.com/fashionfreedom/seamly2d                             *
+ *   https://github.com/fashionfreedom/seamly2d                            *
  *                                                                         *
  ***************************************************************************
  **
@@ -76,8 +76,8 @@ const QString VNodeArc::ToolType = QStringLiteral("modeling");
  * @param qoParent QObject parent
  */
 VNodeArc::VNodeArc(VAbstractPattern *doc, VContainer *data, quint32 id, quint32 idArc, const Source &typeCreation,
-                   const QString &drawName, const quint32 &idTool, QObject *qoParent)
-    :VAbstractNode(doc, data, id, idArc, drawName, idTool, qoParent)
+                   const QString &blockName, const quint32 &idTool, QObject *qoParent)
+    :VAbstractNode(doc, data, id, idArc, blockName, idTool, qoParent)
 {
     ToolCreation(typeCreation);
 }
@@ -94,12 +94,12 @@ VNodeArc::VNodeArc(VAbstractPattern *doc, VContainer *data, quint32 id, quint32 
  * @param idTool tool id.
  */
 void VNodeArc::Create(VAbstractPattern *doc, VContainer *data, quint32 id, quint32 idArc,
-                      const Document &parse, const Source &typeCreation, const QString &drawName, const quint32 &idTool)
+                      const Document &parse, const Source &typeCreation, const QString &blockName, const quint32 &idTool)
 {
     if (parse == Document::FullParse)
     {
         VAbstractTool::AddRecord(id, Tool::NodeArc, doc);
-        VNodeArc *arc = new VNodeArc(doc, data, id, idArc, typeCreation, drawName, idTool, doc);
+        VNodeArc *arc = new VNodeArc(doc, data, id, idArc, typeCreation, blockName, idTool, doc);
 
         VAbstractPattern::AddTool(id, arc);
         if (idTool != NULL_ID)
@@ -143,13 +143,13 @@ void VNodeArc::AllowSelecting(bool enabled)
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
- * @brief AddToFile add tag with informations about tool into file.
+ * @brief AddToFile add tag with Information about tool into file.
  */
 void VNodeArc::AddToFile()
 {
     QDomElement domElement = doc->createElement(getTagName());
 
-    doc->SetAttribute(domElement, VDomDocument::AttrId, id);
+    doc->SetAttribute(domElement, VDomDocument::AttrId, m_id);
     doc->SetAttribute(domElement, AttrType, ToolType);
     doc->SetAttribute(domElement, AttrIdObject, idNode);
     if (idTool != NULL_ID)

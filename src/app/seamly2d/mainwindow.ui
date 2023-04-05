@@ -2,6 +2,9 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -15,7 +18,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
-    <normaloff>:/icon/64x64/icon64x64.png</normaloff>:/icon/64x64/icon64x64.png</iconset>
+    <normaloff>:/icon/logos/seamly_logo_32.png</normaloff>:/icon/logos/seamly_logo_32.png</iconset>
   </property>
   <property name="locale">
    <locale language="Saho" country="Eritrea"/>
@@ -37,7 +40,7 @@
     <item>
      <widget class="VMainGraphicsView" name="view">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -68,17 +71,27 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
-    <widget class="QMenu" name="layout_Menu">
+    <widget class="QMenu" name="print_Menu">
      <property name="title">
-      <string>Layout</string>
+      <string>Print</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../../libs/vmisc/share/resources/theme.qrc">
+       <normaloff>:/icons/win.icon.theme/32x32/actions/document-print.png</normaloff>:/icons/win.icon.theme/32x32/actions/document-print.png</iconset>
+     </property>
+     <addaction name="print_Action"/>
+     <addaction name="printTiled_Action"/>
+    </widget>
+    <widget class="QMenu" name="preview_Menu">
+     <property name="title">
+      <string>Preview</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../../libs/vmisc/share/resources/theme.qrc">
+       <normaloff>:/icons/win.icon.theme/32x32/actions/document-print-preview.png</normaloff>:/icons/win.icon.theme/32x32/actions/document-print-preview.png</iconset>
      </property>
      <addaction name="printPreview_Action"/>
-     <addaction name="print_Action"/>
-     <addaction name="separator"/>
      <addaction name="printPreviewTiled_Action"/>
-     <addaction name="printTiled_Action"/>
-     <addaction name="separator"/>
-     <addaction name="exportAs_Action"/>
     </widget>
     <addaction name="actionNew"/>
     <addaction name="actionOpen"/>
@@ -86,12 +99,17 @@
     <addaction name="save_Action"/>
     <addaction name="saveAs_Action"/>
     <addaction name="separator"/>
-    <addaction name="layout_Menu"/>
+    <addaction name="print_Menu"/>
+    <addaction name="preview_Menu"/>
+    <addaction name="separator"/>
+    <addaction name="exportAs_Action"/>
     <addaction name="separator"/>
     <addaction name="appPreferences_Action"/>
     <addaction name="patternPreferences_Action"/>
     <addaction name="separator"/>
     <addaction name="labelTemplateEditor_Action"/>
+    <addaction name="separator"/>
+    <addaction name="documentInfo_Action"/>
     <addaction name="separator"/>
     <addaction name="exit_Action"/>
    </widget>
@@ -99,6 +117,7 @@
     <property name="title">
      <string>&amp;Help</string>
     </property>
+    <addaction name="shortcuts_Action"/>
     <addaction name="wiki_Action"/>
     <addaction name="forum_Action"/>
     <addaction name="reportBug_Action"/>
@@ -128,7 +147,16 @@
     <property name="title">
      <string>View</string>
     </property>
-    <addaction name="draftMode_Action"/>
+    <widget class="QMenu" name="pointNames_Menu">
+     <property name="title">
+      <string>Point Names</string>
+     </property>
+     <addaction name="showPointNames_Action"/>
+     <addaction name="increaseSize_Action"/>
+     <addaction name="decreaseSize_Action"/>
+     <addaction name="useToolColor_Action"/>
+    </widget>
+    <addaction name="showDraftMode"/>
     <addaction name="pieceMode_Action"/>
     <addaction name="layoutMode_Action"/>
     <addaction name="separator"/>
@@ -140,8 +168,15 @@
     <addaction name="zoomToSelected_Action"/>
     <addaction name="zoomToArea_Action"/>
     <addaction name="zoomPan_Action"/>
+    <addaction name="zoomToPoint_Action"/>
     <addaction name="separator"/>
-    <addaction name="showCurveDetails_Action"/>
+    <addaction name="pointNames_Menu"/>
+    <addaction name="toggleWireframe_Action"/>
+    <addaction name="toggleControlPoints_Action"/>
+    <addaction name="toggleAxisOrigin_Action"/>
+    <addaction name="toggleSeamAllowances_Action"/>
+    <addaction name="toggleGrainLines_Action"/>
+    <addaction name="toggleLabels_Action"/>
     <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="edit_Menu">
@@ -159,7 +194,7 @@
      </property>
      <property name="icon">
       <iconset resource="share/resources/toolicon.qrc">
-       <normaloff>:/toolicon/32x32/modify_toolbox.png</normaloff>:/toolicon/32x32/modify_toolbox.png</iconset>
+       <normaloff>:/toolicon/32x32/operations_toolbox.png</normaloff>:/toolicon/32x32/operations_toolbox.png</iconset>
      </property>
      <addaction name="group_Action"/>
      <addaction name="rotation_Action"/>
@@ -167,16 +202,7 @@
      <addaction name="mirrorByAxis_Action"/>
      <addaction name="move_Action"/>
      <addaction name="trueDarts_Action"/>
-    </widget>
-    <widget class="QMenu" name="elipses_Menu">
-     <property name="title">
-      <string>Ellipse</string>
-     </property>
-     <property name="icon">
-      <iconset resource="share/resources/toolicon.qrc">
-       <normaloff>:/toolicon/32x32/ellipses_toolbox.png</normaloff>:/toolicon/32x32/ellipses_toolbox.png</iconset>
-     </property>
-     <addaction name="ellipticalArc_Action"/>
+     <addaction name="exportDraftBlocks_Action"/>
     </widget>
     <widget class="QMenu" name="points_Menu">
      <property name="title">
@@ -188,23 +214,23 @@
      </property>
      <addaction name="pointAtDistanceAngle_Action"/>
      <addaction name="pointAlongLine_Action"/>
+     <addaction name="midpoint_Action"/>
      <addaction name="pointAlongPerpendicular_Action"/>
      <addaction name="bisector_Action"/>
      <addaction name="pointOnShoulder_Action"/>
      <addaction name="pointOfContact_Action"/>
      <addaction name="triangle_Action"/>
-     <addaction name="pointOfIntersection_Action"/>
+     <addaction name="pointIntersectXY_Action"/>
      <addaction name="perpendicularPoint_Action"/>
      <addaction name="pointIntersectAxis_Action"/>
-     <addaction name="midpoint_Action"/>
     </widget>
-    <widget class="QMenu" name="patternPiece_Menu">
+    <widget class="QMenu" name="details_Menu">
      <property name="title">
-      <string>Pattern Pieces</string>
+      <string>Details</string>
      </property>
      <property name="icon">
       <iconset resource="share/resources/toolicon.qrc">
-       <normaloff>:/toolicon/32x32/patternpieces_toolbox.png</normaloff>:/toolicon/32x32/patternpieces_toolbox.png</iconset>
+       <normaloff>:/toolicon/32x32/details_toolbox.png</normaloff>:/toolicon/32x32/details_toolbox.png</iconset>
      </property>
      <addaction name="union_Action"/>
      <addaction name="exportPieces_Action"/>
@@ -253,19 +279,20 @@
      <addaction name="circleTangent_Action"/>
      <addaction name="arcTangent_Action"/>
      <addaction name="arcWithLength_Action"/>
+     <addaction name="ellipticalArc_Action"/>
     </widget>
-    <widget class="QMenu" name="addDetails_Menu">
+    <widget class="QMenu" name="piece_Menu">
      <property name="title">
-      <string>Add Details</string>
+      <string>Piece</string>
      </property>
      <property name="icon">
       <iconset resource="share/resources/toolicon.qrc">
-       <normaloff>:/toolicon/32x32/details_toolbox.png</normaloff>:/toolicon/32x32/details_toolbox.png</iconset>
+       <normaloff>:/toolicon/32x32/patternpiece_toolbox.png</normaloff>:/toolicon/32x32/patternpiece_toolbox.png</iconset>
      </property>
      <addaction name="addPiece_Action"/>
      <addaction name="anchorPoint_Action"/>
      <addaction name="internalPath_Action"/>
-     <addaction name="insertNode_Action"/>
+     <addaction name="insertNodes_Action"/>
     </widget>
     <widget class="QMenu" name="layouts_Menu">
      <property name="enabled">
@@ -278,7 +305,7 @@
       <iconset resource="share/resources/toolicon.qrc">
        <normaloff>:/toolicon/32x32/layout_toolbox.png</normaloff>:/toolicon/32x32/layout_toolbox.png</iconset>
      </property>
-     <addaction name="newPatternLayout_Action"/>
+     <addaction name="newPrintLayout_Action"/>
      <addaction name="exportLayout_Action"/>
     </widget>
     <addaction name="newDraft_Action"/>
@@ -288,13 +315,19 @@
     <addaction name="lines_Menu"/>
     <addaction name="curves_Menu"/>
     <addaction name="arcs_Menu"/>
-    <addaction name="elipses_Menu"/>
     <addaction name="operations_Menu"/>
-    <addaction name="addDetails_Menu"/>
-    <addaction name="patternPiece_Menu"/>
+    <addaction name="piece_Menu"/>
+    <addaction name="details_Menu"/>
     <addaction name="layouts_Menu"/>
     <addaction name="separator"/>
     <addaction name="lastTool_Action"/>
+   </widget>
+   <widget class="QMenu" name="menuUtiliries">
+    <property name="title">
+     <string>Utilities</string>
+    </property>
+    <addaction name="calculator_Action"/>
+    <addaction name="decimalChart_Action"/>
    </widget>
    <addaction name="file_Menu"/>
    <addaction name="edit_Menu"/>
@@ -302,6 +335,7 @@
    <addaction name="tools_Menu"/>
    <addaction name="measurements_Menu"/>
    <addaction name="history_Menu"/>
+   <addaction name="menuUtiliries"/>
    <addaction name="help_Menu"/>
   </widget>
   <widget class="QToolBar" name="file_ToolBar">
@@ -348,7 +382,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="draftMode_Action"/>
+   <addaction name="showDraftMode"/>
    <addaction name="pieceMode_Action"/>
    <addaction name="layoutMode_Action"/>
   </widget>
@@ -374,25 +408,6 @@
     <bool>false</bool>
    </attribute>
    <addaction name="newDraft_Action"/>
-  </widget>
-  <widget class="QToolBar" name="status_ToolBar">
-   <property name="font">
-    <font>
-     <pointsize>10</pointsize>
-    </font>
-   </property>
-   <property name="windowTitle">
-    <string>Status Toolbar</string>
-   </property>
-   <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonTextUnderIcon</enum>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>BottomToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
   </widget>
   <widget class="QToolBar" name="edit_Toolbar">
    <property name="enabled">
@@ -424,7 +439,7 @@
     </size>
    </property>
    <property name="windowTitle">
-    <string>Property Ediitor</string>
+    <string>Property Editor</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
@@ -439,7 +454,7 @@
     </size>
    </property>
    <property name="features">
-    <set>QDockWidget::DockWidgetClosable</set>
+    <set>QDockWidget::AllDockWidgetFeatures</set>
    </property>
    <property name="allowedAreas">
     <set>Qt::RightDockWidgetArea</set>
@@ -541,30 +556,6 @@
    <widget class="QWidget" name="dockWidgetContents_2"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <widget class="QToolBar" name="tools_ToolBox_ToolBar">
-   <property name="contextMenuPolicy">
-    <enum>Qt::DefaultContextMenu</enum>
-   </property>
-   <property name="windowTitle">
-    <string>Toolbox ToolBar</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>true</bool>
-   </attribute>
-   <addaction name="arrow_Action"/>
-   <addaction name="points_Action"/>
-   <addaction name="lines_Action"/>
-   <addaction name="curves_Action"/>
-   <addaction name="arcs_Action"/>
-   <addaction name="ellipses_Action"/>
-   <addaction name="modifications_Action"/>
-   <addaction name="addDetails_Action"/>
-   <addaction name="patternPiece_Action"/>
-   <addaction name="layout_Action"/>
-  </widget>
   <widget class="QToolBar" name="zoom_ToolBar">
    <property name="enabled">
     <bool>true</bool>
@@ -585,10 +576,34 @@
    <addaction name="zoomOut_Action"/>
    <addaction name="zoom100Percent_Action"/>
    <addaction name="zoomToFit_Action"/>
-   <addaction name="zoomToSelected_Action"/>
    <addaction name="zoomToPrevious_Action"/>
+   <addaction name="zoomToSelected_Action"/>
    <addaction name="zoomToArea_Action"/>
    <addaction name="zoomPan_Action"/>
+   <addaction name="zoomToPoint_Action"/>
+  </widget>
+  <widget class="QToolBar" name="tools_ToolBox_ToolBar">
+   <property name="contextMenuPolicy">
+    <enum>Qt::DefaultContextMenu</enum>
+   </property>
+   <property name="windowTitle">
+    <string>Toolbox ToolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>true</bool>
+   </attribute>
+   <addaction name="arrow_Action"/>
+   <addaction name="points_Action"/>
+   <addaction name="lines_Action"/>
+   <addaction name="curves_Action"/>
+   <addaction name="arcs_Action"/>
+   <addaction name="modifications_Action"/>
+   <addaction name="pieces_Action"/>
+   <addaction name="details_Action"/>
+   <addaction name="layout_Action"/>
   </widget>
   <widget class="QToolBar" name="points_ToolBar">
    <property name="windowTitle">
@@ -602,15 +617,15 @@
    </attribute>
    <addaction name="pointAtDistanceAngle_Action"/>
    <addaction name="pointAlongLine_Action"/>
+   <addaction name="midpoint_Action"/>
    <addaction name="pointAlongPerpendicular_Action"/>
    <addaction name="bisector_Action"/>
    <addaction name="pointOnShoulder_Action"/>
    <addaction name="pointOfContact_Action"/>
    <addaction name="triangle_Action"/>
-   <addaction name="pointOfIntersection_Action"/>
+   <addaction name="pointIntersectXY_Action"/>
    <addaction name="perpendicularPoint_Action"/>
    <addaction name="pointIntersectAxis_Action"/>
-   <addaction name="midpoint_Action"/>
   </widget>
   <widget class="QToolBar" name="lines_ToolBar">
    <property name="windowTitle">
@@ -662,17 +677,6 @@
    <addaction name="circleTangent_Action"/>
    <addaction name="arcTangent_Action"/>
    <addaction name="arcWithLength_Action"/>
-  </widget>
-  <widget class="QToolBar" name="ellipses_ToolBar">
-   <property name="windowTitle">
-    <string>Elliptical Arcs ToolBar</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
    <addaction name="ellipticalArc_Action"/>
   </widget>
   <widget class="QToolBar" name="operations_ToolBar">
@@ -694,13 +698,14 @@
    <addaction name="mirrorByAxis_Action"/>
    <addaction name="move_Action"/>
    <addaction name="trueDarts_Action"/>
+   <addaction name="exportDraftBlocks_Action"/>
   </widget>
-  <widget class="QToolBar" name="addDetails_ToolBar">
+  <widget class="QToolBar" name="pieces_ToolBar">
    <property name="enabled">
     <bool>true</bool>
    </property>
    <property name="windowTitle">
-    <string>Details ToolBar</string>
+    <string>Piece ToolBar</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -710,12 +715,12 @@
    </attribute>
    <addaction name="addPiece_Action"/>
    <addaction name="anchorPoint_Action"/>
-   <addaction name="insertNode_Action"/>
+   <addaction name="insertNodes_Action"/>
    <addaction name="internalPath_Action"/>
   </widget>
-  <widget class="QToolBar" name="pieces_ToolBar">
+  <widget class="QToolBar" name="details_ToolBar">
    <property name="windowTitle">
-    <string>Pieces ToolBar</string>
+    <string>Details ToolBar</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -736,14 +741,38 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="newPatternLayout_Action"/>
+   <addaction name="newPrintLayout_Action"/>
    <addaction name="exportLayout_Action"/>
+  </widget>
+  <widget class="QToolBar" name="pointName_ToolBar">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="windowTitle">
+    <string>Point Name ToolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>true</bool>
+   </attribute>
+   <addaction name="showPointNames_Action"/>
+   <addaction name="increaseSize_Action"/>
+   <addaction name="decreaseSize_Action"/>
+   <addaction name="useToolColor_Action"/>
   </widget>
   <widget class="QDockWidget" name="toolbox_DockWidget">
    <property name="minimumSize">
     <size>
-     <width>120</width>
+     <width>140</width>
      <height>522</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>524287</width>
+     <height>524287</height>
     </size>
    </property>
    <property name="floating">
@@ -758,112 +787,42 @@
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents_3">
+   <widget class="QWidget" name="toolboxDockContents">
     <property name="minimumSize">
      <size>
       <width>0</width>
       <height>500</height>
      </size>
     </property>
-    <widget class="QToolBox" name="tools_ToolBox">
-     <property name="enabled">
-      <bool>true</bool>
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <property name="leftMargin">
+      <number>0</number>
      </property>
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>0</y>
-       <width>120</width>
-       <height>501</height>
-      </rect>
+     <property name="topMargin">
+      <number>0</number>
      </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-       <horstretch>1</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+     <property name="rightMargin">
+      <number>0</number>
      </property>
-     <property name="minimumSize">
-      <size>
-       <width>120</width>
-       <height>500</height>
-      </size>
+     <property name="bottomMargin">
+      <number>0</number>
      </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>10</pointsize>
-      </font>
-     </property>
-     <property name="toolTip">
-      <string/>
-     </property>
-     <property name="currentIndex">
-      <number>5</number>
-     </property>
-     <property name="tabSpacing">
-      <number>4</number>
-     </property>
-     <widget class="QWidget" name="points_Page">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>120</width>
-        <height>240</height>
-       </rect>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="maximumSize">
-       <size>
-        <width>16777215</width>
-        <height>240</height>
-       </size>
-      </property>
-      <property name="toolTip">
-       <string>Tools for creating points.</string>
-      </property>
-      <attribute name="icon">
-       <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
-        <normaloff>:/icon/16x16/toolsectionpoint.png</normaloff>:/icon/16x16/toolsectionpoint.png</iconset>
-      </attribute>
-      <attribute name="label">
-       <string>Point</string>
-      </attribute>
-      <attribute name="toolTip">
-       <string>Point</string>
-      </attribute>
-      <layout class="QFormLayout" name="formLayout">
-       <property name="fieldGrowthPolicy">
-        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-       </property>
-       <property name="verticalSpacing">
-        <number>4</number>
-       </property>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_2">
        <property name="leftMargin">
-        <number>8</number>
+        <number>6</number>
        </property>
        <property name="topMargin">
-        <number>8</number>
+        <number>6</number>
        </property>
        <property name="rightMargin">
-        <number>8</number>
+        <number>6</number>
        </property>
        <property name="bottomMargin">
-        <number>8</number>
+        <number>6</number>
        </property>
-       <item row="0" column="0">
-        <widget class="QToolButton" name="pointPointer_ToolButton">
+       <item>
+        <widget class="QToolButton" name="arrowPointer_ToolButton">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -888,1689 +847,1725 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QToolButton" name="pointAtDistanceAngle_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Point at Distance and Angle (DA)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/segment.png</normaloff>:/toolicon/32x32/segment.png</iconset>
-         </property>
-         <property name="iconSize">
+       <item>
+        <widget class="QStackedWidget" name="toolbox_StackedWidget">
+         <property name="minimumSize">
           <size>
-           <width>32</width>
-           <height>32</height>
+           <width>124</width>
+           <height>0</height>
           </size>
          </property>
-         <property name="checkable">
-          <bool>true</bool>
+         <property name="currentIndex">
+          <number>0</number>
          </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QToolButton" name="alongLine_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Point at Distance along Line (PA)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/along_line.png</normaloff>:/toolicon/32x32/along_line.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QToolButton" name="bisector_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Point along Bisector (PB)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/bisector.png</normaloff>:/toolicon/32x32/bisector.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="0">
-        <widget class="QToolButton" name="shoulderPoint_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Point on Shoulder (PS)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/shoulder.png</normaloff>:/toolicon/32x32/shoulder.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
-        <widget class="QToolButton" name="pointOfContact_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Intersection Point of Line and Arc (PC)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/point_of_contact.png</normaloff>:/toolicon/32x32/point_of_contact.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0">
-        <widget class="QToolButton" name="triangle_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Triangle (PT)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/triangle.png</normaloff>:/toolicon/32x32/triangle.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="1">
-        <widget class="QToolButton" name="pointOfIntersection_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Intersection Point XY from 2 Points (XY)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/point_of_intersection.png</normaloff>:/toolicon/32x32/point_of_intersection.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="0">
-        <widget class="QToolButton" name="height_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Intersection Point of Line and Perpendicular (PL)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/height.png</normaloff>:/toolicon/32x32/height.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="10" column="1">
-        <widget class="QToolButton" name="lineIntersectAxis_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Intersection Point of Line and Axis (IX)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/line_intersect_axis.png</normaloff>:/toolicon/32x32/line_intersect_axis.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QToolButton" name="normal_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Point on Perpendicular (PP)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/normal.png</normaloff>:/toolicon/32x32/normal.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QToolButton" name="midpoint_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Midpoint between 2 Points (MP)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/midpoint.png</normaloff>:/toolicon/32x32/midpoint.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
+         <widget class="QWidget" name="draftMode_Page">
+          <widget class="QToolBox" name="draft_ToolBox">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>124</width>
+             <height>461</height>
+            </rect>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+             <horstretch>1</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>124</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="toolTip">
+            <string/>
+           </property>
+           <property name="currentIndex">
+            <number>4</number>
+           </property>
+           <property name="tabSpacing">
+            <number>4</number>
+           </property>
+           <widget class="QWidget" name="points_Page">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>124</width>
+              <height>293</height>
+             </rect>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>118</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>Tools for creating points.</string>
+            </property>
+            <attribute name="icon">
+             <iconset resource="share/resources/toolicon.qrc">
+              <normaloff>:/toolicon/32x32/points_toolbox.png</normaloff>:/toolicon/32x32/points_toolbox.png</iconset>
+            </attribute>
+            <attribute name="label">
+             <string>Point</string>
+            </attribute>
+            <attribute name="toolTip">
+             <string>Point</string>
+            </attribute>
+            <layout class="QFormLayout" name="formLayout_6">
+             <property name="fieldGrowthPolicy">
+              <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+             </property>
+             <property name="verticalSpacing">
+              <number>4</number>
+             </property>
+             <property name="leftMargin">
+              <number>8</number>
+             </property>
+             <property name="topMargin">
+              <number>8</number>
+             </property>
+             <property name="rightMargin">
+              <number>8</number>
+             </property>
+             <property name="bottomMargin">
+              <number>8</number>
+             </property>
+             <item row="4" column="1">
+              <widget class="QToolButton" name="bisector_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Point - On Bisector (O, B)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/bisector.png</normaloff>:/toolicon/32x32/bisector.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="0">
+              <widget class="QToolButton" name="shoulderPoint_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Point - Length to Line (P, S)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/shoulder.png</normaloff>:/toolicon/32x32/shoulder.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="1">
+              <widget class="QToolButton" name="pointOfContact_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Point - Intersect Arc and Line (A, L)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/point_of_contact.png</normaloff>:/toolicon/32x32/point_of_contact.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="9" column="0">
+              <widget class="QToolButton" name="triangle_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Point - Intersect Axis and Triangle (X, T)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/triangle.png</normaloff>:/toolicon/32x32/triangle.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="9" column="1">
+              <widget class="QToolButton" name="pointIntersectXY_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Point - Intersect XY (X, Y)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/point_intersectxy_icon.png</normaloff>:/toolicon/32x32/point_intersectxy_icon.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="11" column="0">
+              <widget class="QToolButton" name="height_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Point - Intersect Line and Perpendicular (L, P)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/height.png</normaloff>:/toolicon/32x32/height.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="11" column="1">
+              <widget class="QToolButton" name="lineIntersectAxis_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Point - Intersect Line and Axis (L, X)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/line_intersect_axis.png</normaloff>:/toolicon/32x32/line_intersect_axis.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QToolButton" name="normal_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Point - On Perpendicular (O, P)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/normal.png</normaloff>:/toolicon/32x32/normal.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QToolButton" name="pointAtDistanceAngle_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Point - Length and Angle (L, A)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/segment.png</normaloff>:/toolicon/32x32/segment.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QToolButton" name="alongLine_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Point - On Line (O, L)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/along_line.png</normaloff>:/toolicon/32x32/along_line.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QToolButton" name="midpoint_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Point - Midpoint on Line (Shift+O, Shift+L)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/midpoint.png</normaloff>:/toolicon/32x32/midpoint.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="lines_Page">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>124</width>
+              <height>58</height>
+             </rect>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Tools for creating lines.</string>
+            </property>
+            <attribute name="icon">
+             <iconset resource="share/resources/toolicon.qrc">
+              <normaloff>:/toolicon/32x32/lines_toolbox.png</normaloff>:/toolicon/32x32/lines_toolbox.png</iconset>
+            </attribute>
+            <attribute name="label">
+             <string>Line</string>
+            </attribute>
+            <attribute name="toolTip">
+             <string>Line</string>
+            </attribute>
+            <layout class="QFormLayout" name="formLayout_8">
+             <property name="verticalSpacing">
+              <number>4</number>
+             </property>
+             <property name="leftMargin">
+              <number>8</number>
+             </property>
+             <property name="topMargin">
+              <number>8</number>
+             </property>
+             <property name="rightMargin">
+              <number>8</number>
+             </property>
+             <property name="bottomMargin">
+              <number>8</number>
+             </property>
+             <item row="1" column="0">
+              <widget class="QToolButton" name="line_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Line between 2 Points (Alt+L)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/line.png</normaloff>:/toolicon/32x32/line.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QToolButton" name="lineIntersect_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Point - Intersect Lines (I, L)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/intersect.png</normaloff>:/toolicon/32x32/intersect.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="curves_Page">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>124</width>
+              <height>196</height>
+             </rect>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>118</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>Tools for creating curves.</string>
+            </property>
+            <attribute name="icon">
+             <iconset resource="share/resources/toolicon.qrc">
+              <normaloff>:/toolicon/32x32/spline_toolboxs.png</normaloff>:/toolicon/32x32/spline_toolboxs.png</iconset>
+            </attribute>
+            <attribute name="label">
+             <string>Curve</string>
+            </attribute>
+            <attribute name="toolTip">
+             <string>Curve</string>
+            </attribute>
+            <layout class="QFormLayout" name="formLayout_10">
+             <property name="verticalSpacing">
+              <number>4</number>
+             </property>
+             <property name="leftMargin">
+              <number>8</number>
+             </property>
+             <property name="topMargin">
+              <number>8</number>
+             </property>
+             <property name="rightMargin">
+              <number>8</number>
+             </property>
+             <property name="bottomMargin">
+              <number>8</number>
+             </property>
+             <item row="1" column="0">
+              <widget class="QToolButton" name="curve_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Curve - Interactive (Alt+C)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/spline.png</normaloff>:/toolicon/32x32/spline.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QToolButton" name="spline_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Spline - Interactive (Alt+S)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/splinePath.png</normaloff>:/toolicon/32x32/splinePath.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QToolButton" name="curveWithCPs_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Curve - Fixed (Alt+Shift+C)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/cubic_bezier.png</normaloff>:/toolicon/32x32/cubic_bezier.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QToolButton" name="splineWithCPs_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Spline - Fixed (Alt+Shift+S)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/cubic_bezier_path.png</normaloff>:/toolicon/32x32/cubic_bezier_path.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="1">
+              <widget class="QToolButton" name="pointAlongSpline_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Point - On Spline (O, S)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/splinePath_cut_point.png</normaloff>:/toolicon/32x32/splinePath_cut_point.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="0">
+              <widget class="QToolButton" name="pointOfIntersectionCurves_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Point - Intersect Curves (I, C)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/intersection_curves.png</normaloff>:/toolicon/32x32/intersection_curves.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="1">
+              <widget class="QToolButton" name="curveIntersectAxis_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Point - Intersect Curve and Axis (C, X)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/curve_intersect_axis.png</normaloff>:/toolicon/32x32/curve_intersect_axis.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="0">
+              <widget class="QToolButton" name="pointAlongCurve_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Point - On Curve (O, C)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/spline_cut_point.png</normaloff>:/toolicon/32x32/spline_cut_point.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="arcs_Page">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>124</width>
+              <height>226</height>
+             </rect>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Tools for creating arcs.</string>
+            </property>
+            <attribute name="icon">
+             <iconset resource="share/resources/toolicon.qrc">
+              <normaloff>:/toolicon/32x32/arcs_toolbox.png</normaloff>:/toolicon/32x32/arcs_toolbox.png</iconset>
+            </attribute>
+            <attribute name="label">
+             <string>Arc</string>
+            </attribute>
+            <attribute name="toolTip">
+             <string>Arc</string>
+            </attribute>
+            <layout class="QFormLayout" name="formLayout_11">
+             <property name="verticalSpacing">
+              <number>4</number>
+             </property>
+             <property name="leftMargin">
+              <number>8</number>
+             </property>
+             <property name="topMargin">
+              <number>8</number>
+             </property>
+             <property name="rightMargin">
+              <number>8</number>
+             </property>
+             <property name="bottomMargin">
+              <number>8</number>
+             </property>
+             <item row="1" column="0">
+              <widget class="QToolButton" name="arc_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Arc - Radius and Angles (Alt+A)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/arc.png</normaloff>:/toolicon/32x32/arc.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QToolButton" name="pointAlongArc_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Point - On Arc (O, A)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/arc_cut.png</normaloff>:/toolicon/32x32/arc_cut.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QToolButton" name="arcIntersectAxis_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Point - Intersect Arc and Axis (A, X)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/arc_intersect_axis.png</normaloff>:/toolicon/32x32/arc_intersect_axis.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QToolButton" name="pointOfIntersectionArcs_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Point - Intersect Arcs (I, A)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/point_of_intersection_arcs.png</normaloff>:/toolicon/32x32/point_of_intersection_arcs.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QToolButton" name="pointOfIntersectionCircles_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Point - Intersect Circles (Shift+I, Shift+C)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/point_of_intersection_circles.png</normaloff>:/toolicon/32x32/point_of_intersection_circles.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1">
+              <widget class="QToolButton" name="pointFromCircleAndTangent_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Point - Intersect Circle and Tangent (C, T)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/point_from_circle_and_tangent.png</normaloff>:/toolicon/32x32/point_from_circle_and_tangent.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0">
+              <widget class="QToolButton" name="pointFromArcAndTangent_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Point - Intersect Arc and Tangent (A, T)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/point_from_arc_and_tangent.png</normaloff>:/toolicon/32x32/point_from_arc_and_tangent.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QToolButton" name="arcWithLength_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Arc - Radius and Length (Alt+Shift+A)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/arc_with_length.png</normaloff>:/toolicon/32x32/arc_with_length.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0">
+              <widget class="QToolButton" name="ellipticalArc_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Arc - Elliptical (Alt+E)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/el_arc.png</normaloff>:/toolicon/32x32/el_arc.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="operations_Page">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>124</width>
+              <height>293</height>
+             </rect>
+            </property>
+            <property name="toolTip">
+             <string>Tools for performing operations on objects</string>
+            </property>
+            <attribute name="icon">
+             <iconset resource="share/resources/toolicon.qrc">
+              <normaloff>:/toolicon/32x32/operations_toolbox.png</normaloff>:/toolicon/32x32/operations_toolbox.png</iconset>
+            </attribute>
+            <attribute name="label">
+             <string>Operations</string>
+            </attribute>
+            <attribute name="toolTip">
+             <string>Operations</string>
+            </attribute>
+            <layout class="QFormLayout" name="formLayout_13">
+             <property name="verticalSpacing">
+              <number>4</number>
+             </property>
+             <property name="leftMargin">
+              <number>8</number>
+             </property>
+             <property name="topMargin">
+              <number>8</number>
+             </property>
+             <property name="rightMargin">
+              <number>8</number>
+             </property>
+             <property name="bottomMargin">
+              <number>8</number>
+             </property>
+             <item row="0" column="0">
+              <widget class="QToolButton" name="group_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Add Objects to Group (G)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/group.png</normaloff>:/toolicon/32x32/group.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QToolButton" name="rotation_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Rotate Selected Objects (R)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/rotation.png</normaloff>:/toolicon/32x32/rotation.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QToolButton" name="mirrorByLine_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Mirror Objects by Line (M, L)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/mirror_by_line.png</normaloff>:/toolicon/32x32/mirror_by_line.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QToolButton" name="mirrorByAxis_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Mirror Objects by Axis (M, A)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/mirror_by_axis.png</normaloff>:/toolicon/32x32/mirror_by_axis.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QToolButton" name="move_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Move Objects (Alt+M)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/move.png</normaloff>:/toolicon/32x32/move.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QToolButton" name="trueDarts_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>True Darts (T, D)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/true_darts.png</normaloff>:/toolicon/32x32/true_darts.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QToolButton" name="exportDraftBlocks_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Export Draft Blocks (E, D)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/export.png</normaloff>:/toolicon/32x32/export.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="piece_Page">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>124</width>
+              <height>96</height>
+             </rect>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>Tools for adding pattern pieces.</string>
+            </property>
+            <attribute name="icon">
+             <iconset resource="share/resources/toolicon.qrc">
+              <normaloff>:/toolicon/32x32/patternpiece_toolbox.png</normaloff>:/toolicon/32x32/patternpiece_toolbox.png</iconset>
+            </attribute>
+            <attribute name="label">
+             <string>Piece</string>
+            </attribute>
+            <attribute name="toolTip">
+             <string>Add Details</string>
+            </attribute>
+            <layout class="QFormLayout" name="formLayout_14">
+             <property name="verticalSpacing">
+              <number>4</number>
+             </property>
+             <property name="leftMargin">
+              <number>8</number>
+             </property>
+             <property name="topMargin">
+              <number>8</number>
+             </property>
+             <property name="rightMargin">
+              <number>8</number>
+             </property>
+             <property name="bottomMargin">
+              <number>8</number>
+             </property>
+             <item row="0" column="0">
+              <widget class="QToolButton" name="addPatternPiece_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Add New Pattern Piece (N, P)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/new_piece.png</normaloff>:/toolicon/32x32/new_piece.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QToolButton" name="anchorPoint_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Add Anchor Point (A, P)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/anchor_point.png</normaloff>:/toolicon/32x32/anchor_point.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QToolButton" name="insertNodes_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Insert Nodes (I, N)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/insert_nodes_icon.png</normaloff>:/toolicon/32x32/insert_nodes_icon.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QToolButton" name="internalPath_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Add Internal Path (I, P)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/path.png</normaloff>:/toolicon/32x32/path.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </widget>
+         <widget class="QWidget" name="pieceMode_Page">
+          <widget class="QToolBox" name="piece_ToolBox">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>120</width>
+             <height>111</height>
+            </rect>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+             <horstretch>1</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>120</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="toolTip">
+            <string/>
+           </property>
+           <property name="currentIndex">
+            <number>0</number>
+           </property>
+           <property name="tabSpacing">
+            <number>4</number>
+           </property>
+           <widget class="QWidget" name="details_Page">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>120</width>
+              <height>83</height>
+             </rect>
+            </property>
+            <property name="toolTip">
+             <string>Tools for adding details to pattern pieces</string>
+            </property>
+            <attribute name="icon">
+             <iconset resource="share/resources/toolicon.qrc">
+              <normaloff>:/toolicon/32x32/details_toolbox.png</normaloff>:/toolicon/32x32/details_toolbox.png</iconset>
+            </attribute>
+            <attribute name="label">
+             <string>Details</string>
+            </attribute>
+            <attribute name="toolTip">
+             <string>Add Details</string>
+            </attribute>
+            <widget class="QToolButton" name="unitePieces_ToolButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="geometry">
+              <rect>
+               <x>10</x>
+               <y>10</y>
+               <width>39</width>
+               <height>38</height>
+              </rect>
+             </property>
+             <property name="toolTip">
+              <string>Unite 2 Pieces (U)</string>
+             </property>
+             <property name="text">
+              <string notr="true">...</string>
+             </property>
+             <property name="icon">
+              <iconset resource="share/resources/toolicon.qrc">
+               <normaloff>:/toolicon/32x32/union.png</normaloff>:/toolicon/32x32/union.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>32</width>
+               <height>32</height>
+              </size>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QToolButton" name="exportPiecesAs_ToolButton">
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="geometry">
+              <rect>
+               <x>60</x>
+               <y>10</y>
+               <width>39</width>
+               <height>38</height>
+              </rect>
+             </property>
+             <property name="toolTip">
+              <string>Export Pieces (E, P)</string>
+             </property>
+             <property name="text">
+              <string notr="true">...</string>
+             </property>
+             <property name="icon">
+              <iconset resource="share/resources/toolicon.qrc">
+               <normaloff>:/toolicon/32x32/export.png</normaloff>:/toolicon/32x32/export.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>32</width>
+               <height>32</height>
+              </size>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </widget>
+          </widget>
+         </widget>
+         <widget class="QWidget" name="layoutMode_Page">
+          <widget class="QToolBox" name="layout_ToolBox">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>120</width>
+             <height>111</height>
+            </rect>
+           </property>
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+             <horstretch>1</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>120</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>16777215</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="toolTip">
+            <string/>
+           </property>
+           <property name="currentIndex">
+            <number>0</number>
+           </property>
+           <property name="tabSpacing">
+            <number>4</number>
+           </property>
+           <widget class="QWidget" name="layout_Page">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>120</width>
+              <height>83</height>
+             </rect>
+            </property>
+            <attribute name="icon">
+             <iconset resource="share/resources/toolicon.qrc">
+              <normaloff>:/toolicon/32x32/layout_toolbox.png</normaloff>:/toolicon/32x32/layout_toolbox.png</iconset>
+            </attribute>
+            <attribute name="label">
+             <string>Layout</string>
+            </attribute>
+            <attribute name="toolTip">
+             <string>Layout</string>
+            </attribute>
+            <layout class="QFormLayout" name="formLayout_15">
+             <property name="fieldGrowthPolicy">
+              <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+             </property>
+             <property name="verticalSpacing">
+              <number>4</number>
+             </property>
+             <property name="leftMargin">
+              <number>8</number>
+             </property>
+             <property name="topMargin">
+              <number>8</number>
+             </property>
+             <property name="rightMargin">
+              <number>8</number>
+             </property>
+             <property name="bottomMargin">
+              <number>8</number>
+             </property>
+             <item row="0" column="0">
+              <widget class="QToolButton" name="layoutSettings_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>New Print Layout (N, L)</string>
+               </property>
+               <property name="text">
+                <string>Settings</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/layout_settings.png</normaloff>:/toolicon/32x32/layout_settings.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QToolButton" name="exportLayout_ToolButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
+               <property name="toolTip">
+                <string>Export Layout (E, L)</string>
+               </property>
+               <property name="text">
+                <string notr="true">...</string>
+               </property>
+               <property name="icon">
+                <iconset resource="share/resources/toolicon.qrc">
+                 <normaloff>:/toolicon/32x32/export.png</normaloff>:/toolicon/32x32/export.png</iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>32</width>
+                 <height>32</height>
+                </size>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </widget>
         </widget>
        </item>
       </layout>
-     </widget>
-     <widget class="QWidget" name="lines_Page">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>120</width>
-        <height>100</height>
-       </rect>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="toolTip">
-       <string>Tools for creating lines.</string>
-      </property>
-      <attribute name="icon">
-       <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
-        <normaloff>:/icon/16x16/toolsectionline.png</normaloff>:/icon/16x16/toolsectionline.png</iconset>
-      </attribute>
-      <attribute name="label">
-       <string>Line</string>
-      </attribute>
-      <attribute name="toolTip">
-       <string>Line</string>
-      </attribute>
-      <layout class="QFormLayout" name="formLayout_2">
-       <property name="verticalSpacing">
-        <number>4</number>
-       </property>
-       <property name="leftMargin">
-        <number>8</number>
-       </property>
-       <property name="topMargin">
-        <number>8</number>
-       </property>
-       <property name="rightMargin">
-        <number>8</number>
-       </property>
-       <property name="bottomMargin">
-        <number>8</number>
-       </property>
-       <item row="0" column="0">
-        <widget class="QToolButton" name="linePointer_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Tool pointer</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
-           <normaloff>:/icon/32x32/arrow_cursor.png</normaloff>:/icon/32x32/arrow_cursor.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QToolButton" name="line_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Line between 2 Points (Alt+L)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/line.png</normaloff>:/toolicon/32x32/line.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QToolButton" name="lineIntersect_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Intersection Point of 2 Lines (IL)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/intersect.png</normaloff>:/toolicon/32x32/intersect.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="curves_Page">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>120</width>
-        <height>238</height>
-       </rect>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="toolTip">
-       <string>Tools for creating curves.</string>
-      </property>
-      <attribute name="icon">
-       <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
-        <normaloff>:/icon/16x16/toolsectioncurve.png</normaloff>:/icon/16x16/toolsectioncurve.png</iconset>
-      </attribute>
-      <attribute name="label">
-       <string>Curve</string>
-      </attribute>
-      <attribute name="toolTip">
-       <string>Curve</string>
-      </attribute>
-      <layout class="QFormLayout" name="formLayout_3">
-       <property name="verticalSpacing">
-        <number>4</number>
-       </property>
-       <property name="leftMargin">
-        <number>8</number>
-       </property>
-       <property name="topMargin">
-        <number>8</number>
-       </property>
-       <property name="rightMargin">
-        <number>8</number>
-       </property>
-       <property name="bottomMargin">
-        <number>8</number>
-       </property>
-       <item row="0" column="0">
-        <widget class="QToolButton" name="curvePointer_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Tool pointer</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
-           <normaloff>:/icon/32x32/arrow_cursor.png</normaloff>:/icon/32x32/arrow_cursor.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QToolButton" name="curve_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Curve (Alt+C)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/spline.png</normaloff>:/toolicon/32x32/spline.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QToolButton" name="spline_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Spline (Alt+S)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/splinePath.png</normaloff>:/toolicon/32x32/splinePath.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QToolButton" name="curveWithCPs_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Curve with Control Points (CP)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/cubic_bezier.png</normaloff>:/toolicon/32x32/cubic_bezier.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <widget class="QToolButton" name="splineWithCPs_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Spline with Control Points (SP)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/cubic_bezier_path.png</normaloff>:/toolicon/32x32/cubic_bezier_path.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="1">
-        <widget class="QToolButton" name="pointAlongSpline_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Point along Spline (AS)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/splinePath_cut_point.png</normaloff>:/toolicon/32x32/splinePath_cut_point.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="0">
-        <widget class="QToolButton" name="pointOfIntersectionCurves_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Intersection Point of Curves (CC)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/intersection_curves.png</normaloff>:/toolicon/32x32/intersection_curves.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="1">
-        <widget class="QToolButton" name="curveIntersectAxis_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Intersection Point of Curve and Axis (CA)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/curve_intersect_axis.png</normaloff>:/toolicon/32x32/curve_intersect_axis.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="7" column="0">
-        <widget class="QToolButton" name="pointAlongCurve_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Point along Curve (AC)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/spline_cut_point.png</normaloff>:/toolicon/32x32/spline_cut_point.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="arcs_Page">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>120</width>
-        <height>226</height>
-       </rect>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="toolTip">
-       <string>Tools for creating arcs.</string>
-      </property>
-      <attribute name="icon">
-       <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
-        <normaloff>:/icon/16x16/toolsectionarc.png</normaloff>:/icon/16x16/toolsectionarc.png</iconset>
-      </attribute>
-      <attribute name="label">
-       <string>Arc</string>
-      </attribute>
-      <attribute name="toolTip">
-       <string>Arc</string>
-      </attribute>
-      <layout class="QFormLayout" name="formLayout_4">
-       <property name="verticalSpacing">
-        <number>4</number>
-       </property>
-       <property name="leftMargin">
-        <number>8</number>
-       </property>
-       <property name="topMargin">
-        <number>8</number>
-       </property>
-       <property name="rightMargin">
-        <number>8</number>
-       </property>
-       <property name="bottomMargin">
-        <number>8</number>
-       </property>
-       <item row="2" column="0">
-        <widget class="QToolButton" name="arc_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Arc (Alt+A)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/arc.png</normaloff>:/toolicon/32x32/arc.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QToolButton" name="pointAlongArc_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Point along Arc (AA)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/arc_cut.png</normaloff>:/toolicon/32x32/arc_cut.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QToolButton" name="arcIntersectAxis_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Intersection Point of Arc and Axis (AX)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/arc_intersect_axis.png</normaloff>:/toolicon/32x32/arc_intersect_axis.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QToolButton" name="pointOfIntersectionArcs_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Intersection Point of Arcs (IA)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/point_of_intersection_arcs.png</normaloff>:/toolicon/32x32/point_of_intersection_arcs.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QToolButton" name="pointOfIntersectionCircles_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Intersection Point of 2 Circles (IC)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/point_of_intersection_circles.png</normaloff>:/toolicon/32x32/point_of_intersection_circles.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <widget class="QToolButton" name="pointFromCircleAndTangent_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Tangency Point of Circle and Tangent (CT)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/point_from_circle_and_tangent.png</normaloff>:/toolicon/32x32/point_from_circle_and_tangent.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QToolButton" name="pointFromArcAndTangent_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Tangency Point of Arc and Tangent (AT)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/point_from_arc_and_tangent.png</normaloff>:/toolicon/32x32/point_from_arc_and_tangent.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="1">
-        <widget class="QToolButton" name="arcWithLength_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Arc with Length (AL)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/arc_with_length.png</normaloff>:/toolicon/32x32/arc_with_length.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QToolButton" name="arcPointer_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Tool pointer</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
-           <normaloff>:/icon/32x32/arrow_cursor.png</normaloff>:/icon/32x32/arrow_cursor.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="ellipses_Page">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>120</width>
-        <height>96</height>
-       </rect>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="toolTip">
-       <string>Tools for creating elliptical arcs.</string>
-      </property>
-      <attribute name="icon">
-       <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
-        <normaloff>:/icon/16x16/toolsectionelarc.png</normaloff>:/icon/16x16/toolsectionelarc.png</iconset>
-      </attribute>
-      <attribute name="label">
-       <string>Elliptical Arc</string>
-      </attribute>
-      <attribute name="toolTip">
-       <string>Elliptical Arc</string>
-      </attribute>
-      <layout class="QFormLayout" name="formLayout_9">
-       <property name="verticalSpacing">
-        <number>4</number>
-       </property>
-       <property name="leftMargin">
-        <number>8</number>
-       </property>
-       <property name="topMargin">
-        <number>8</number>
-       </property>
-       <property name="rightMargin">
-        <number>8</number>
-       </property>
-       <property name="bottomMargin">
-        <number>8</number>
-       </property>
-       <item row="0" column="0">
-        <widget class="QToolButton" name="ellipticalArcPointer_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Tool pointer</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
-           <normaloff>:/icon/32x32/arrow_cursor.png</normaloff>:/icon/32x32/arrow_cursor.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QToolButton" name="ellipticalArc_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Elliptical Arc (EA)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/el_arc.png</normaloff>:/toolicon/32x32/el_arc.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="operations_Page">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>120</width>
-        <height>249</height>
-       </rect>
-      </property>
-      <property name="toolTip">
-       <string>Tools for performing operations on objects</string>
-      </property>
-      <attribute name="icon">
-       <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
-        <normaloff>:/icon/16x16/operations.png</normaloff>:/icon/16x16/operations.png</iconset>
-      </attribute>
-      <attribute name="label">
-       <string>Operations</string>
-      </attribute>
-      <attribute name="toolTip">
-       <string>Operations</string>
-      </attribute>
-      <layout class="QFormLayout" name="formLayout_7">
-       <property name="verticalSpacing">
-        <number>4</number>
-       </property>
-       <property name="leftMargin">
-        <number>8</number>
-       </property>
-       <property name="topMargin">
-        <number>8</number>
-       </property>
-       <property name="rightMargin">
-        <number>8</number>
-       </property>
-       <property name="bottomMargin">
-        <number>8</number>
-       </property>
-       <item row="0" column="0">
-        <widget class="QToolButton" name="operationsPointer_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Tool pointer</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
-           <normaloff>:/icon/32x32/arrow_cursor.png</normaloff>:/icon/32x32/arrow_cursor.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QToolButton" name="group_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Create New Group (G)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/group.png</normaloff>:/toolicon/32x32/group.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QToolButton" name="rotation_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Rotate Selected Objects (R)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/rotation.png</normaloff>:/toolicon/32x32/rotation.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QToolButton" name="mirrorByLine_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Mirror Objects by Line (ML)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/mirror_by_line.png</normaloff>:/toolicon/32x32/mirror_by_line.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QToolButton" name="mirrorByAxis_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Mirror Objects by Axis (MA)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/mirror_by_axis.png</normaloff>:/toolicon/32x32/mirror_by_axis.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QToolButton" name="move_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Move Objects (MM)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/move.png</normaloff>:/toolicon/32x32/move.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QToolButton" name="trueDarts_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>True Darts (TD)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/true_darts.png</normaloff>:/toolicon/32x32/true_darts.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="details_Page">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>120</width>
-        <height>138</height>
-       </rect>
-      </property>
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Maximum">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="toolTip">
-       <string>Tools for adding details.</string>
-      </property>
-      <attribute name="icon">
-       <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
-        <normaloff>:/icon/16x16/toolsectiondetail.png</normaloff>:/icon/16x16/toolsectiondetail.png</iconset>
-      </attribute>
-      <attribute name="label">
-       <string>Add Details</string>
-      </attribute>
-      <attribute name="toolTip">
-       <string>Add Details</string>
-      </attribute>
-      <layout class="QFormLayout" name="formLayout_5">
-       <property name="verticalSpacing">
-        <number>4</number>
-       </property>
-       <property name="leftMargin">
-        <number>8</number>
-       </property>
-       <property name="topMargin">
-        <number>8</number>
-       </property>
-       <property name="rightMargin">
-        <number>8</number>
-       </property>
-       <property name="bottomMargin">
-        <number>8</number>
-       </property>
-       <item row="0" column="0">
-        <widget class="QToolButton" name="detailsPointer_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Tool pointer</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
-           <normaloff>:/icon/32x32/arrow_cursor.png</normaloff>:/icon/32x32/arrow_cursor.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QToolButton" name="anchorPoint_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Add Anchor Point (AP)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/anchor_point.png</normaloff>:/toolicon/32x32/anchor_point.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QToolButton" name="insertNode_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Insert Node (IN)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/insert_node.png</normaloff>:/toolicon/32x32/insert_node.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QToolButton" name="internalPath_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Add Internal Path (IP)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/path.png</normaloff>:/toolicon/32x32/path.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0">
-        <widget class="QToolButton" name="addPatternPiece_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Add New Pattern Piece (NP)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/new_detail.png</normaloff>:/toolicon/32x32/new_detail.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="pieces_Page">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>120</width>
-        <height>249</height>
-       </rect>
-      </property>
-      <attribute name="icon">
-       <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
-        <normaloff>:/icon/16x16/toolsectionpatternpiece.png</normaloff>:/icon/16x16/toolsectionpatternpiece.png</iconset>
-      </attribute>
-      <attribute name="label">
-       <string>Pattern Piece</string>
-      </attribute>
-      <attribute name="toolTip">
-       <string>Pattern Piece</string>
-      </attribute>
-      <widget class="QToolButton" name="piecePointer_ToolButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>10</y>
-         <width>39</width>
-         <height>38</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string>Tool pointer</string>
-       </property>
-       <property name="text">
-        <string notr="true">...</string>
-       </property>
-       <property name="icon">
-        <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
-         <normaloff>:/icon/32x32/arrow_cursor.png</normaloff>:/icon/32x32/arrow_cursor.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>32</width>
-         <height>32</height>
-        </size>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QToolButton" name="unitePieces_ToolButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>10</x>
-         <y>50</y>
-         <width>39</width>
-         <height>38</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string>Unite 2 Pieces (U)</string>
-       </property>
-       <property name="text">
-        <string notr="true">...</string>
-       </property>
-       <property name="icon">
-        <iconset resource="share/resources/toolicon.qrc">
-         <normaloff>:/toolicon/32x32/union.png</normaloff>:/toolicon/32x32/union.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>32</width>
-         <height>32</height>
-        </size>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-      <widget class="QToolButton" name="exportPiecesAs_ToolButton">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="geometry">
-        <rect>
-         <x>60</x>
-         <y>50</y>
-         <width>39</width>
-         <height>38</height>
-        </rect>
-       </property>
-       <property name="toolTip">
-        <string>Export Pieces (XP)</string>
-       </property>
-       <property name="text">
-        <string notr="true">...</string>
-       </property>
-       <property name="icon">
-        <iconset resource="share/resources/toolicon.qrc">
-         <normaloff>:/toolicon/32x32/export_to_picture_document.png</normaloff>:/toolicon/32x32/export_to_picture_document.png</iconset>
-       </property>
-       <property name="iconSize">
-        <size>
-         <width>32</width>
-         <height>32</height>
-        </size>
-       </property>
-       <property name="checkable">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </widget>
-     <widget class="QWidget" name="layout_Page">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>120</width>
-        <height>249</height>
-       </rect>
-      </property>
-      <attribute name="icon">
-       <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
-        <normaloff>:/icon/16x16/toolsectionlayout.png</normaloff>:/icon/16x16/toolsectionlayout.png</iconset>
-      </attribute>
-      <attribute name="label">
-       <string>Layout</string>
-      </attribute>
-      <attribute name="toolTip">
-       <string>Layout</string>
-      </attribute>
-      <layout class="QFormLayout" name="formLayout_6">
-       <property name="fieldGrowthPolicy">
-        <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-       </property>
-       <property name="verticalSpacing">
-        <number>4</number>
-       </property>
-       <property name="leftMargin">
-        <number>8</number>
-       </property>
-       <property name="topMargin">
-        <number>8</number>
-       </property>
-       <property name="rightMargin">
-        <number>8</number>
-       </property>
-       <property name="bottomMargin">
-        <number>8</number>
-       </property>
-       <item row="0" column="0">
-        <widget class="QToolButton" name="layoutSettings_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Create New Layout (NL)</string>
-         </property>
-         <property name="text">
-          <string>Settings</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/layoutsettings.png</normaloff>:/toolicon/32x32/layoutsettings.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QToolButton" name="exportLayout_ToolButton">
-         <property name="enabled">
-          <bool>false</bool>
-         </property>
-         <property name="toolTip">
-          <string>Export Layout (XL)</string>
-         </property>
-         <property name="text">
-          <string notr="true">...</string>
-         </property>
-         <property name="icon">
-          <iconset resource="share/resources/toolicon.qrc">
-           <normaloff>:/toolicon/32x32/export_layout.png</normaloff>:/toolicon/32x32/export_layout.png</iconset>
-         </property>
-         <property name="iconSize">
-          <size>
-           <width>32</width>
-           <height>32</height>
-          </size>
-         </property>
-         <property name="checkable">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </widget>
+     </item>
+    </layout>
    </widget>
+  </widget>
+  <widget class="QToolBar" name="view_ToolBar">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="windowTitle">
+    <string>View Toolbar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="toggleWireframe_Action"/>
+   <addaction name="toggleControlPoints_Action"/>
+   <addaction name="toggleAxisOrigin_Action"/>
+   <addaction name="toggleSeamAllowances_Action"/>
+   <addaction name="toggleGrainLines_Action"/>
+   <addaction name="toggleLabels_Action"/>
   </widget>
   <action name="actionNew">
    <property name="icon">
-    <iconset theme="document-new">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset resource="../../libs/vmisc/share/resources/theme.qrc">
+     <normaloff>:/icons/win.icon.theme/32x32/actions/document-new.png</normaloff>:/icons/win.icon.theme/32x32/actions/document-new.png</iconset>
    </property>
    <property name="text">
     <string>New</string>
@@ -2590,8 +2585,8 @@
   </action>
   <action name="actionOpen">
    <property name="icon">
-    <iconset theme="document-open">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset resource="../../libs/vmisc/share/resources/theme.qrc">
+     <normaloff>:/icons/win.icon.theme/32x32/actions/document-open.png</normaloff>:/icons/win.icon.theme/32x32/actions/document-open.png</iconset>
    </property>
    <property name="text">
     <string>Open</string>
@@ -2614,8 +2609,8 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset theme="document-save">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset resource="../../libs/vmisc/share/resources/theme.qrc">
+     <normaloff>:/icons/win.icon.theme/32x32/actions/document-save.png</normaloff>:/icons/win.icon.theme/32x32/actions/document-save.png</iconset>
    </property>
    <property name="text">
     <string>Save</string>
@@ -2654,12 +2649,12 @@
     <enum>QAction::NoRole</enum>
    </property>
   </action>
-  <action name="draftMode_Action">
+  <action name="showDraftMode">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="enabled">
     <bool>false</bool>
@@ -2678,7 +2673,7 @@
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Mode for working with draft blocks. These draft blocks are the base for going to the next stage &amp;quot;Piece mode&amp;quot;. Before you will be able to enable the &amp;quot;Piece mode&amp;quot; you need to create at least one pattern piece.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="shortcut">
-    <string notr="true">Ctrl+W</string>
+    <string notr="true">Shift+D</string>
    </property>
    <property name="menuRole">
     <enum>QAction::NoRole</enum>
@@ -2702,7 +2697,7 @@
     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Mode for working with pattern pieces. Before you will be able to enable the &amp;quot;Piece mode&amp;quot; you need to create at least one pattern piece on the stage &amp;quot;Draft mode&amp;quot;. Pattern pieces created on this stage will be used for creating a layout. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="shortcut">
-    <string notr="true">Ctrl+E</string>
+    <string notr="true">Shift+P</string>
    </property>
    <property name="menuRole">
     <enum>QAction::NoRole</enum>
@@ -2713,7 +2708,7 @@
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="icon">
     <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
@@ -2731,7 +2726,7 @@
   </action>
   <action name="newDraft_Action">
    <property name="enabled">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="icon">
     <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
@@ -2831,10 +2826,10 @@
     <string>Layout</string>
    </property>
    <property name="toolTip">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Mode for creating a layout of pattern pieces. This mode is availiable if at least one pattern piece was created in &amp;quot;Piece mode&amp;quot;. The layout can be exported to your prefered file format and saved.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Mode for creating a layout of pattern pieces. This mode is available if at least one pattern piece was created in &amp;quot;Piece mode&amp;quot;. The layout can be exported to your preferred file format and saved.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="shortcut">
-    <string notr="true">Ctrl+L</string>
+    <string notr="true">Shift+L</string>
    </property>
    <property name="menuRole">
     <enum>QAction::NoRole</enum>
@@ -2867,10 +2862,10 @@
      <normaloff>:/toolicon/32x32/group.png</normaloff>:/toolicon/32x32/group.png</iconset>
    </property>
    <property name="text">
-    <string>Create New Group</string>
+    <string>Add Objects to Group</string>
    </property>
    <property name="toolTip">
-    <string>Create a New Group (G)</string>
+    <string>Add Objects to Group (G)</string>
    </property>
    <property name="shortcut">
     <string>G</string>
@@ -2909,7 +2904,7 @@
     <string>Mirror by Line</string>
    </property>
    <property name="toolTip">
-    <string>Mirror Objects by Line (ML)</string>
+    <string>Mirror Objects by Line (M, L)</string>
    </property>
    <property name="shortcut">
     <string>M, L</string>
@@ -2927,7 +2922,7 @@
     <string>Mirror by Axis</string>
    </property>
    <property name="toolTip">
-    <string>Mirror Objects by Axis (MA)</string>
+    <string>Mirror Objects by Axis (M, A)</string>
    </property>
    <property name="shortcut">
     <string>M, A</string>
@@ -2945,10 +2940,10 @@
     <string>Move</string>
    </property>
    <property name="toolTip">
-    <string>Move Objects (MM)</string>
+    <string>Move Objects (Alt+M)</string>
    </property>
    <property name="shortcut">
-    <string>M, M</string>
+    <string>Alt+M</string>
    </property>
   </action>
   <action name="trueDarts_Action">
@@ -2963,7 +2958,7 @@
     <string>True Darts</string>
    </property>
    <property name="toolTip">
-    <string>True Darts (TD)</string>
+    <string>True Darts (T, D)</string>
    </property>
    <property name="shortcut">
     <string>T, D</string>
@@ -2978,13 +2973,16 @@
      <normaloff>:/toolicon/32x32/el_arc.png</normaloff>:/toolicon/32x32/el_arc.png</iconset>
    </property>
    <property name="text">
-    <string>Elliptical Arc</string>
+    <string>Elliptical</string>
+   </property>
+   <property name="iconText">
+    <string>Arc -Elliptical</string>
    </property>
    <property name="toolTip">
-    <string>Elliptical Arc (EA)</string>
+    <string>Arc - Elliptical (Alt+E)</string>
    </property>
    <property name="shortcut">
-    <string>E, A</string>
+    <string>Alt+E</string>
    </property>
   </action>
   <action name="midpoint_Action">
@@ -2996,13 +2994,13 @@
      <normaloff>:/toolicon/32x32/midpoint.png</normaloff>:/toolicon/32x32/midpoint.png</iconset>
    </property>
    <property name="text">
-    <string>Midpoint</string>
+    <string>Midpoint on Line</string>
    </property>
    <property name="toolTip">
-    <string>Midpoint between 2 Points (MP)</string>
+    <string>Point - Mispoint on Line (Shift+O, Shift+L)</string>
    </property>
    <property name="shortcut">
-    <string>M, P</string>
+    <string>Shift+O, Shift+L</string>
    </property>
   </action>
   <action name="pointAlongLine_Action">
@@ -3014,13 +3012,13 @@
      <normaloff>:/toolicon/32x32/along_line.png</normaloff>:/toolicon/32x32/along_line.png</iconset>
    </property>
    <property name="text">
-    <string>Point at Distance along Line</string>
+    <string>On Line</string>
    </property>
    <property name="toolTip">
-    <string>Point at Distance along Line (PA)</string>
+    <string>Point - On Line (O, L)</string>
    </property>
    <property name="shortcut">
-    <string>P, A</string>
+    <string>O, L</string>
    </property>
   </action>
   <action name="pointAtDistanceAngle_Action">
@@ -3032,16 +3030,16 @@
      <normaloff>:/toolicon/32x32/segment.png</normaloff>:/toolicon/32x32/segment.png</iconset>
    </property>
    <property name="text">
-    <string>Point at Distance and Angle</string>
+    <string>Length and Angle</string>
    </property>
    <property name="iconText">
-    <string>Point at Distance and Angle</string>
+    <string>Length and Angle</string>
    </property>
    <property name="toolTip">
-    <string>Point at Distance and Angle (DA)</string>
+    <string>Point - Length and Angle (L, A)</string>
    </property>
    <property name="shortcut">
-    <string>D, A</string>
+    <string>L, A</string>
    </property>
   </action>
   <action name="pointAlongPerpendicular_Action">
@@ -3053,13 +3051,13 @@
      <normaloff>:/toolicon/32x32/normal.png</normaloff>:/toolicon/32x32/normal.png</iconset>
    </property>
    <property name="text">
-    <string>Point on Perpendicular</string>
+    <string>On Perpendicular</string>
    </property>
    <property name="toolTip">
-    <string>Point on Perpendicular (PP)</string>
+    <string>Point - On Perpendicular (O, P)</string>
    </property>
    <property name="shortcut">
-    <string>P, P</string>
+    <string>O, P</string>
    </property>
   </action>
   <action name="bisector_Action">
@@ -3071,13 +3069,13 @@
      <normaloff>:/toolicon/32x32/bisector.png</normaloff>:/toolicon/32x32/bisector.png</iconset>
    </property>
    <property name="text">
-    <string>Point along Bisector</string>
+    <string>On Bisector</string>
    </property>
    <property name="toolTip">
-    <string>Point along Bisector (PB)</string>
+    <string>Point - On Bisector (O, B)</string>
    </property>
    <property name="shortcut">
-    <string>P, B</string>
+    <string>O, B</string>
    </property>
   </action>
   <action name="pointOnShoulder_Action">
@@ -3089,10 +3087,10 @@
      <normaloff>:/toolicon/32x32/shoulder.png</normaloff>:/toolicon/32x32/shoulder.png</iconset>
    </property>
    <property name="text">
-    <string>Point on Shoulder</string>
+    <string>Length to Line</string>
    </property>
    <property name="toolTip">
-    <string>Point on Shoulder (PS)</string>
+    <string>Point - Length to Line (P, S)</string>
    </property>
    <property name="shortcut">
     <string>P, S</string>
@@ -3107,13 +3105,13 @@
      <normaloff>:/toolicon/32x32/point_of_contact.png</normaloff>:/toolicon/32x32/point_of_contact.png</iconset>
    </property>
    <property name="text">
-    <string>Intersection Point of Line and Arc</string>
+    <string>Intersect  Arc and Line</string>
    </property>
    <property name="toolTip">
-    <string>Intersection Point of Line and Arc (PC)</string>
+    <string>Point - Intersect Arc and Line (A, L)</string>
    </property>
    <property name="shortcut">
-    <string>P, C</string>
+    <string>A, L</string>
    </property>
   </action>
   <action name="triangle_Action">
@@ -3125,28 +3123,28 @@
      <normaloff>:/toolicon/32x32/triangle.png</normaloff>:/toolicon/32x32/triangle.png</iconset>
    </property>
    <property name="text">
-    <string>Triangle</string>
+    <string>Intersect Axis and Triangle</string>
    </property>
    <property name="toolTip">
-    <string>Triangle (PT)</string>
+    <string>Point - Intersect Axis and Triangle (X, T)</string>
    </property>
    <property name="shortcut">
-    <string>P, T</string>
+    <string>X, T</string>
    </property>
   </action>
-  <action name="pointOfIntersection_Action">
+  <action name="pointIntersectXY_Action">
    <property name="enabled">
     <bool>false</bool>
    </property>
    <property name="icon">
     <iconset resource="share/resources/toolicon.qrc">
-     <normaloff>:/toolicon/32x32/point_of_intersection.png</normaloff>:/toolicon/32x32/point_of_intersection.png</iconset>
+     <normaloff>:/toolicon/32x32/point_intersectxy_icon.png</normaloff>:/toolicon/32x32/point_intersectxy_icon.png</iconset>
    </property>
    <property name="text">
-    <string>Intersection Point XY from 2 Points</string>
+    <string>Intersect XY</string>
    </property>
    <property name="toolTip">
-    <string>Intersection Point XY from 2 Points (XY)</string>
+    <string>Point - Intersect XY (X, Y)</string>
    </property>
    <property name="shortcut">
     <string>X, Y</string>
@@ -3161,13 +3159,13 @@
      <normaloff>:/toolicon/32x32/height.png</normaloff>:/toolicon/32x32/height.png</iconset>
    </property>
    <property name="text">
-    <string>Intersection Point of Line and Perpendicular</string>
+    <string>Intersect Line and Perpendicular</string>
    </property>
    <property name="toolTip">
-    <string>Intersection Point of Line and Perpendicular (PL)</string>
+    <string>Point - Intersect Line and Perpendicular (L, P)</string>
    </property>
    <property name="shortcut">
-    <string>P, L</string>
+    <string>L, P</string>
    </property>
   </action>
   <action name="pointIntersectAxis_Action">
@@ -3179,13 +3177,13 @@
      <normaloff>:/toolicon/32x32/line_intersect_axis.png</normaloff>:/toolicon/32x32/line_intersect_axis.png</iconset>
    </property>
    <property name="text">
-    <string>Intersection Point of Line and Axis</string>
+    <string>Intersect Line and Axis</string>
    </property>
    <property name="toolTip">
-    <string>Intersection Point of Line and Axis (IX)</string>
+    <string>Point - Intersect Line and Axis (L, X)</string>
    </property>
    <property name="shortcut">
-    <string>I, X</string>
+    <string>L, X</string>
    </property>
   </action>
   <action name="lineIntersect_Action">
@@ -3197,10 +3195,10 @@
      <normaloff>:/toolicon/32x32/intersect.png</normaloff>:/toolicon/32x32/intersect.png</iconset>
    </property>
    <property name="text">
-    <string>Intersection Point of 2  Lines</string>
+    <string>Intersect Lines</string>
    </property>
    <property name="toolTip">
-    <string>Intersection Point of 2 Lines (IL)</string>
+    <string>Point - Intersect Lines (I, L)</string>
    </property>
    <property name="shortcut">
     <string>I, L</string>
@@ -3215,10 +3213,10 @@
      <normaloff>:/toolicon/32x32/spline.png</normaloff>:/toolicon/32x32/spline.png</iconset>
    </property>
    <property name="text">
-    <string>Curve</string>
+    <string>Curve - Interactive</string>
    </property>
    <property name="toolTip">
-    <string>Curve (Alt+C)</string>
+    <string>Curve - Interactive (Alt+C)</string>
    </property>
    <property name="shortcut">
     <string>Alt+C</string>
@@ -3233,13 +3231,13 @@
      <normaloff>:/toolicon/32x32/spline_cut_point.png</normaloff>:/toolicon/32x32/spline_cut_point.png</iconset>
    </property>
    <property name="text">
-    <string>Point along Curve</string>
+    <string>Point on Curve</string>
    </property>
    <property name="toolTip">
-    <string>Point along Curve (AC)</string>
+    <string>Point on Curve (A, C)</string>
    </property>
    <property name="shortcut">
-    <string>A, C</string>
+    <string>O, C</string>
    </property>
   </action>
   <action name="curveWithCPs_Action">
@@ -3251,13 +3249,13 @@
      <normaloff>:/toolicon/32x32/cubic_bezier.png</normaloff>:/toolicon/32x32/cubic_bezier.png</iconset>
    </property>
    <property name="text">
-    <string>Curve with Control Points</string>
+    <string>Curve - Fixed</string>
    </property>
    <property name="toolTip">
-    <string>Curve with Control Points (CP)</string>
+    <string>Curve - Fixed (Alt+Shift+C)</string>
    </property>
    <property name="shortcut">
-    <string>C, P</string>
+    <string>Alt+Shift+C</string>
    </property>
   </action>
   <action name="spline_Action">
@@ -3269,10 +3267,10 @@
      <normaloff>:/toolicon/32x32/splinePath.png</normaloff>:/toolicon/32x32/splinePath.png</iconset>
    </property>
    <property name="text">
-    <string>Spline</string>
+    <string>Spline - Interactive</string>
    </property>
    <property name="toolTip">
-    <string>Spline (Alt+S)</string>
+    <string>Spline - Interactive (Alt+S)</string>
    </property>
    <property name="shortcut">
     <string>Alt+S</string>
@@ -3287,13 +3285,13 @@
      <normaloff>:/toolicon/32x32/splinePath_cut_point.png</normaloff>:/toolicon/32x32/splinePath_cut_point.png</iconset>
    </property>
    <property name="text">
-    <string>Point along Spline</string>
+    <string>Point on Spline</string>
    </property>
    <property name="toolTip">
-    <string>Point along Spline (AS)</string>
+    <string>Point on Spline (O, S)</string>
    </property>
    <property name="shortcut">
-    <string>A, S</string>
+    <string>O, S</string>
    </property>
   </action>
   <action name="splineWithCPs_Action">
@@ -3305,13 +3303,13 @@
      <normaloff>:/toolicon/32x32/cubic_bezier_path.png</normaloff>:/toolicon/32x32/cubic_bezier_path.png</iconset>
    </property>
    <property name="text">
-    <string>Spline with Control Points</string>
+    <string>Spline - Fixed</string>
    </property>
    <property name="toolTip">
-    <string>Spline with Control Points (SP)</string>
+    <string>Spline - Fixed (Alt+Shift+S)</string>
    </property>
    <property name="shortcut">
-    <string>S, P</string>
+    <string>Alt+Shift+S</string>
    </property>
   </action>
   <action name="curveIntersectCurve_Action">
@@ -3323,16 +3321,16 @@
      <normaloff>:/toolicon/32x32/intersection_curves.png</normaloff>:/toolicon/32x32/intersection_curves.png</iconset>
    </property>
    <property name="text">
-    <string>Intersection Point of Curves</string>
+    <string>Intersect Curves</string>
    </property>
    <property name="iconText">
-    <string>Intersection Point of Curves</string>
+    <string>Intersect Curves</string>
    </property>
    <property name="toolTip">
-    <string>Intersection Point of Curves (CC)</string>
+    <string>Point - Intersect Curves (I, C)</string>
    </property>
    <property name="shortcut">
-    <string>C, C</string>
+    <string>I, C</string>
    </property>
   </action>
   <action name="splineIntersectAxis_Action">
@@ -3344,16 +3342,16 @@
      <normaloff>:/toolicon/32x32/curve_intersect_axis.png</normaloff>:/toolicon/32x32/curve_intersect_axis.png</iconset>
    </property>
    <property name="text">
-    <string>Intersection Point of Curve and Axis</string>
+    <string>Intersect Curve and Axis</string>
    </property>
    <property name="iconText">
-    <string>Intersection Point of Curve and Axis</string>
+    <string>Intersect Curve and Axis</string>
    </property>
    <property name="toolTip">
-    <string>Intersection Point of Curve and Axis (CA)</string>
+    <string>Point - Intersect Curve and Axis (C, X)</string>
    </property>
    <property name="shortcut">
-    <string>C, A</string>
+    <string>C, X</string>
    </property>
   </action>
   <action name="arcTool_Action">
@@ -3365,10 +3363,13 @@
      <normaloff>:/toolicon/32x32/arc.png</normaloff>:/toolicon/32x32/arc.png</iconset>
    </property>
    <property name="text">
-    <string>Arc</string>
+    <string>Radius and Angles</string>
+   </property>
+   <property name="iconText">
+    <string>Arc - Radius and Angles</string>
    </property>
    <property name="toolTip">
-    <string>Arc (Alt+A)</string>
+    <string>Arc - Radius and Angles (Alt+A)</string>
    </property>
    <property name="shortcut">
     <string>Alt+A</string>
@@ -3383,13 +3384,13 @@
      <normaloff>:/toolicon/32x32/arc_cut.png</normaloff>:/toolicon/32x32/arc_cut.png</iconset>
    </property>
    <property name="text">
-    <string>Point along Arc</string>
+    <string>Point on Arc</string>
    </property>
    <property name="toolTip">
-    <string>Point along Arc (AA)</string>
+    <string>Point on Arc (O, A)</string>
    </property>
    <property name="shortcut">
-    <string>A, A</string>
+    <string>O, A</string>
    </property>
   </action>
   <action name="arcIntersectAxis_Action">
@@ -3401,10 +3402,10 @@
      <normaloff>:/toolicon/32x32/arc_intersect_axis.png</normaloff>:/toolicon/32x32/arc_intersect_axis.png</iconset>
    </property>
    <property name="text">
-    <string>Intersection Point of Arc and Axis</string>
+    <string>Intersect Arc and Axis</string>
    </property>
    <property name="toolTip">
-    <string>Intersection Point of Arc and Axis (AX)</string>
+    <string>Intersect Arc and Axis (A, X)</string>
    </property>
    <property name="shortcut">
     <string>A, X</string>
@@ -3419,10 +3420,10 @@
      <normaloff>:/toolicon/32x32/point_of_intersection_arcs.png</normaloff>:/toolicon/32x32/point_of_intersection_arcs.png</iconset>
    </property>
    <property name="text">
-    <string>Intersection Point of Arcs</string>
+    <string>Intersect Arcs</string>
    </property>
    <property name="toolTip">
-    <string>Intersection Point of Arcs (IA)</string>
+    <string>Intersect Arcs (I, A)</string>
    </property>
    <property name="shortcut">
     <string>I, A</string>
@@ -3437,13 +3438,13 @@
      <normaloff>:/toolicon/32x32/point_of_intersection_circles.png</normaloff>:/toolicon/32x32/point_of_intersection_circles.png</iconset>
    </property>
    <property name="text">
-    <string>Intersection Point of Circles</string>
+    <string>Intersect Circles</string>
    </property>
    <property name="toolTip">
-    <string>Intersection Point of 2 Circles (IC)</string>
+    <string>Intersect Circles (Shift+I, Shift+C)</string>
    </property>
    <property name="shortcut">
-    <string>I, C</string>
+    <string>Shift+I, Shift+C</string>
    </property>
   </action>
   <action name="circleTangent_Action">
@@ -3455,10 +3456,10 @@
      <normaloff>:/toolicon/32x32/point_from_circle_and_tangent.png</normaloff>:/toolicon/32x32/point_from_circle_and_tangent.png</iconset>
    </property>
    <property name="text">
-    <string>Tangency Point of Circle and Tangent</string>
+    <string>Intersect Circle and Tangent</string>
    </property>
    <property name="toolTip">
-    <string>Tangency Point of Circle and Tangent (CT)</string>
+    <string>Intersect Circle and Tangent (C, T)</string>
    </property>
    <property name="shortcut">
     <string>C, T</string>
@@ -3473,10 +3474,10 @@
      <normaloff>:/toolicon/32x32/point_from_arc_and_tangent.png</normaloff>:/toolicon/32x32/point_from_arc_and_tangent.png</iconset>
    </property>
    <property name="text">
-    <string>Tangency Point of Arc and Tangent</string>
+    <string>Intersect Arc and Tangent</string>
    </property>
    <property name="toolTip">
-    <string>Tangency Point of Arc and Tangent (AT)</string>
+    <string>Intersect Arc and Tangent (A, T)</string>
    </property>
    <property name="shortcut">
     <string>A, T</string>
@@ -3491,13 +3492,16 @@
      <normaloff>:/toolicon/32x32/arc_with_length.png</normaloff>:/toolicon/32x32/arc_with_length.png</iconset>
    </property>
    <property name="text">
-    <string>Arc with Length</string>
+    <string>Radius and Length</string>
+   </property>
+   <property name="iconText">
+    <string>Arc - Radius and Length</string>
    </property>
    <property name="toolTip">
-    <string>Arc with Length (AL)</string>
+    <string>Arc - Radius and Length (Alt+Shift+A)</string>
    </property>
    <property name="shortcut">
-    <string>A, L</string>
+    <string>Alt+Shift+A</string>
    </property>
   </action>
   <action name="aboutQt_Action">
@@ -3513,8 +3517,8 @@
   </action>
   <action name="aboutSeamly2D_Action">
    <property name="icon">
-    <iconset theme="help-about">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
+     <normaloff>:/icon/logos/seamly_logo_32.png</normaloff>:/icon/logos/seamly_logo_32.png</iconset>
    </property>
    <property name="text">
     <string>&amp;About Seamly2D</string>
@@ -3528,8 +3532,8 @@
   </action>
   <action name="exit_Action">
    <property name="icon">
-    <iconset theme="application-exit">
-     <normaloff>.</normaloff>.</iconset>
+    <iconset resource="../../libs/vmisc/share/resources/theme.qrc">
+     <normaloff>:/icons/win.icon.theme/32x32/actions/application-exit.png</normaloff>:/icons/win.icon.theme/32x32/actions/application-exit.png</iconset>
    </property>
    <property name="text">
     <string>E&amp;xit</string>
@@ -3549,7 +3553,7 @@
     <string>Application Preferences...</string>
    </property>
    <property name="shortcut">
-    <string notr="true"/>
+    <string notr="true">Ctrl+,</string>
    </property>
    <property name="menuRole">
     <enum>QAction::PreferencesRole</enum>
@@ -3560,7 +3564,7 @@
     <string>Pattern Preferences...</string>
    </property>
    <property name="shortcut">
-    <string notr="true"/>
+    <string notr="true">Ctrl+Shift+,</string>
    </property>
    <property name="menuRole">
     <enum>QAction::NoRole</enum>
@@ -3708,6 +3712,18 @@
     <enum>QAction::NoRole</enum>
    </property>
   </action>
+  <action name="shortcuts_Action">
+   <property name="icon">
+    <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
+     <normaloff>:/icon/32x32/2d_key_icon.png</normaloff>:/icon/32x32/2d_key_icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Shortcuts</string>
+   </property>
+   <property name="shortcut">
+    <string>K</string>
+   </property>
+  </action>
   <action name="lastTool_Action">
    <property name="enabled">
     <bool>false</bool>
@@ -3716,30 +3732,34 @@
     <string>Last tool</string>
    </property>
    <property name="toolTip">
-    <string>Activate last used tool (L)</string>
+    <string>Activate last used tool (Ctrl+Shift+L)</string>
    </property>
    <property name="shortcut">
-    <string notr="true">L</string>
+    <string notr="true">Ctrl+Shift+L</string>
    </property>
    <property name="menuRole">
     <enum>QAction::NoRole</enum>
    </property>
   </action>
-  <action name="showCurveDetails_Action">
+  <action name="toggleControlPoints_Action">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="enabled">
     <bool>false</bool>
    </property>
+   <property name="icon">
+    <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
+     <normaloff>:/icon/32x32/curve_control_points.png</normaloff>:/icon/32x32/curve_control_points.png</iconset>
+   </property>
    <property name="text">
-    <string>Curve Details</string>
+    <string>Curve Control Points</string>
    </property>
    <property name="toolTip">
-    <string>Show/ Hide Control Points and Curve Direction (F2)</string>
+    <string>Toggle Control Points and Curve Direction (V, C)</string>
    </property>
    <property name="shortcut">
-    <string notr="true">F2</string>
+    <string notr="true">V, C</string>
    </property>
    <property name="menuRole">
     <enum>QAction::NoRole</enum>
@@ -3823,13 +3843,13 @@
    </property>
    <property name="icon">
     <iconset resource="share/resources/toolicon.qrc">
-     <normaloff>:/toolicon/32x32/export_to_picture_document.png</normaloff>:/toolicon/32x32/export_to_picture_document.png</iconset>
+     <normaloff>:/toolicon/32x32/export.png</normaloff>:/toolicon/32x32/export.png</iconset>
    </property>
    <property name="text">
     <string>Export As...</string>
    </property>
    <property name="toolTip">
-    <string>Export Layout (XL)</string>
+    <string>Export Layout (E, L)</string>
    </property>
    <property name="shortcut">
     <string notr="true"/>
@@ -3873,6 +3893,10 @@
    </property>
   </action>
   <action name="openSeamlyMe_Action">
+   <property name="icon">
+    <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
+     <normaloff>:/icon/logos/seamlyme_logo_32.png</normaloff>:/icon/logos/seamlyme_logo_32.png</iconset>
+   </property>
    <property name="text">
     <string>Open SeamlyMe</string>
    </property>
@@ -3972,7 +3996,7 @@
     <string>Selected</string>
    </property>
    <property name="toolTip">
-    <string>Zoom to Selected (CTRL+M)</string>
+    <string>Zoom to Selected (Ctrl+Right)</string>
    </property>
    <property name="shortcut">
     <string notr="true">Ctrl+Right</string>
@@ -4019,7 +4043,7 @@
     <string>Area</string>
    </property>
    <property name="toolTip">
-    <string>Zoom to selected Area (CTRL+Right)</string>
+    <string>Zoom to selected Area (Ctrl+A)</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+A</string>
@@ -4040,7 +4064,7 @@
     <string>Pan</string>
    </property>
    <property name="toolTip">
-    <string>Pan Work Area (Z,P)</string>
+    <string>Pan Work Area (Z, P)</string>
    </property>
    <property name="shortcut">
     <string>Z, P</string>
@@ -4129,6 +4153,9 @@
    <property name="text">
     <string>Curve</string>
    </property>
+   <property name="toolTip">
+    <string>Curve Tools</string>
+   </property>
   </action>
   <action name="arcs_Action">
    <property name="enabled">
@@ -4154,13 +4181,13 @@
    </property>
    <property name="icon">
     <iconset resource="share/resources/toolicon.qrc">
-     <normaloff>:/toolicon/32x32/modify_toolbox.png</normaloff>:/toolicon/32x32/modify_toolbox.png</iconset>
+     <normaloff>:/toolicon/32x32/operations_toolbox.png</normaloff>:/toolicon/32x32/operations_toolbox.png</iconset>
    </property>
    <property name="text">
     <string>modifications_Action</string>
    </property>
    <property name="toolTip">
-    <string>Modify Tools</string>
+    <string>Operations Tools</string>
    </property>
    <property name="shortcut">
     <string>W, O</string>
@@ -4177,17 +4204,23 @@
    <property name="text">
     <string>Layout</string>
    </property>
+   <property name="toolTip">
+    <string>Layout Tools</string>
+   </property>
   </action>
-  <action name="addDetails_Action">
+  <action name="pieces_Action">
    <property name="enabled">
     <bool>false</bool>
    </property>
    <property name="icon">
     <iconset resource="share/resources/toolicon.qrc">
-     <normaloff>:/toolicon/32x32/details_toolbox.png</normaloff>:/toolicon/32x32/details_toolbox.png</iconset>
+     <normaloff>:/toolicon/32x32/patternpiece_toolbox.png</normaloff>:/toolicon/32x32/patternpiece_toolbox.png</iconset>
    </property>
    <property name="text">
     <string>Details</string>
+   </property>
+   <property name="toolTip">
+    <string>Piece tools</string>
    </property>
   </action>
   <action name="addPiece_Action">
@@ -4196,31 +4229,31 @@
    </property>
    <property name="icon">
     <iconset resource="share/resources/toolicon.qrc">
-     <normaloff>:/toolicon/32x32/new_detail@2x.png</normaloff>:/toolicon/32x32/new_detail@2x.png</iconset>
+     <normaloff>:/toolicon/32x32/new_piece@2x.png</normaloff>:/toolicon/32x32/new_piece@2x.png</iconset>
    </property>
    <property name="text">
     <string>New Pattern Piece</string>
    </property>
    <property name="toolTip">
-    <string>Add New Pattern Piece (NP)</string>
+    <string>Add New Pattern Piece (N, P)</string>
    </property>
    <property name="shortcut">
     <string>N, P</string>
    </property>
   </action>
-  <action name="newPatternLayout_Action">
+  <action name="newPrintLayout_Action">
    <property name="enabled">
     <bool>false</bool>
    </property>
    <property name="icon">
     <iconset resource="share/resources/toolicon.qrc">
-     <normaloff>:/toolicon/32x32/layoutsettings.png</normaloff>:/toolicon/32x32/layoutsettings.png</iconset>
+     <normaloff>:/toolicon/32x32/layout_settings.png</normaloff>:/toolicon/32x32/layout_settings.png</iconset>
    </property>
    <property name="text">
-    <string>New Layout</string>
+    <string>New Print Layout</string>
    </property>
    <property name="toolTip">
-    <string>Create New Layout (NL)</string>
+    <string>Create New Print Layout (N, L)</string>
    </property>
    <property name="shortcut">
     <string>N, L</string>
@@ -4232,16 +4265,16 @@
    </property>
    <property name="icon">
     <iconset resource="share/resources/toolicon.qrc">
-     <normaloff>:/toolicon/32x32/export_layout.png</normaloff>:/toolicon/32x32/export_layout.png</iconset>
+     <normaloff>:/toolicon/32x32/export.png</normaloff>:/toolicon/32x32/export.png</iconset>
    </property>
    <property name="text">
     <string>Export Layout</string>
    </property>
    <property name="toolTip">
-    <string>Export Layout (XL)</string>
+    <string>Export Layout (E, L)</string>
    </property>
    <property name="shortcut">
-    <string>X, L</string>
+    <string>E, L</string>
    </property>
   </action>
   <action name="anchorPoint_Action">
@@ -4256,7 +4289,7 @@
     <string>Anchor Point</string>
    </property>
    <property name="toolTip">
-    <string>Add Anchor Point (AP)</string>
+    <string>Add Anchor Point (A, P)</string>
    </property>
    <property name="shortcut">
     <string>A, P</string>
@@ -4274,25 +4307,25 @@
     <string>Internal Path</string>
    </property>
    <property name="toolTip">
-    <string>Add Internal Path (IP)</string>
+    <string>Add Internal Path (I, P)</string>
    </property>
    <property name="shortcut">
     <string>I, P</string>
    </property>
   </action>
-  <action name="insertNode_Action">
+  <action name="insertNodes_Action">
    <property name="enabled">
     <bool>false</bool>
    </property>
    <property name="icon">
     <iconset resource="share/resources/toolicon.qrc">
-     <normaloff>:/toolicon/32x32/insert_node.png</normaloff>:/toolicon/32x32/insert_node.png</iconset>
+     <normaloff>:/toolicon/32x32/insert_nodes_icon.png</normaloff>:/toolicon/32x32/insert_nodes_icon.png</iconset>
    </property>
    <property name="text">
-    <string>Insert Node</string>
+    <string>Insert Nodes</string>
    </property>
    <property name="toolTip">
-    <string>Insert Node (IN)</string>
+    <string>Insert Nodes (I, N)</string>
    </property>
    <property name="shortcut">
     <string>I, N</string>
@@ -4319,28 +4352,306 @@
    </property>
    <property name="icon">
     <iconset resource="share/resources/toolicon.qrc">
-     <normaloff>:/toolicon/32x32/export_to_picture_document.png</normaloff>:/toolicon/32x32/export_to_picture_document.png</iconset>
+     <normaloff>:/toolicon/32x32/export.png</normaloff>:/toolicon/32x32/export.png</iconset>
    </property>
    <property name="text">
     <string>Export Pieces</string>
    </property>
    <property name="toolTip">
-    <string>Export Pieces (XP)</string>
+    <string>Export Pieces (E, P)</string>
    </property>
    <property name="shortcut">
-    <string>X, P</string>
+    <string>E, P</string>
    </property>
   </action>
-  <action name="patternPiece_Action">
+  <action name="details_Action">
    <property name="enabled">
     <bool>false</bool>
    </property>
    <property name="icon">
     <iconset resource="share/resources/toolicon.qrc">
-     <normaloff>:/toolicon/32x32/patternpieces_toolbox.png</normaloff>:/toolicon/32x32/patternpieces_toolbox.png</iconset>
+     <normaloff>:/toolicon/32x32/details_toolbox.png</normaloff>:/toolicon/32x32/details_toolbox.png</iconset>
    </property>
    <property name="text">
-    <string>patternPiece_Action</string>
+    <string>details_Action</string>
+   </property>
+   <property name="toolTip">
+    <string>Detail tools</string>
+   </property>
+  </action>
+  <action name="showPointNames_Action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
+     <normaloff>:/icon/16x16/open_eye@2x.png</normaloff>:/icon/16x16/open_eye@2x.png</iconset>
+   </property>
+   <property name="text">
+    <string>Point Name Text</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle Point Name Text (P)</string>
+   </property>
+   <property name="shortcut">
+    <string>V, P</string>
+   </property>
+  </action>
+  <action name="increaseSize_Action">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
+     <normaloff>:/icon/32x32/increase_size.png</normaloff>:/icon/32x32/increase_size.png</iconset>
+   </property>
+   <property name="text">
+    <string>Increase Text Size</string>
+   </property>
+   <property name="toolTip">
+    <string>Increase Text Size (Ctrl+])</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+]</string>
+   </property>
+  </action>
+  <action name="decreaseSize_Action">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
+     <normaloff>:/icon/32x32/decrease_size.png</normaloff>:/icon/32x32/decrease_size.png</iconset>
+   </property>
+   <property name="text">
+    <string>Decrease Text Size</string>
+   </property>
+   <property name="toolTip">
+    <string>Decrease Text Size (Ctrl+[)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+[</string>
+   </property>
+  </action>
+  <action name="useToolColor_Action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
+     <normaloff>:/icon/32x32/pen_color.png</normaloff>:/icon/32x32/pen_color.png</iconset>
+   </property>
+   <property name="text">
+    <string>Use Tool Color</string>
+   </property>
+   <property name="toolTip">
+    <string>Use Tool Color (T)</string>
+   </property>
+   <property name="shortcut">
+    <string>V, T</string>
+   </property>
+  </action>
+  <action name="toggleAxisOrigin_Action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
+     <normaloff>:/icon/32x32/origin.png</normaloff>:/icon/32x32/origin.png</iconset>
+   </property>
+   <property name="text">
+    <string>Axis Origin </string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle Axis Origin (V, A)</string>
+   </property>
+   <property name="shortcut">
+    <string>V, A</string>
+   </property>
+  </action>
+  <action name="toggleWireframe_Action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
+     <normaloff>:/icon/32x32/wireframe.png</normaloff>:/icon/32x32/wireframe.png</iconset>
+   </property>
+   <property name="text">
+    <string>Wireframe Mode</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle Wireframe Mode (V, W)</string>
+   </property>
+   <property name="shortcut">
+    <string>V, W</string>
+   </property>
+  </action>
+  <action name="toggleGrainLines_Action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
+     <normaloff>:/icon/32x32/grainline.png</normaloff>:/icon/32x32/grainline.png</iconset>
+   </property>
+   <property name="text">
+    <string>Grainlines</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle Grainlines (V, G)</string>
+   </property>
+   <property name="shortcut">
+    <string>V, G</string>
+   </property>
+  </action>
+  <action name="toggleLabels_Action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
+     <normaloff>:/icon/32x32/labels.png</normaloff>:/icon/32x32/labels.png</iconset>
+   </property>
+   <property name="text">
+    <string>Labels</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle Labels (V, L)</string>
+   </property>
+   <property name="shortcut">
+    <string>V, L</string>
+   </property>
+  </action>
+  <action name="calculator_Action">
+   <property name="icon">
+    <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
+     <normaloff>:/icon/32x32/calculator.png</normaloff>:/icon/32x32/calculator.png</iconset>
+   </property>
+   <property name="text">
+    <string>Calculator</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+C</string>
+   </property>
+  </action>
+  <action name="decimalChart_Action">
+   <property name="icon">
+    <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
+     <normaloff>:/icon/32x32/table.png</normaloff>:/icon/32x32/table.png</iconset>
+   </property>
+   <property name="text">
+    <string>Decimal Chart</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+D</string>
+   </property>
+  </action>
+  <action name="exportDraftBlocks_Action">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="share/resources/toolicon.qrc">
+     <normaloff>:/toolicon/32x32/export.png</normaloff>:/toolicon/32x32/export.png</iconset>
+   </property>
+   <property name="text">
+    <string>Export Draft Blocks</string>
+   </property>
+   <property name="toolTip">
+    <string>Export Draft Blocks (E, D)</string>
+   </property>
+   <property name="shortcut">
+    <string>E, D</string>
+   </property>
+  </action>
+  <action name="actionExport">
+   <property name="text">
+    <string>Export</string>
+   </property>
+  </action>
+  <action name="toggleSeamAllowances_Action">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
+     <normaloff>:/icon/32x32/seam_allowance@2x.png</normaloff>:/icon/32x32/seam_allowance@2x.png</iconset>
+   </property>
+   <property name="text">
+    <string>Seam Allowance</string>
+   </property>
+   <property name="shortcut">
+    <string>V, S</string>
+   </property>
+  </action>
+  <action name="documentInfo_Action">
+   <property name="icon">
+    <iconset resource="../../libs/vmisc/share/resources/icon.qrc">
+     <normaloff>:/icon/16x16/show_info16_icon.png</normaloff>:/icon/16x16/show_info16_icon.png</iconset>
+   </property>
+   <property name="text">
+    <string>Document Info...</string>
+   </property>
+   <property name="iconText">
+    <string>Document Info</string>
+   </property>
+   <property name="toolTip">
+    <string>Display document Info</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
+  </action>
+  <action name="zoomToPoint_Action">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../libs/vmisc/share/resources/theme.qrc">
+     <normaloff>:/icons/win.icon.theme/24x24/actions/zoom_to_point.png</normaloff>:/icons/win.icon.theme/24x24/actions/zoom_to_point.png</iconset>
+   </property>
+   <property name="text">
+    <string>Point</string>
+   </property>
+   <property name="toolTip">
+    <string>Zoom to point (Ctrl + Alt + P)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+P</string>
    </property>
   </action>
  </widget>

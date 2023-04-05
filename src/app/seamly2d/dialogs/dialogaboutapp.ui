@@ -30,7 +30,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../../../libs/vmisc/share/resources/icon.qrc">
-    <normaloff>:/icon/64x64/icon64x64.png</normaloff>:/icon/64x64/icon64x64.png</iconset>
+    <normaloff>:/icon/logos/seamly_logo_32.png</normaloff>:/icon/logos/seamly_logo_32.png</iconset>
   </property>
   <property name="locale">
    <locale language="English" country="UnitedStates"/>
@@ -58,11 +58,23 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>96</width>
+         <height>16777215</height>
+        </size>
+       </property>
        <property name="text">
         <string/>
        </property>
        <property name="pixmap">
-        <pixmap resource="../../../libs/vmisc/share/resources/icon.qrc">:/icon/64x64/icon64x64.png</pixmap>
+        <pixmap resource="../../../libs/vmisc/share/resources/icon.qrc">:/icon/logos/seamly_logo_96.png</pixmap>
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -204,29 +216,60 @@
           <bool>true</bool>
          </property>
          <property name="plainText">
-          <string notr="true">Roman Telezhinskyi
-Susan Spencer
-Steve Conklin
-Timo Virtaneva
-luzpazB
-Christine Neupert
-Sabine Schmaltz
-grumpi
-Lindsay Williams
-Patrick Proy
-Mischa Krempel
-Matt Daw
-Peter Gsellmann
-Robert Martin
-Michaela Orth
-Rina Rivera
-Fritz Rometsch
-Felix Ulber
-Alex Zaharov
-Valentina Zhuravska
-Bettina Gatzlaff
-Ronan Le Tiec
-Douglas Caskey</string>
+<string notr="true">Contributors   
+Alphabetical order: 
+  Aleenejejw
+  Subhash Abhijith
+  Sergey Alyoshin
+  AstHrO
+  Vincent Bermel
+  Johannes Brakensiek
+  Douglas Caskey
+  Steve Conklin
+  Ian Cunningham
+  Grace de Man
+  Frukto
+  Bettina Gatzlaff
+  Marius Ghita
+  Peter Gsellmann
+  Raina Gufstafson
+  Mohammed Ibrahim
+  Jackstr
+  Keepy38
+  Martijn Kleptog
+  Mischa Linus Krempel
+  Bojan Kverh
+  Ronan LeTiec
+  Kim March-Force
+  Dan McMahill
+  Benjamin Nauk
+  Christine Neupert
+  Mo Odling
+  Oni303
+  Harshil Patel
+  Pneumarian
+  Roman Postanciuk
+  Patrick Proy
+  QtGirl
+  SS-Adam
+  Fabrice Salvaire
+  Sabine Schmaltz
+  Alexsey Schmuley
+  Christoph Settgast
+  Evgeniy Strelnikov
+  Abhijith Subhash
+  U38cg
+  Felix Ulber
+  Ths80
+  Timo Virtaneva
+  Lindsay Williams
+  Araceli Yanez
+  Alex Zaharov
+  Valentina Zhuravska
+  Bernd Zeimetz
+  Alex Lopez Zubieta
+  Aleksey Zaharov
+          </string>
          </property>
         </widget>
        </item>

@@ -2,7 +2,7 @@
  *                                                                         *
  *   Copyright (C) 2017  Seamly, LLC                                       *
  *                                                                         *
- *   https://github.com/fashionfreedom/seamly2d                             *
+ *   https://github.com/fashionfreedom/seamly2d                            *
  *                                                                         *
  ***************************************************************************
  **
@@ -71,22 +71,22 @@ void VCubicBezierPath::Swap(VCubicBezierPath &curve) Q_DECL_NOTHROW
 
 //---------------------------------------------------------------------------------------------------------------------
 VCubicBezierPath::VCubicBezierPath(quint32 idObject, Draw mode)
-    : VAbstractCubicBezierPath(GOType::CubicBezierPath, idObject, mode),
-      d(new VCubicBezierPathData())
+    : VAbstractCubicBezierPath(GOType::CubicBezierPath, idObject, mode)
+    , d(new VCubicBezierPathData())
 {
 }
 
 //---------------------------------------------------------------------------------------------------------------------
 VCubicBezierPath::VCubicBezierPath(const VCubicBezierPath &curve)
-    : VAbstractCubicBezierPath(curve),
-      d(curve.d)
+    : VAbstractCubicBezierPath(curve)
+    , d(curve.d)
 {
 }
 
 //---------------------------------------------------------------------------------------------------------------------
 VCubicBezierPath::VCubicBezierPath(const QVector<VPointF> &points, quint32 idObject, Draw mode)
-    : VAbstractCubicBezierPath(GOType::CubicBezierPath, idObject, mode),
-      d(new VCubicBezierPathData())
+    : VAbstractCubicBezierPath(GOType::CubicBezierPath, idObject, mode)
+    , d(new VCubicBezierPathData())
 {
     if (points.isEmpty())
     {
@@ -119,8 +119,9 @@ VCubicBezierPath VCubicBezierPath::Rotate(const QPointF &originPoint, qreal degr
         curve.append(points.at(i).Rotate(originPoint, degrees));
     }
     curve.setName(name() + prefix);
-    curve.SetColor(GetColor());
+    curve.setLineColor(getLineColor());
     curve.SetPenStyle(GetPenStyle());
+    curve.setLineWeight(getLineWeight());
     return curve;
 }
 
@@ -134,8 +135,9 @@ VCubicBezierPath VCubicBezierPath::Flip(const QLineF &axis, const QString &prefi
         curve.append(points.at(i).Flip(axis));
     }
     curve.setName(name() + prefix);
-    curve.SetColor(GetColor());
+    curve.setLineColor(getLineColor());
     curve.SetPenStyle(GetPenStyle());
+    curve.setLineWeight(getLineWeight());
     return curve;
 }
 
@@ -149,8 +151,9 @@ VCubicBezierPath VCubicBezierPath::Move(qreal length, qreal angle, const QString
         curve.append(points.at(i).Move(length, angle));
     }
     curve.setName(name() + prefix);
-    curve.SetColor(GetColor());
+    curve.setLineColor(getLineColor());
     curve.SetPenStyle(GetPenStyle());
+    curve.setLineWeight(getLineWeight());
     return curve;
 }
 
@@ -174,11 +177,6 @@ const VPointF &VCubicBezierPath::at(int indx) const
 //---------------------------------------------------------------------------------------------------------------------
 void VCubicBezierPath::append(const VPointF &point)
 {
-    if (d->path.size() > 0 && static_cast<QPointF>(d->path.last()) != static_cast<QPointF>(point))
-    {
-        return;
-    }
-
     d->path.append(point);
     CreateName();
 }

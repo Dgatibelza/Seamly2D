@@ -380,7 +380,7 @@ quint32 VDomDocument::GetParametrUInt(const QDomElement &domElement, const QStri
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-bool VDomDocument::GetParametrBool(const QDomElement &domElement, const QString &name, const QString &defValue)
+bool VDomDocument::getParameterBool(const QDomElement &domElement, const QString &name, const QString &defValue)
 {
     Q_ASSERT_X(not name.isEmpty(), Q_FUNC_INFO, "name of parametr is empty");
     Q_ASSERT_X(not domElement.isNull(), Q_FUNC_INFO, "domElement is null");
@@ -424,7 +424,7 @@ bool VDomDocument::GetParametrBool(const QDomElement &domElement, const QString 
 //---------------------------------------------------------------------------------------------------------------------
 NodeUsage VDomDocument::GetParametrUsage(const QDomElement &domElement, const QString &name)
 {
-    const bool value = GetParametrBool(domElement, name, trueStr);
+    const bool value = getParameterBool(domElement, name, trueStr);
     if (value)
     {
         return NodeUsage::InUse;
@@ -527,11 +527,11 @@ qreal VDomDocument::GetParametrDouble(const QDomElement &domElement, const QStri
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
- * @brief GetParametrId return value id attribute.
+ * @brief getParameterId return value id attribute.
  * @param domElement tag in xml tree.
  * @return id value.
  */
-quint32 VDomDocument::GetParametrId(const QDomElement &domElement)
+quint32 VDomDocument::getParameterId(const QDomElement &domElement)
 {
     Q_ASSERT_X(not domElement.isNull(), Q_FUNC_INFO, "domElement is null");
 
@@ -614,7 +614,7 @@ void VDomDocument::CollectId(const QDomElement &node, QVector<quint32> &vector) 
 {
     if (node.hasAttribute(VDomDocument::AttrId))
     {
-        const quint32 id = GetParametrId(node);
+        const quint32 id = getParameterId(node);
         if (vector.contains(id))
         {
             throw VExceptionWrongId(tr("This id is not unique."), node);
@@ -964,8 +964,8 @@ QVector<VLabelTemplateLine> VDomDocument::GetLabelTemplate(const QDomElement &el
             {
                 VLabelTemplateLine line;
                 line.line = GetParametrString(tagLine, AttrText, tr("<empty>"));
-                line.bold = GetParametrBool(tagLine, AttrBold, falseStr);
-                line.italic = GetParametrBool(tagLine, AttrItalic, falseStr);
+                line.bold = getParameterBool(tagLine, AttrBold, falseStr);
+                line.italic = getParameterBool(tagLine, AttrItalic, falseStr);
                 line.alignment = static_cast<int>(GetParametrUInt(tagLine, AttrAlignment, "0"));
                 line.fontSizeIncrement = static_cast<int>(GetParametrUInt(tagLine, AttrFSIncrement, "0"));
                 lines.append(line);

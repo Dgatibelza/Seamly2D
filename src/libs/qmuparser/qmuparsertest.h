@@ -28,11 +28,11 @@
 #include <QString>
 #include <QVector>
 #include <QtGlobal>
+#include <QRandomGenerator>
 #include <locale>
+#include <QRandomGenerator>
 
-#include "../qmuparser/qmuparser_global.h"
 #include "qmuparser.h"
-#include "qmuparser_global.h"
 #include "qmuparserdef.h"
 #include "qmuparsererror.h"
 
@@ -54,7 +54,7 @@ namespace Test
  *
  * (C) 2004-2011 Ingo Berg
  */
-class QMUPARSERSHARED_EXPORT QmuParserTester : public QObject // final
+class QmuParserTester : public QObject // final
 {
     Q_OBJECT
 public:
@@ -234,12 +234,12 @@ private:
 
     static qreal Rnd ( qreal v )
     {
-        return static_cast<qreal>( ( 1 + ( v * qrand() / ( RAND_MAX + 1.0 ) ) ) );
+        return static_cast<qreal>( ( 1 + ( v * QRandomGenerator::global()->generate() / ( RAND_MAX + 1.0 ) ) ) );
     }
 
     static qreal RndWithString ( const char_type* )
     {
-        return static_cast<qreal>( ( 1 + ( 1000.0f * static_cast<qreal>(qrand()) / ( RAND_MAX + 1.0 ) ) ) );
+        return static_cast<qreal>( ( 1 + ( 1000.0f * static_cast<qreal>(QRandomGenerator::global()->generate()) / ( RAND_MAX + 1.0 ) ) ) );
     }
 
     static qreal Ping()

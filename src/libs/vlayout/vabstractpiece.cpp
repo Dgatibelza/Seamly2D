@@ -106,6 +106,43 @@ void VAbstractPiece::SetName(const QString &value)
     d->m_name = value;
 }
 
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VAbstractPiece::getColor() const
+{
+    return d->m_color;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VAbstractPiece::setColor(const QString &value)
+{
+    d->m_color = value;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VAbstractPiece::getFill() const
+{
+    return d->m_fill;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VAbstractPiece::setFill(const QString &value)
+{
+    d->m_fill = value;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+bool VAbstractPiece::getLock() const
+{
+    return d->m_pieceLock;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+void VAbstractPiece::setLock(bool value)
+{
+    d->m_pieceLock = value;
+}
+
 //---------------------------------------------------------------------------------------------------------------------
 bool VAbstractPiece::IsForbidFlipping() const
 {
@@ -143,13 +180,13 @@ void VAbstractPiece::SetSeamAllowanceBuiltIn(bool value)
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-bool VAbstractPiece::IsHideMainPath() const
+bool VAbstractPiece::isHideSeamLine() const
 {
     return d->m_hideMainPath;
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void VAbstractPiece::SetHideMainPath(bool value)
+void VAbstractPiece::setHideSeamLine(bool value)
 {
     d->m_hideMainPath = value;
 }
@@ -216,7 +253,7 @@ QVector<QPointF> VAbstractPiece::Equidistant(const QVector<VSAPoint> &points, qr
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-qreal VAbstractPiece::SumTrapezoids(const QVector<QPointF> &points)
+qreal VAbstractPiece::sumTrapezoids(const QVector<QPointF> &points)
 {
     // Calculation a polygon area through the sum of the areas of trapezoids
     qreal s, res = 0;
@@ -251,6 +288,24 @@ qreal VAbstractPiece::SumTrapezoids(const QVector<QPointF> &points)
     return res;
 }
 
+/*
+ * @brief Checks for direction of a vector of points.
+ * @param points QVector of QPointF.
+ * @return true for clockwise direction.
+ * return false for counterclock-wise direction.
+ */
+bool VAbstractPiece::isClockwise(const QVector<QPointF> &points)
+{
+    if(points.count() < 3)
+    {
+        return false;
+    }
+    else if (sumTrapezoids(points) < 0)
+    {
+        return true;
+    }
+    return false;
+}
 //---------------------------------------------------------------------------------------------------------------------
 /**
  * @brief CheckLoops seek and delete loops in equidistant.
@@ -315,7 +370,7 @@ QVector<QPointF> VAbstractPiece::CheckLoops(const QVector<QPointF> &points)
             // For closed path last point is equal to first. Using index of the first.
             pathClosed && jNext == count-1 ? AddUniqueIndex(0) : AddUniqueIndex(jNext);
 
-            const QLineF::IntersectType intersect = line1.intersect(line2, &crosPoint);
+            const QLineF::IntersectType intersect = line1.intersects(line2, &crosPoint);
             if (intersect == QLineF::NoIntersection)
             { // According to the documentation QLineF::NoIntersection indicates that the lines do not intersect;
               // i.e. they are parallel. But parallel also mean they can be on the same line.
@@ -331,12 +386,12 @@ QVector<QPointF> VAbstractPiece::CheckLoops(const QVector<QPointF> &points)
                     tmpLine1.setAngle(tmpLine1.angle()+90);
 
                     QPointF tmpCrosPoint;
-                    const QLineF::IntersectType tmpIntrs1 = tmpLine1.intersect(tmpLine2, &tmpCrosPoint);
+                    const QLineF::IntersectType tmpIntrs1 = tmpLine1.intersects(tmpLine2, &tmpCrosPoint);
 
                     tmpLine1 = line1;
                     tmpLine2.setAngle(tmpLine2.angle()+90);
 
-                    const QLineF::IntersectType tmpIntrs2 = tmpLine1.intersect(tmpLine2, &tmpCrosPoint);
+                    const QLineF::IntersectType tmpIntrs2 = tmpLine1.intersects(tmpLine2, &tmpCrosPoint);
 
                     if (tmpIntrs1 == QLineF::BoundedIntersection || tmpIntrs2 == QLineF::BoundedIntersection)
                     { // Now we really sure that lines are on the same lines and have real intersections.
@@ -418,10 +473,10 @@ qreal VAbstractPiece::MaxLocalSA(const VSAPoint &p, qreal width)
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
- * @brief EkvPoint return seam aloowance points in place of intersection two edges. Last points of two edges should be
- * equal.
+ * @brief EkvPoint return seam allowance points in place of intersection of two edges. Last points of two edges
+ * should be equal.
  * @param width global seam allowance width.
- * @return seam aloowance points.
+ * @return seam allowance points.
  */
 QVector<QPointF> VAbstractPiece::EkvPoint(const VSAPoint &p1Line1, const VSAPoint &p2Line1,
                                           const VSAPoint &p1Line2, const VSAPoint &p2Line2, qreal width)
@@ -441,7 +496,7 @@ QVector<QPointF> VAbstractPiece::EkvPoint(const VSAPoint &p1Line1, const VSAPoin
     const QLineF bigLine1 = createParallelLine(p1Line1, p2Line1, width );
     const QLineF bigLine2 = createParallelLine(p2Line2, p1Line2, width );
     QPointF CrosPoint;
-    const QLineF::IntersectType type = bigLine1.intersect( bigLine2, &CrosPoint );
+    const QLineF::IntersectType type = bigLine1.intersects( bigLine2, &CrosPoint );
     switch (type)
     {// There are at least three big cases
         case (QLineF::BoundedIntersection):
@@ -501,7 +556,7 @@ QT_WARNING_POP
 
                     const QLineF bigEdge = createParallelLine(p1Line1, p1Line2, localWidth );
                     QPointF px;
-                    const QLineF::IntersectType type = bigEdge.intersect(line, &px);
+                    const QLineF::IntersectType type = bigEdge.intersects(line, &px);
                     if (type != QLineF::BoundedIntersection)
                     {
                         if (line.length() < QLineF(p2Line1, px).length())
@@ -568,7 +623,7 @@ QVector<QPointF> VAbstractPiece::AngleByLength(const QPointF &p2, const QPointF 
         // We do not check intersection type because intersection must alwayse exist
         QPointF px;
         cutLine.setAngle(cutLine.angle()+90);
-        QLineF::IntersectType type = QLineF(sp1, sp2).intersect(cutLine, &px);
+        QLineF::IntersectType type = QLineF(sp1, sp2).intersects(cutLine, &px);
         if (type == QLineF::NoIntersection)
         {
             qDebug()<<"Couldn't find intersection with cut line.";
@@ -576,7 +631,7 @@ QVector<QPointF> VAbstractPiece::AngleByLength(const QPointF &p2, const QPointF 
         points.append(px);
 
         cutLine.setAngle(cutLine.angle()-180);
-        type = QLineF(sp2, sp3).intersect(cutLine, &px);
+        type = QLineF(sp2, sp3).intersects(cutLine, &px);
         if (type == QLineF::NoIntersection)
         {
             qDebug()<<"Couldn't find intersection with cut line.";
@@ -601,7 +656,7 @@ QVector<QPointF> VAbstractPiece::AngleByIntersection(const QPointF &p1, const QP
     QLineF sEdge1(sp1, sp2);
 
     QPointF px;
-    QLineF::IntersectType type = edge2.intersect(sEdge1, &px);
+    QLineF::IntersectType type = edge2.intersects(sEdge1, &px);
     if (type == QLineF::NoIntersection)
     {
         return AngleByLength(p2, sp1, sp2, sp3, width);
@@ -616,7 +671,7 @@ QVector<QPointF> VAbstractPiece::AngleByIntersection(const QPointF &p1, const QP
     QLineF edge1(p1, p2);
     QLineF sEdge2(sp2, sp3);
 
-    type = edge1.intersect(sEdge2, &px);
+    type = edge1.intersects(sEdge2, &px);
     if (type == QLineF::NoIntersection)
     {
         return AngleByLength(p2, sp1, sp2, sp3, width);
@@ -645,7 +700,7 @@ QVector<QPointF> VAbstractPiece::AngleByFirstSymmetry(const QPointF &p1, const Q
 
     QPointF px;
     QLineF sEdge1(sp1, sp2);
-    QLineF::IntersectType type = fEdge.intersect(sEdge1, &px);
+    QLineF::IntersectType type = fEdge.intersects(sEdge1, &px);
     if (type == QLineF::NoIntersection)
     {
         return AngleByLength(p2, sp1, sp2, sp3, width);
@@ -657,7 +712,7 @@ QVector<QPointF> VAbstractPiece::AngleByFirstSymmetry(const QPointF &p1, const Q
     }
     points.append(px);
 
-    type = fEdge.intersect(sEdge2, &px);
+    type = fEdge.intersects(sEdge2, &px);
     if (type == QLineF::NoIntersection)
     {
         return AngleByLength(p2, sp1, sp2, sp3, width);
@@ -685,7 +740,7 @@ QVector<QPointF> VAbstractPiece::AngleBySecondSymmetry(const QPointF &p2, const 
     QLineF fEdge(fp2, fp3);
 
     QPointF px;
-    QLineF::IntersectType type = fEdge.intersect(sEdge1, &px);
+    QLineF::IntersectType type = fEdge.intersects(sEdge1, &px);
     if (type == QLineF::NoIntersection)
     {
         return AngleByLength(p2, sp1, sp2, sp3, width);
@@ -698,7 +753,7 @@ QVector<QPointF> VAbstractPiece::AngleBySecondSymmetry(const QPointF &p2, const 
     points.append(px);
 
     QLineF sEdge2(sp2, sp3);
-    type = fEdge.intersect(sEdge2, &px);
+    type = fEdge.intersects(sEdge2, &px);
     if (type == QLineF::NoIntersection)
     {
         return AngleByLength(p2, sp1, sp2, sp3, width);
@@ -724,7 +779,7 @@ QVector<QPointF> VAbstractPiece::AngleByFirstRightAngle(const QPointF &p1, const
     edge1.setAngle(edge1.angle()-90);
 
     QPointF px;
-    QLineF::IntersectType type = edge1.intersect(QLineF(sp1, sp2), &px);
+    QLineF::IntersectType type = edge1.intersects(QLineF(sp1, sp2), &px);
     if (type == QLineF::NoIntersection)
     {
         return AngleByLength(p2, sp1, sp2, sp3, width);
@@ -736,7 +791,7 @@ QVector<QPointF> VAbstractPiece::AngleByFirstRightAngle(const QPointF &p1, const
     }
     points.append(px);
 
-    type = edge1.intersect(QLineF(sp2, sp3), &px);
+    type = edge1.intersects(QLineF(sp2, sp3), &px);
     if (type == QLineF::NoIntersection)
     {
         return AngleByLength(p2, sp1, sp2, sp3, width);
@@ -762,7 +817,7 @@ QVector<QPointF> VAbstractPiece::AngleBySecondRightAngle(const QPointF &p2, cons
     edge2.setAngle(edge2.angle()+90);
 
     QPointF px;
-    QLineF::IntersectType type = edge2.intersect(QLineF(sp1, sp2), &px);
+    QLineF::IntersectType type = edge2.intersects(QLineF(sp1, sp2), &px);
     if (type == QLineF::NoIntersection)
     {
         return AngleByLength(p2, sp1, sp2, sp3, width);
@@ -774,7 +829,7 @@ QVector<QPointF> VAbstractPiece::AngleBySecondRightAngle(const QPointF &p2, cons
     }
     points.append(px);
 
-    type = edge2.intersect(QLineF(sp2, sp3), &px);
+    type = edge2.intersects(QLineF(sp2, sp3), &px);
     if (type == QLineF::NoIntersection)
     {
         return AngleByLength(p2, sp1, sp2, sp3, width);
@@ -884,12 +939,12 @@ bool VAbstractPiece::CheckIntersection(const QVector<QPointF> &points, int i, in
     QVector<QPointF> sub1 = SubPath(points, iNext, j);
     sub1.append(crossPoint);
     sub1 = CheckLoops(CorrectEquidistantPoints(sub1, false));
-    const qreal sub1Sum = SumTrapezoids(sub1);
+    const qreal sub1Sum = sumTrapezoids(sub1);
 
     QVector<QPointF> sub2 = SubPath(points, jNext, i);
     sub2.append(crossPoint);
     sub2 = CheckLoops(CorrectEquidistantPoints(sub2, false));
-    const qreal sub2Sum = SumTrapezoids(sub2);
+    const qreal sub2Sum = sumTrapezoids(sub2);
 
     if (sub1Sum < 0 && sub2Sum < 0)
     {

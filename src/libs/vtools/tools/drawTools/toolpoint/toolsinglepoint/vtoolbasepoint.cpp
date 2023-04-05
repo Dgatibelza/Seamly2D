@@ -1,11 +1,13 @@
 /***************************************************************************
- *                                                                         *
- *   Copyright (C) 2017  Seamly, LLC                                       *
- *                                                                         *
- *   https://github.com/fashionfreedom/seamly2d                             *
- *                                                                         *
- ***************************************************************************
+ **  @file   vtoolsinglepoint.cpp
+ **  @author Douglas S Caskey
+ **  @date   Dec 27, 2022
  **
+ **  @copyright
+ **  Copyright (C) 2017 - 2022 Seamly, LLC
+ **  https://github.com/fashionfreedom/seamly2d
+ **
+ **  @brief
  **  Seamly2D is free software: you can redistribute it and/or modify
  **  it under the terms of the GNU General Public License as published by
  **  the Free Software Foundation, either version 3 of the License, or
@@ -17,11 +19,10 @@
  **  GNU General Public License for more details.
  **
  **  You should have received a copy of the GNU General Public License
- **  along with Seamly2D.  If not, see <http://www.gnu.org/licenses/>.
- **
- **************************************************************************
+ **  along with Seamly2D. If not, see <http://www.gnu.org/licenses/>.
+ **************************************************************************/
 
- ************************************************************************
+/************************************************************************
  **
  **  @file   vtoolsinglepoint.cpp
  **  @author Roman Telezhynskyi <dismine(at)gmail.com>
@@ -29,23 +30,23 @@
  **
  **  @brief
  **  @copyright
- **  This source code is part of the Valentine project, a pattern making
+ **  This source code is part of the Valentina project, a pattern making
  **  program, whose allow create and modeling patterns of clothing.
- **  Copyright (C) 2013-2015 Seamly2D project
- **  <https://github.com/fashionfreedom/seamly2d> All Rights Reserved.
+ **  Copyright (C) 2013-2015 Valentina project
+ **  <https://bitbucket.org/dismine/valentina> All Rights Reserved.
  **
- **  Seamly2D is free software: you can redistribute it and/or modify
+ **  Valentina is free software: you can redistribute it and/or modify
  **  it under the terms of the GNU General Public License as published by
  **  the Free Software Foundation, either version 3 of the License, or
  **  (at your option) any later version.
  **
- **  Seamly2D is distributed in the hope that it will be useful,
+ **  Valentina is distributed in the hope that it will be useful,
  **  but WITHOUT ANY WARRANTY; without even the implied warranty of
  **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  **  GNU General Public License for more details.
  **
  **  You should have received a copy of the GNU General Public License
- **  along with Seamly2D.  If not, see <http://www.gnu.org/licenses/>.
+ **  along with Valentina.  If not, see <http://www.gnu.org/licenses/>.
  **
  *************************************************************************/
 
@@ -71,25 +72,25 @@
 #include <QUndoStack>
 #include <new>
 
-#include "../../../../dialogs/tools/dialogtool.h"
-#include "../../../../dialogs/tools/dialogsinglepoint.h"
-#include "../../../../undocommands/addpatternpiece.h"
-#include "../../../../undocommands/deletepatternpiece.h"
-#include "../../../../undocommands/movespoint.h"
+#include "vtoolsinglepoint.h"
 #include "../ifc/exception/vexception.h"
 #include "../ifc/ifcdef.h"
 #include "../vgeometry/vgobject.h"
 #include "../vgeometry/vpointf.h"
+#include "../vmisc/logging.h"
 #include "../vmisc/vabstractapplication.h"
 #include "../vpatterndb/vcontainer.h"
 #include "../vwidgets/vgraphicssimpletextitem.h"
 #include "../vwidgets/vmaingraphicsscene.h"
 #include "../vwidgets/vmaingraphicsview.h"
-#include "../vmisc/logging.h"
+#include "../../vdrawtool.h"
 #include "../../../vabstracttool.h"
 #include "../../../vdatatool.h"
-#include "../../vdrawtool.h"
-#include "vtoolsinglepoint.h"
+#include "../../../../dialogs/tools/dialogtool.h"
+#include "../../../../dialogs/tools/dialogsinglepoint.h"
+#include "../../../../undocommands/add_draftblock.h"
+#include "../../../../undocommands/delete_draftblock.h"
+#include "../../../../undocommands/movespoint.h"
 
 const QString VToolBasePoint::ToolType = QStringLiteral("single");
 
@@ -103,13 +104,13 @@ const QString VToolBasePoint::ToolType = QStringLiteral("single");
  * @param parent parent object.
  */
 VToolBasePoint::VToolBasePoint (VAbstractPattern *doc, VContainer *data, quint32 id, const Source &typeCreation,
-                                const QString &namePP, QGraphicsItem * parent )
-    :VToolSinglePoint(doc, data, id, parent), namePP(namePP)
+                                const QString &draftBlockName, QGraphicsItem * parent )
+    : VToolSinglePoint(doc, data, id, QColor(Qt::red), parent)
+    , draftBlockName(draftBlockName)
 {
-    m_baseColor = Qt::red;
     this->setFlag(QGraphicsItem::ItemIsMovable, true);
     this->setFlag(QGraphicsItem::ItemSendsGeometryChanges, true);
-    m_namePoint->setBrush(Qt::black);
+    //m_pointName->setBrush(Qt::black);
     ToolCreation(typeCreation);
 }
 
@@ -122,12 +123,12 @@ void VToolBasePoint::setDialog()
     SCASSERT(not m_dialog.isNull())
     QSharedPointer<DialogSinglePoint> dialogTool = m_dialog.objectCast<DialogSinglePoint>();
     SCASSERT(not dialogTool.isNull())
-    const QSharedPointer<VPointF> p = VAbstractTool::data.GeometricObject<VPointF>(id);
+    const QSharedPointer<VPointF> p = VAbstractTool::data.GeometricObject<VPointF>(m_id);
     dialogTool->SetData(p->name(), static_cast<QPointF>(*p));
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-VToolBasePoint *VToolBasePoint::Create(quint32 _id, const QString &nameActivPP, VPointF *point,
+VToolBasePoint *VToolBasePoint::Create(quint32 _id, const QString &activeDraftBlock, VPointF *point,
                                        VMainGraphicsScene *scene, VAbstractPattern *doc, VContainer *data,
                                        const Document &parse, const Source &typeCreation)
 {
@@ -150,7 +151,7 @@ VToolBasePoint *VToolBasePoint::Create(quint32 _id, const QString &nameActivPP, 
     if (parse == Document::FullParse)
     {
         VDrawTool::AddRecord(id, Tool::BasePoint, doc);
-        VToolBasePoint *spoint = new VToolBasePoint(doc, data, id, typeCreation, nameActivPP);
+        VToolBasePoint *spoint = new VToolBasePoint(doc, data, id, typeCreation, activeDraftBlock);
         scene->addItem(spoint);
         InitToolConnections(scene, spoint);
         VAbstractPattern::AddTool(id, spoint);
@@ -167,32 +168,32 @@ void VToolBasePoint::ShowVisualization(bool show)
 
 //---------------------------------------------------------------------------------------------------------------------
 /**
- * @brief AddToFile add tag with informations about tool into file.
+ * @brief AddToFile add tag with Information about tool into file.
  */
 void VToolBasePoint::AddToFile()
 {
-    Q_ASSERT_X(not namePP.isEmpty(), Q_FUNC_INFO, "name pattern piece is empty");
+    Q_ASSERT_X(not draftBlockName.isEmpty(), Q_FUNC_INFO, "name pattern piece is empty");
 
     QDomElement sPoint = doc->createElement(getTagName());
 
     // Create SPoint tag
-    QSharedPointer<VGObject> obj = VAbstractTool::data.GetGObject(id);
+    QSharedPointer<VGObject> obj = VAbstractTool::data.GetGObject(m_id);
     SaveOptions(sPoint, obj);
 
     //Create pattern piece structure
-    QDomElement patternPiece = doc->createElement(VAbstractPattern::TagDraw);
-    doc->SetAttribute(patternPiece, AttrName, namePP);
+    QDomElement patternPiece = doc->createElement(VAbstractPattern::TagDraftBlock);
+    doc->SetAttribute(patternPiece, AttrName, draftBlockName);
 
     QDomElement calcElement = doc->createElement(VAbstractPattern::TagCalculation);
     calcElement.appendChild(sPoint);
 
     patternPiece.appendChild(calcElement);
     patternPiece.appendChild(doc->createElement(VAbstractPattern::TagModeling));
-    patternPiece.appendChild(doc->createElement(VAbstractPattern::TagDetails));
+    patternPiece.appendChild(doc->createElement(VAbstractPattern::TagPieces));
 
-    AddPatternPiece *addPP = new AddPatternPiece(patternPiece, doc, namePP);
-    connect(addPP, &AddPatternPiece::ClearScene, doc, &VAbstractPattern::ClearScene);
-    connect(addPP, &AddPatternPiece::NeedFullParsing, doc, &VAbstractPattern::NeedFullParsing);
+    AddDraftBlock *addPP = new AddDraftBlock(patternPiece, doc, draftBlockName);
+    connect(addPP, &AddDraftBlock::ClearScene, doc, &VAbstractPattern::ClearScene);
+    connect(addPP, &AddDraftBlock::NeedFullParsing, doc, &VAbstractPattern::NeedFullParsing);
     qApp->getUndoStack()->push(addPP);
 }
 
@@ -216,7 +217,7 @@ QVariant VToolBasePoint::itemChange(QGraphicsItem::GraphicsItemChange change, co
             // value - this is new position.
             QPointF newPos = value.toPointF();
 
-            MoveSPoint *moveSP = new MoveSPoint(doc, newPos.x(), newPos.y(), id, this->scene());
+            MoveSPoint *moveSP = new MoveSPoint(doc, newPos.x(), newPos.y(), m_id, this->scene());
             connect(moveSP, &MoveSPoint::NeedLiteParsing, doc, &VAbstractPattern::LiteParseTree);
             qApp->getUndoStack()->push(moveSP);
             const QList<QGraphicsView *> viewList = scene()->views();
@@ -267,7 +268,7 @@ void VToolBasePoint::decrementReferens()
 //---------------------------------------------------------------------------------------------------------------------
 QPointF VToolBasePoint::GetBasePointPos() const
 {
-    const QSharedPointer<VPointF> p = VAbstractTool::data.GeometricObject<VPointF>(id);
+    const QSharedPointer<VPointF> p = VAbstractTool::data.GeometricObject<VPointF>(m_id);
     QPointF pos(qApp->fromPixel(p->x()), qApp->fromPixel(p->y()));
     return pos;
 }
@@ -275,7 +276,7 @@ QPointF VToolBasePoint::GetBasePointPos() const
 //---------------------------------------------------------------------------------------------------------------------
 void VToolBasePoint::SetBasePointPos(const QPointF &pos)
 {
-    QSharedPointer<VPointF> p = VAbstractTool::data.GeometricObject<VPointF>(id);
+    QSharedPointer<VPointF> p = VAbstractTool::data.GeometricObject<VPointF>(m_id);
     p->setX(qApp->toPixel(pos.x()));
     p->setY(qApp->toPixel(pos.y()));
 
@@ -285,7 +286,7 @@ void VToolBasePoint::SetBasePointPos(const QPointF &pos)
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void VToolBasePoint::DeleteTool(bool ask)
+void VToolBasePoint::deleteTool(bool ask)
 {
     qCDebug(vTool, "Deleting base point.");
     qApp->getSceneView()->itemClicked(nullptr);
@@ -300,8 +301,8 @@ void VToolBasePoint::DeleteTool(bool ask)
     }
 
     qCDebug(vTool, "Begin deleting.");
-    DeletePatternPiece *deletePP = new DeletePatternPiece(doc, nameActivDraw);
-    connect(deletePP, &DeletePatternPiece::NeedFullParsing, doc, &VAbstractPattern::NeedFullParsing);
+    DeleteDraftBlock *deletePP = new DeleteDraftBlock(doc, activeBlockName);
+    connect(deletePP, &DeleteDraftBlock::NeedFullParsing, doc, &VAbstractPattern::NeedFullParsing);
     qApp->getUndoStack()->push(deletePP);
 
     // Throw exception, this will help prevent case when we forget to immediately quit function.
@@ -394,38 +395,51 @@ void VToolBasePoint::ReadToolAttributes(const QDomElement &domElement)
 }
 
 //---------------------------------------------------------------------------------------------------------------------
+QString VToolBasePoint::makeToolTip() const
+{
+    const QSharedPointer<VPointF> point = VAbstractTool::data.GeometricObject<VPointF>(m_id);
+
+    const QString toolTipStr = QString("<table>"
+                                       "<tr> <td><b>%1:</b> %2</td> </tr>"
+                                       "</table>")
+                                       .arg(tr("Name"))
+                                       .arg(point->name());
+    return toolTipStr;
+}
+
+//---------------------------------------------------------------------------------------------------------------------
 /**
- * @brief contextMenuEvent handle context menu events.
+ * @brief showContextMenu handle context menu events.
  * @param event context menu event.
  */
-void VToolBasePoint::contextMenuEvent ( QGraphicsSceneContextMenuEvent * event )
+void VToolBasePoint::showContextMenu(QGraphicsSceneContextMenuEvent *event, quint32 id)
 {
     qCDebug(vTool, "Context menu base point");
 #ifndef QT_NO_CURSOR
     QGuiApplication::restoreOverrideCursor();
-    qCDebug(vTool, "Restored overriden cursor");
+    qCDebug(vTool, "Restored overridden cursor");
 #endif
 
     try
     {
-        if (doc->CountPP() > 1)
+        if (doc->draftBlockCount() > 1)
         {
-            qCDebug(vTool, "PP count > 1");
-            ContextMenu<DialogSinglePoint>(this, event, RemoveOption::Enable, Referens::Ignore);
+            qCDebug(vTool, "Draft Block count > 1");
+            ContextMenu<DialogSinglePoint>(event, id, RemoveOption::Enable, Referens::Ignore);
         }
         else
         {
-            qCDebug(vTool, "PP count = 1");
-            ContextMenu<DialogSinglePoint>(this, event, RemoveOption::Disable);
+            qCDebug(vTool, "Draft Block count = 1");
+            ContextMenu<DialogSinglePoint>(event, id, RemoveOption::Disable);
         }
     }
     catch(const VExceptionToolWasDeleted &e)
     {
-        qCDebug(vTool, "Tool was deleted. Immediately leave method.");
+        qCDebug(vTool, "Tool was deleted. Leave method immediately.");
         Q_UNUSED(e)
         return;//Leave this method immediately!!!
     }
-    qCDebug(vTool, "Context menu closed. Tool was not deleted.");
+    qCDebug(vTool, "Context menu was closed. Tool was not deleted.");
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -434,7 +448,7 @@ void VToolBasePoint::contextMenuEvent ( QGraphicsSceneContextMenuEvent * event )
  */
 void  VToolBasePoint::FullUpdateFromFile()
 {
-    RefreshPointGeometry(*VAbstractTool::data.GeometricObject<VPointF>(id));
+    refreshPointGeometry(*VAbstractTool::data.GeometricObject<VPointF>(m_id));
 }
 
 //---------------------------------------------------------------------------------------------------------------------

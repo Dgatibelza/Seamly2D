@@ -124,7 +124,7 @@ public:
     void SetAttribute(QDomElement &domElement, const QString &name, const T &value) const;
 
     static quint32 GetParametrUInt(const QDomElement& domElement, const QString &name, const QString &defValue);
-    static bool    GetParametrBool(const QDomElement& domElement, const QString &name, const QString &defValue);
+    static bool    getParameterBool(const QDomElement& domElement, const QString &name, const QString &defValue);
 
     static NodeUsage GetParametrUsage(const QDomElement& domElement, const QString &name);
     static void      SetParametrUsage(QDomElement& domElement, const QString &name, const NodeUsage &value);
@@ -133,7 +133,7 @@ public:
                                      const QString &defValue = QString());
     static QString GetParametrEmptyString(const QDomElement& domElement, const QString &name);
     static qreal   GetParametrDouble(const QDomElement& domElement, const QString &name, const QString &defValue);
-    static quint32 GetParametrId(const QDomElement& domElement);
+    static quint32 getParameterId(const QDomElement& domElement);
 
     Unit           MUnit() const;
 

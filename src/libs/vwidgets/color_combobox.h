@@ -24,7 +24,7 @@ public:
 
     QString  getColor() const;
     void     setColor(const QString &color);
-    void     init();
+    void     setItems(QMap<QString, QString> map);
     int      getIconWidth();
     int      getIconHeight();
 
@@ -35,8 +35,8 @@ signals:
     void     colorChangedSignal(const QString &color);
 
 private:
+    void     init();
     QString  m_currentColor;
-    int      m_colorIndexStart;
     int      m_iconWidth;
     int      m_iconHeight;
 };

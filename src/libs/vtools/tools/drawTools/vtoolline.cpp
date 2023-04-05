@@ -1,27 +1,22 @@
-/***************************************************************************
- *                                                                         *
- *   Copyright (C) 2017  Seamly, LLC                                       *
- *                                                                         *
- *   https://github.com/fashionfreedom/seamly2d                             *
- *                                                                         *
- ***************************************************************************
+/******************************************************************************
+ *   @file   vtoolline.cpp
+ **  @author Douglas S Caskey
+ **  @date   21 Mar, 2023
+ **
+ **  @brief
+ **  @copyright
+ **  This source code is part of the Seamly2D project, a pattern making
+ **  program to create and model patterns of clothing.
+ **  Copyright (C) 2017-2023 Seamly2D project
+ **  <https://github.com/fashionfreedom/seamly2d> All Rights Reserved.
  **
  **  Seamly2D is free software: you can redistribute it and/or modify
- **  it under the terms of the GNU General Public License as published by
- **  the Free Software Foundation, either version 3 of the License, or
- **  (at your option) any later version.
- **
- **  Seamly2D is distributed in the hope that it will be useful,
- **  but WITHOUT ANY WARRANTY; without even the implied warranty of
- **  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- **  GNU General Public License for more details.
- **
  **  You should have received a copy of the GNU General Public License
  **  along with Seamly2D.  If not, see <http://www.gnu.org/licenses/>.
  **
- **************************************************************************
+ *****************************************************************************/
 
- ************************************************************************
+/************************************************************************
  **
  **  @file   vtoolline.cpp
  **  @author Roman Telezhynskyi <dismine(at)gmail.com>
@@ -85,21 +80,22 @@ template <class T> class QSharedPointer;
  * @param id object id in container.
  * @param firstPoint id first line point.
  * @param secondPoint id second line point.
- * @param typeLine line type.
+ * @param lineType line type.
  * @param typeCreation way we create this tool.
  * @param parent parent object.
  */
 VToolLine::VToolLine(VAbstractPattern *doc, VContainer *data, quint32 id, quint32 firstPoint, quint32 secondPoint,
-                     const QString &typeLine, const QString &lineColor, const Source &typeCreation,
-                     QGraphicsItem *parent)
-    :VDrawTool(doc, data, id),
-      QGraphicsLineItem(parent),
-      firstPoint(firstPoint),
-      secondPoint(secondPoint),
-      lineColor(lineColor),
-      m_isHovered(false)
+                     const QString &lineType, const QString &lineWeight, const QString &lineColor,
+                     const Source &typeCreation, QGraphicsItem *parent)
+    : VDrawTool(doc, data, id)
+    , QGraphicsLineItem(parent)
+    , firstPoint(firstPoint)
+    , secondPoint(secondPoint)
+    , lineColor(lineColor)
+    , m_isHovered(false)
 {
-    this->m_lineType = typeLine;
+    this->m_lineType = lineType;
+    this->m_lineWeight = lineWeight;
     //Line
     RefreshGeometry();
     this->setFlag(QGraphicsItem::ItemStacksBehindParent, true);
@@ -118,10 +114,11 @@ void VToolLine::setDialog()
     SCASSERT(not m_dialog.isNull())
     QSharedPointer<DialogLine> dialogTool = m_dialog.objectCast<DialogLine>();
     SCASSERT(not dialogTool.isNull())
-    dialogTool->SetFirstPoint(firstPoint);
-    dialogTool->SetSecondPoint(secondPoint);
-    dialogTool->SetTypeLine(m_lineType);
-    dialogTool->SetLineColor(lineColor);
+    dialogTool->setFirstPoint(firstPoint);
+    dialogTool->setSecondPoint(secondPoint);
+    dialogTool->setLineType(m_lineType);
+    dialogTool->setLineWeight(m_lineWeight);
+    dialogTool->setLineColor(lineColor);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -138,12 +135,13 @@ VToolLine *VToolLine::Create(QSharedPointer<DialogTool> dialog, VMainGraphicsSce
     SCASSERT(not dialog.isNull())
     QSharedPointer<DialogLine> dialogTool = dialog.objectCast<DialogLine>();
     SCASSERT(not dialogTool.isNull())
-    const quint32 firstPoint = dialogTool->GetFirstPoint();
-    const quint32 secondPoint = dialogTool->GetSecondPoint();
-    const QString typeLine = dialogTool->GetTypeLine();
-    const QString lineColor = dialogTool->GetLineColor();
+    const quint32 firstPoint  = dialogTool->getFirstPoint();
+    const quint32 secondPoint = dialogTool->getSecondPoint();
+    const QString lineType    = dialogTool->getLineType();
+    const QString lineWeight  = dialogTool->getLineWeight();
+    const QString lineColor   = dialogTool->getLineColor();
 
-    VToolLine *line = Create(0, firstPoint, secondPoint, typeLine, lineColor,  scene, doc, data, Document::FullParse,
+    VToolLine *line = Create(0, firstPoint, secondPoint, lineType, lineWeight, lineColor,  scene, doc, data, Document::FullParse,
                              Source::FromGui);
     if (line != nullptr)
     {
@@ -158,7 +156,9 @@ VToolLine *VToolLine::Create(QSharedPointer<DialogTool> dialog, VMainGraphicsSce
  * @param _id tool id, 0 if tool doesn't exist yet.
  * @param firstPoint id first line point.
  * @param secondPoint id second line point.
- * @param typeLine line type.
+ * @param lineType line type.
+ * @param lineWeight line weight.
+ * @param lineColor line color.
  * @param scene pointer to scene.
  * @param doc dom document container.
  * @param data container with variables.
@@ -166,9 +166,9 @@ VToolLine *VToolLine::Create(QSharedPointer<DialogTool> dialog, VMainGraphicsSce
  * @param typeCreation way we create this tool.
  */
 VToolLine * VToolLine::Create(const quint32 &_id, const quint32 &firstPoint, const quint32 &secondPoint,
-                              const QString &typeLine, const QString &lineColor, VMainGraphicsScene *scene,
-                              VAbstractPattern *doc, VContainer *data, const Document &parse,
-                              const Source &typeCreation)
+                              const QString &lineType, const QString &lineWeight, const QString &lineColor,
+                              VMainGraphicsScene *scene, VAbstractPattern *doc, VContainer *data,
+                              const Document &parse, const Source &typeCreation)
 {
     SCASSERT(scene != nullptr)
     SCASSERT(doc != nullptr)
@@ -192,7 +192,7 @@ VToolLine * VToolLine::Create(const quint32 &_id, const quint32 &firstPoint, con
     if (parse == Document::FullParse)
     {
         VDrawTool::AddRecord(id, Tool::Line, doc);
-        VToolLine *line = new VToolLine(doc, data, id, firstPoint, secondPoint, typeLine, lineColor, typeCreation);
+        VToolLine *line = new VToolLine(doc, data, id, firstPoint, secondPoint, lineType, lineWeight, lineColor, typeCreation);
         scene->addItem(line);
         InitDrawToolConnections(scene, line);
         connect(scene, &VMainGraphicsScene::EnableLineItemSelection, line, &VToolLine::AllowSelecting);
@@ -218,9 +218,13 @@ QString VToolLine::getTagName() const
 //---------------------------------------------------------------------------------------------------------------------
 void VToolLine::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    const qreal width = ScaleWidth(m_isHovered ? widthMainLine : widthHairLine, SceneScale(scene()));
+    //const qreal width = scaleWidth(m_isHovered ? widthMainLine : widthHairLine, sceneScale(scene()));
 
-    setPen(QPen(CorrectColor(this, lineColor), width, LineStyleToPenStyle(m_lineType)));
+    const qreal weight = ToPixel(doc->useGroupLineWeight(m_id, m_lineWeight).toDouble(), Unit::Mm);
+    const qreal width  = scaleWidth(m_isHovered ? weight + 4 : weight, sceneScale(scene()));
+
+    setPen(QPen(correctColor(this, doc->useGroupColor(m_id, lineColor)),
+           width, lineTypeToPenStyle(doc->useGroupLineType(m_id, m_lineType))));
 
     QGraphicsLineItem::paint(painter, option, widget);
 }
@@ -260,9 +264,9 @@ void VToolLine::ShowTool(quint32 id, bool enable)
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void VToolLine::Disable(bool disable, const QString &namePP)
+void VToolLine::Disable(bool disable, const QString &draftBlockName)
 {
-    const bool enabled = !CorrectDisable(disable, namePP);
+    const bool enabled = !CorrectDisable(disable, draftBlockName);
     this->setEnabled(enabled);
 }
 
@@ -283,17 +287,28 @@ void VToolLine::AllowSelecting(bool enabled)
  * @brief contextMenuEvent handle context menu events.
  * @param event context menu event.
  */
-void VToolLine::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+void VToolLine::showContextMenu(QGraphicsSceneContextMenuEvent *event, quint32 id)
 {
+    Q_UNUSED(id)
     try
     {
-        ContextMenu<DialogLine>(this, event);
+        ContextMenu<DialogLine>(event);
     }
     catch(const VExceptionToolWasDeleted &e)
     {
         Q_UNUSED(e)
         return;//Leave this method immediately!!!
     }
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+/**
+ * @brief contextMenuEvent handle context menu events.
+ * @param event context menu event.
+ */
+void VToolLine::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+    showContextMenu(event);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -316,7 +331,7 @@ void VToolLine::AddToFile()
 void VToolLine::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     m_isHovered = true;
-    setToolTip(MakeToolTip());
+    setToolTip(makeToolTip());
     QGraphicsLineItem::hoverEnterEvent(event);
 }
 
@@ -358,7 +373,7 @@ QVariant VToolLine::itemChange(QGraphicsItem::GraphicsItemChange change, const Q
 {
     if (change == QGraphicsItem::ItemSelectedChange)
     {
-        emit ChangedToolSelection(value.toBool(), id, id);
+        emit ChangedToolSelection(value.toBool(), m_id, m_id);
     }
 
     return QGraphicsItem::itemChange(change, value);
@@ -376,7 +391,7 @@ void VToolLine::keyReleaseEvent(QKeyEvent *event)
         case Qt::Key_Delete:
             try
             {
-                DeleteTool();
+                deleteTool();
             }
             catch(const VExceptionToolWasDeleted &e)
             {
@@ -399,10 +414,11 @@ void VToolLine::SaveDialog(QDomElement &domElement)
     SCASSERT(not m_dialog.isNull())
     QSharedPointer<DialogLine> dialogTool = m_dialog.objectCast<DialogLine>();
     SCASSERT(not dialogTool.isNull())
-    doc->SetAttribute(domElement, AttrFirstPoint, QString().setNum(dialogTool->GetFirstPoint()));
-    doc->SetAttribute(domElement, AttrSecondPoint, QString().setNum(dialogTool->GetSecondPoint()));
-    doc->SetAttribute(domElement, AttrLineType, dialogTool->GetTypeLine());
-    doc->SetAttribute(domElement, AttrLineColor, dialogTool->GetLineColor());
+    doc->SetAttribute(domElement, AttrFirstPoint,  QString().setNum(dialogTool->getFirstPoint()));
+    doc->SetAttribute(domElement, AttrSecondPoint, QString().setNum(dialogTool->getSecondPoint()));
+    doc->SetAttribute(domElement, AttrLineType,    dialogTool->getLineType());
+    doc->SetAttribute(domElement, AttrLineWeight,  dialogTool->getLineWeight());
+    doc->SetAttribute(domElement, AttrLineColor,   dialogTool->getLineColor());
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -410,19 +426,21 @@ void VToolLine::SaveOptions(QDomElement &tag, QSharedPointer<VGObject> &obj)
 {
     VDrawTool::SaveOptions(tag, obj);
 
-    doc->SetAttribute(tag, AttrFirstPoint, firstPoint);
+    doc->SetAttribute(tag, AttrFirstPoint,  firstPoint);
     doc->SetAttribute(tag, AttrSecondPoint, secondPoint);
-    doc->SetAttribute(tag, AttrLineType, m_lineType);
-    doc->SetAttribute(tag, AttrLineColor, lineColor);
+    doc->SetAttribute(tag, AttrLineType,    m_lineType);
+    doc->SetAttribute(tag, AttrLineWeight,  m_lineWeight);
+    doc->SetAttribute(tag, AttrLineColor,   lineColor);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
 void VToolLine::ReadToolAttributes(const QDomElement &domElement)
 {
-    firstPoint = doc->GetParametrUInt(domElement, AttrFirstPoint, NULL_ID_STR);
-    secondPoint = doc->GetParametrUInt(domElement, AttrSecondPoint, NULL_ID_STR);
-    m_lineType = doc->GetParametrString(domElement, AttrLineType, LineTypeSolidLine);
-    lineColor = doc->GetParametrString(domElement, AttrLineColor, ColorBlack);
+    firstPoint   = doc->GetParametrUInt(domElement,   AttrFirstPoint,  NULL_ID_STR);
+    secondPoint  = doc->GetParametrUInt(domElement,   AttrSecondPoint, NULL_ID_STR);
+    m_lineType   = doc->GetParametrString(domElement, AttrLineType,    LineTypeSolidLine);
+    m_lineWeight = doc->GetParametrString(domElement, AttrLineWeight,  "0.35");
+    lineColor    = doc->GetParametrString(domElement, AttrLineColor,   ColorBlack);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -435,13 +453,14 @@ void VToolLine::SetVisualization()
 
         visual->setObject1Id(firstPoint);
         visual->setPoint2Id(secondPoint);
-        visual->setLineStyle(LineStyleToPenStyle(m_lineType));
+        visual->setLineStyle(lineTypeToPenStyle(m_lineType));
+        visual->setLineWeight(m_lineWeight);
         visual->RefreshGeometry();
     }
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-QString VToolLine::MakeToolTip() const
+QString VToolLine::makeToolTip() const
 {
     const QSharedPointer<VPointF> first = VAbstractTool::data.GeometricObject<VPointF>(firstPoint);
     const QSharedPointer<VPointF> second = VAbstractTool::data.GeometricObject<VPointF>(secondPoint);
@@ -504,7 +523,7 @@ void VToolLine::ShowVisualization(bool show)
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void VToolLine::SetTypeLine(const QString &value)
+void VToolLine::setLineType(const QString &value)
 {
     m_lineType = value;
 
@@ -513,13 +532,22 @@ void VToolLine::SetTypeLine(const QString &value)
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-QString VToolLine::GetLineColor() const
+void VToolLine::setLineWeight(const QString &value)
+{
+    m_lineWeight = value;
+
+    QSharedPointer<VGObject> obj;//We don't have object for line in data container. Just will send empty object.
+    SaveOption(obj);
+}
+
+//---------------------------------------------------------------------------------------------------------------------
+QString VToolLine::getLineColor() const
 {
     return lineColor;
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void VToolLine::SetLineColor(const QString &value)
+void VToolLine::setLineColor(const QString &value)
 {
     lineColor = value;
 

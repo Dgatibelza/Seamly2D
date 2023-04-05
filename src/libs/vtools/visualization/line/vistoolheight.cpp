@@ -89,7 +89,7 @@ void VisToolHeight::RefreshGeometry()
 
         if (lineP1Id <= NULL_ID)
         {
-            DrawLine(this, QLineF(static_cast<QPointF>(*first), Visualization::scenePos), mainColor);
+            DrawLine(this, QLineF(static_cast<QPointF>(*first), Visualization::scenePos), mainColor, lineWeight);
         }
         else
         {
@@ -100,7 +100,7 @@ void VisToolHeight::RefreshGeometry()
             if (lineP2Id <= NULL_ID)
             {
                 base_line = QLineF(static_cast<QPointF>(*second), Visualization::scenePos);
-                DrawLine(line, base_line, supportColor);
+                DrawLine(line, base_line, supportColor, lineWeight);
             }
             else
             {
@@ -110,13 +110,13 @@ void VisToolHeight::RefreshGeometry()
                 base_line = QLineF(static_cast<QPointF>(*second), static_cast<QPointF>(*third));
             }
 
-            DrawLine(line, base_line, supportColor);
+            DrawLine(line, base_line, supportColor, lineWeight);
 
             QPointF height = VToolHeight::FindPoint(base_line, static_cast<QPointF>(*first));
             DrawPoint(point, height, mainColor);
 
             QLineF height_line(static_cast<QPointF>(*first), height);
-            DrawLine(this, height_line, mainColor, lineStyle);
+            DrawLine(this, height_line, mainColor, lineWeight, lineStyle);
 
             ShowIntersection(height_line, base_line);
         }
@@ -139,7 +139,7 @@ void VisToolHeight::setLineP2Id(const quint32 &value)
 void VisToolHeight::ShowIntersection(const QLineF &height_line, const QLineF &base_line)
 {
     QPointF p;
-    QLineF::IntersectType intersect = height_line.intersect(base_line, &p);
+    QLineF::IntersectType intersect = height_line.intersects(base_line, &p);
     if (intersect == QLineF::UnboundedIntersection)
     {
         line_intersection->setVisible(true);

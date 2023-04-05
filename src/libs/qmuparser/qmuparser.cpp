@@ -339,7 +339,7 @@ void QmuParser::InitFun()
     DefineFun("sinD",   SinD);
     DefineFun("cosD",   CosD);
     DefineFun("tanD",   TanD);
-    // arcus functions
+    // inverse functions
     DefineFun("asin",  qAsin);
     DefineFun("acos",  qAcos);
     DefineFun("atan",  qAtan);
@@ -351,7 +351,7 @@ void QmuParser::InitFun()
     DefineFun("sinh",  Sinh);
     DefineFun("cosh",  Cosh);
     DefineFun("tanh",  Tanh);
-    // arcus hyperbolic functions
+    // inverse hyperbolic functions
     DefineFun("asinh", ASinh);
     DefineFun("acosh", ACosh);
     DefineFun("atanh", ATanh);

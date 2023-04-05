@@ -37,8 +37,10 @@ class VGraphicsFillItem : public QGraphicsPathItem
 public:
     /**
      * @brief VGraphicsFillItem Constructor
+     * @param color color used for the item's pen & brush
+     * @param fill flag used if the item is to be filled or not
      */
-    explicit VGraphicsFillItem(QGraphicsItem *parent = nullptr);
+    explicit VGraphicsFillItem(const QColor &color, bool fill, QGraphicsItem *parent = nullptr);
     /**
      * @brief ~VGraphicsFillItem Destructor
      */
@@ -50,6 +52,11 @@ public:
      * @param widget unused
      */
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+
+private:
+    QColor   m_color;
+    bool     m_fill;
+
 };
 
 #endif // VGRAPHICSFILLITEM_H

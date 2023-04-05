@@ -1867,11 +1867,11 @@ QVector<QPointF> TST_VAbstractPiece::OutputPointsCase3() const
 }
 
 //---------------------------------------------------------------------------------------------------------------------
-void TST_VAbstractPiece::SumTrapezoids() const
+void TST_VAbstractPiece::sumTrapezoids() const
 {
-    // Case3 checks that the method 'SumTrapezoids' returns negative value for three clockwise allocated points
-    // Case4 checks that the method 'SumTrapezoids' returns positive value for three counterclock-wise allocated points
-    // Case5 checks that the method 'SumTrapezoids' returns 0 for one point
+    // Case3 checks that the method 'sumTrapezoids' returns negative value for three clockwise allocated points
+    // Case4 checks that the method 'sumTrapezoids' returns positive value for three counterclock-wise allocated points
+    // Case5 checks that the method 'sumTrapezoids' returns 0 for one point
     Case3();
     Case4();
     Case5();
@@ -1965,13 +1965,9 @@ void TST_VAbstractPiece::PathRemoveLoop_data() const
     res << QPointF(20, 10);
     QTest::newRow("One loop, the first loop, closed a path (six unique points)") << path << res;
 
-#if QT_VERSION < QT_VERSION_CHECK(5, 1, 0)
-    path.remove(path.size() - 1);
-    res.remove(res.size() - 1);
-#else
     path.removeLast();
     res.removeLast();
-#endif
+
     QTest::newRow("One loop, the first loop, unclosed a path (six unique points)") << path << res;
 
     path.clear();
@@ -3122,7 +3118,7 @@ void TST_VAbstractPiece::Case3() const
 {
     const QVector<QPointF> points = InputPointsCase3a(); // Input points.
 
-    const qreal result = VAbstractPiece::SumTrapezoids(points);
+    const qreal result = VAbstractPiece::sumTrapezoids(points);
     QVERIFY(result < 0);
 }
 
@@ -3131,7 +3127,7 @@ void TST_VAbstractPiece::Case4() const
 {
     const QVector<QPointF> points = InputPointsCase4a(); // Input points.
 
-    const qreal result = VAbstractPiece::SumTrapezoids(points);
+    const qreal result = VAbstractPiece::sumTrapezoids(points);
     QVERIFY(result > 0);
 }
 
@@ -3140,7 +3136,7 @@ void TST_VAbstractPiece::Case5() const
 {
     const QVector<QPointF> points = InputPointsCase5a(); // Input points.
 
-    const qreal result = VAbstractPiece::SumTrapezoids(points);
+    const qreal result = VAbstractPiece::sumTrapezoids(points);
     QVERIFY(qFuzzyIsNull(result));
 }
 

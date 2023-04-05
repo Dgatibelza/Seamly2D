@@ -63,10 +63,10 @@
 
 //---------------------------------------------------------------------------------------------------------------------
 AddToCalc::AddToCalc(const QDomElement &xml, VAbstractPattern *doc, QUndoCommand *parent)
-    : VUndoCommand(xml, doc, parent), nameActivDraw(doc->GetNameActivPP()), cursor(doc->getCursor())
+    : VUndoCommand(xml, doc, parent), activeBlockName(doc->getActiveDraftBlockName()), cursor(doc->getCursor())
 {
     setText(tr("add object"));
-    nodeId = doc->GetParametrId(xml);
+    nodeId = doc->getParameterId(xml);
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -74,10 +74,10 @@ void AddToCalc::undo()
 {
     qCDebug(vUndo, "Undo.");
 
-    doc->ChangeActivPP(nameActivDraw);//Without this user will not see this change
+    doc->changeActiveDraftBlock(activeBlockName);//Without this user will not see this change
 
     QDomElement calcElement;
-    if (doc->GetActivNodeElement(VAbstractPattern::TagCalculation, calcElement))
+    if (doc->getActiveNodeElement(VAbstractPattern::TagCalculation, calcElement))
     {
         QDomElement domElement = doc->elementById(nodeId);
         if (domElement.isElement())
@@ -101,7 +101,7 @@ void AddToCalc::undo()
     }
     emit NeedFullParsing();
     VMainGraphicsView::NewSceneRect(qApp->getCurrentScene(), qApp->getSceneView());
-    doc->SetCurrentPP(nameActivDraw);//Return current pattern piece after undo
+    doc->setCurrentDraftBlock(activeBlockName);//Return current pattern piece after undo
 }
 
 //---------------------------------------------------------------------------------------------------------------------
@@ -109,11 +109,11 @@ void AddToCalc::redo()
 {
     qCDebug(vUndo, "Redo.");
 
-    doc->ChangeActivPP(nameActivDraw);//Without this user will not see this change
+    doc->changeActiveDraftBlock(activeBlockName);//Without this user will not see this change
     doc->setCursor(cursor);
 
     QDomElement calcElement;
-    if (doc->GetActivNodeElement(VAbstractPattern::TagCalculation, calcElement))
+    if (doc->getActiveNodeElement(VAbstractPattern::TagCalculation, calcElement))
     {
         if (cursor == NULL_ID)
         {
@@ -148,7 +148,7 @@ void AddToCalc::RedoFullParsing()
     if (redoFlag)
     {
         emit NeedFullParsing();
-        doc->SetCurrentPP(nameActivDraw);//Return current pattern piece after undo
+        doc->setCurrentDraftBlock(activeBlockName);//Return current pattern piece after undo
     }
     else
     {

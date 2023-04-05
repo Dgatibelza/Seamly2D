@@ -2,7 +2,7 @@
  *                                                                         *
  *   Copyright (C) 2017  Seamly, LLC                                       *
  *                                                                         *
- *   https://github.com/fashionfreedom/seamly2d                             *
+ *   https://github.com/fashionfreedom/seamly2d                            *
  *                                                                         *
  ***************************************************************************
  **
@@ -78,7 +78,7 @@ public:
                                   VAbstractPattern *doc, VContainer *data);
 
     static VToolRotation  *Create(const quint32 _id, const quint32 &origin, QString &angle, const QString &suffix,
-                                  const QVector<quint32> &source, const QVector<DestinationItem> &destination,
+                                  const QVector<SourceItem> &source, const QVector<DestinationItem> &destination,
                                   VMainGraphicsScene *scene, VAbstractPattern *doc, VContainer *data,
                                   const Document &parse, const Source &typeCreation);
 
@@ -88,27 +88,32 @@ public:
     enum                   { Type = UserType + static_cast<int>(Tool::Rotation)};
 
     QString                getOriginPointName() const;
+    quint32                getOriginPointId() const;
+    void                   setOriginPointId(const quint32 &value);
 
     VFormula               GetFormulaAngle() const;
     void                   SetFormulaAngle(const VFormula &value);
 
     virtual void           ShowVisualization(bool show) Q_DECL_OVERRIDE;
 
+protected slots:
+    virtual void           showContextMenu(QGraphicsSceneContextMenuEvent *event, quint32 id=NULL_ID) Q_DECL_OVERRIDE;
+
 protected:
     virtual void           SetVisualization() Q_DECL_OVERRIDE;
     virtual void           SaveDialog(QDomElement &domElement) Q_DECL_OVERRIDE;
     virtual void           ReadToolAttributes(const QDomElement &domElement) Q_DECL_OVERRIDE;
     virtual void           SaveOptions(QDomElement &tag, QSharedPointer<VGObject> &obj) Q_DECL_OVERRIDE;
-    virtual void           contextMenuEvent ( QGraphicsSceneContextMenuEvent * event ) Q_DECL_OVERRIDE;
+    virtual QString        makeToolTip() const Q_DECL_OVERRIDE;
 
 private:
     Q_DISABLE_COPY(VToolRotation)
-    quint32                origPointId;
+    quint32                m_originPointId;
     QString                formulaAngle;
 
                            VToolRotation(VAbstractPattern *doc, VContainer *data, quint32 id,
-                                         quint32 origPointId, const QString &angle, const QString &suffix,
-                                         const QVector<quint32> &source, const QVector<DestinationItem> &destination,
+                                         quint32 originPointId, const QString &angle, const QString &suffix,
+                                         const QVector<SourceItem> &source, const QVector<DestinationItem> &destination,
                                          const Source &typeCreation, QGraphicsItem *parent = nullptr);
 
     static DestinationItem createPoint(quint32 idTool, quint32 idItem, const QPointF &origin, qreal angle,
@@ -128,7 +133,7 @@ private:
                                                    qreal angle, const QString &suffix, VContainer *data);
 
     static void updatePoint(quint32 idTool, quint32 idItem, const QPointF &origin, qreal angle,
-                            const QString &suffix, VContainer *data, quint32 id, qreal mx, qreal my);
+                            const QString &suffix, VContainer *data, const DestinationItem &item);
     template <class Item>
     static void updateItem(quint32 idTool, quint32 idItem, const QPointF &origin, qreal angle,
                            const QString &suffix, VContainer *data, quint32 id);

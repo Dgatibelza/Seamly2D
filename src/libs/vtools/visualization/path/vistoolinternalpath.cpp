@@ -73,15 +73,16 @@ void VisToolInternalPath::RefreshGeometry()
 
     if (m_path.CountNodes() > 0)
     {
-        DrawPath(this, m_path.PainterPath(Visualization::data), mainColor, m_path.GetPenType(), Qt::RoundCap);
+        DrawPath(this, m_path.PainterPath(Visualization::data), mainColor, m_path.GetPenType(),
+                 lineWeight, Qt::RoundCap);
 
         const QVector<VPointF> nodes = m_path.PathNodePoints(Visualization::data);
 
         for (int i = 0; i < nodes.size(); ++i)
         {
             VSimplePoint *point = GetPoint(static_cast<quint32>(i), supportColor);
-            point->SetOnlyPoint(mode == Mode::Creation);
-            point->RefreshPointGeometry(nodes.at(i));
+            point->setOnlyPoint(mode == Mode::Creation);
+            point->refreshPointGeometry(nodes.at(i));
             point->setVisible(true);
         }
 
@@ -90,7 +91,8 @@ void VisToolInternalPath::RefreshGeometry()
             const QVector<QPointF> points = m_path.PathPoints(Visualization::data);
             if (points.size() > 0)
             {
-                DrawLine(m_line, QLineF(points.last(), Visualization::scenePos), supportColor, Qt::DashLine);
+                DrawLine(m_line, QLineF(points.last(), Visualization::scenePos), supportColor,
+                                        lineWeight, Qt::DashLine);
             }
         }
     }

@@ -2,7 +2,7 @@
  *                                                                         *
  *   Copyright (C) 2017  Seamly, LLC                                       *
  *                                                                         *
- *   https://github.com/fashionfreedom/seamly2d                             *
+ *   https://github.com/fashionfreedom/seamly2d                            *
  *                                                                         *
  ***************************************************************************
  **
@@ -68,8 +68,10 @@ public:
     virtual ~PreferencesConfigurationPage();
 
     void Apply();
+    
 protected:
     virtual void changeEvent(QEvent* event) Q_DECL_OVERRIDE;
+
 private:
     Q_DISABLE_COPY(PreferencesConfigurationPage)
     Ui::PreferencesConfigurationPage *ui;
@@ -77,6 +79,12 @@ private:
     bool m_systemChanged;
     bool m_unitChanged;
     bool m_labelLangChanged;
+    bool m_selectionSoundChanged;
+    bool m_moveSuffixChanged;
+    bool m_rotateSuffixChanged;
+    bool m_mirrorByAxisSuffixChanged;
+    bool m_mirrorByLineSuffixChanged;
+    bool m_defaultExportFormatChanged;
 
     void SetLabelComboBox(const QStringList &list);
     void InitUnits();
