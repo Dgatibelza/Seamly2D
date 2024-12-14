@@ -2,8 +2,8 @@ var def_8h =
 [
     [ "DraftImage", "d3/df8/structDraftImage.html", "d3/df8/structDraftImage" ],
     [ "CustomSARecord", "dc/d74/structCustomSARecord.html", "dc/d74/structCustomSARecord" ],
-    [ "QxtPrivate", "db/d14/classQxtPrivate.html", "db/d14/classQxtPrivate" ],
-    [ "QxtPrivateInterface", "de/ddc/classQxtPrivateInterface.html", "de/ddc/classQxtPrivateInterface" ],
+    [ "QxtPrivate< PUB >", "db/d14/classQxtPrivate.html", "db/d14/classQxtPrivate" ],
+    [ "QxtPrivateInterface< PUB, PVT >", "de/ddc/classQxtPrivateInterface.html", "de/ddc/classQxtPrivateInterface" ],
     [ "__has_cpp_attribute", "d4/da4/def_8h.html#aeed0a618f017e128a5d8654754f792db", null ],
     [ "HANDLE_SIZE", "d4/da4/def_8h.html#a115eb986866b4424e9143567d902f816", null ],
     [ "QIMAGE_MAX", "d4/da4/def_8h.html#abb52cf8f360453bdd87e44d6dcf17ce9", null ],
@@ -16,6 +16,11 @@ var def_8h =
     [ "SceneSize", "d4/da4/def_8h.html#a8084f95d171e33ef73bf44aed20a4378", null ],
     [ "V_FALLTHROUGH", "d4/da4/def_8h.html#a380cf399715eea06631207dd0f18de71", null ],
     [ "ToolVisHolderType", "d4/da4/def_8h.html#acb16ac88f43c4dcfdc9e43baf22da452", null ],
+    [ "DialogSource", "d4/da4/def_8h.html#a2ace20f64b3456b610d7b2d85ea3418e", [
+      [ "ToolDialog", "d4/da4/def_8h.html#a2ace20f64b3456b610d7b2d85ea3418eada9dd8d76cc8af1d78de34d822cf26ab", null ],
+      [ "VariableDialog", "d4/da4/def_8h.html#a2ace20f64b3456b610d7b2d85ea3418ea0d8f2a9b908c5c0f0e712bba782f2b03", null ],
+      [ "MeasurementDialog", "d4/da4/def_8h.html#a2ace20f64b3456b610d7b2d85ea3418eae2e9e73a1611e997de4419e9ecabc818", null ]
+    ] ],
     [ "Direction", "d4/da4/def_8h.html#a1b2993a5d049d3ac565a9a8d0209084a", [
       [ "Forward", "d4/da4/def_8h.html#a1b2993a5d049d3ac565a9a8d0209084aa67d2f6740a8eaebf4d5c6f79be8da481", null ],
       [ "Backward", "d4/da4/def_8h.html#a1b2993a5d049d3ac565a9a8d0209084aab3263eb38f8903efc271cc7a760da510", null ]
@@ -351,9 +356,9 @@ var def_8h =
       [ "LAST_ONE_DO_NOT_USE", "d4/da4/def_8h.html#a474a10f771dff4181411f5ff47029582ae154556eea64f68495301fc09a12122e", null ]
     ] ],
     [ "AbsoluteMPath", "d4/da4/def_8h.html#a109bfae79164a25450f13a1145e21246", null ],
-    [ "convertToList", "d4/da4/def_8h.html#a457cbefee10fd95df9bd29704fe59fb5", null ],
-    [ "convertToSet", "d4/da4/def_8h.html#a6b9749227c2564c8dbbfa13237418429", null ],
-    [ "convertToSet", "d4/da4/def_8h.html#a3d3286b5877ab04c2718a0054be0c9ea", null ],
+    [ "convertToList", "d4/da4/def_8h.html#a0bab8a55be6e28603efc4f99b140a779", null ],
+    [ "convertToSet", "d4/da4/def_8h.html#a3ecf6230eab9b9997515ace558e1ffac", null ],
+    [ "convertToSet", "d4/da4/def_8h.html#a9b5dc664655cd45f745dfa6cb03dcb97", null ],
     [ "darkenPixmap", "d4/da4/def_8h.html#a3f58bf4b46e94f75893d1e8005582a80", null ],
     [ "directionToString", "d4/da4/def_8h.html#a2e4bae6ace9ea7638b5174f65c4bb4c2", null ],
     [ "fileDialog", "d4/da4/def_8h.html#a58e50c3dcf5e9d809ad9f6f4a64f254c", null ],
@@ -366,7 +371,7 @@ var def_8h =
     [ "makeHeaderName", "d4/da4/def_8h.html#a0d388d3b034a1f7b4f3618163b213f73", null ],
     [ "notchSubTypeToString", "d4/da4/def_8h.html#a45306c2fc908e7e89e2bd49fd6df23b0", null ],
     [ "notchTypeToString", "d4/da4/def_8h.html#af49aeb9df96488d2b90dece1756b1d2c", null ],
-    [ "PreparePrinter", "d4/da4/def_8h.html#a1a3199818364cce4a77b4eef63f528bf", null ],
+    [ "PreparePrinter", "d4/da4/def_8h.html#a4d48e08b62697a4d46199919f131efb2", null ],
     [ "Q_DECLARE_TYPEINFO", "d4/da4/def_8h.html#ac2a684cd90d4072b96ca1cf87d980dbf", null ],
     [ "Q_DECLARE_TYPEINFO", "d4/da4/def_8h.html#ae47b6bd4531cf8d8c6666e9b9d455792", null ],
     [ "RelativeMPath", "d4/da4/def_8h.html#a70500634183359838388ccd270379787", null ],
