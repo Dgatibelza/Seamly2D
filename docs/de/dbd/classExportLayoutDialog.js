@@ -2,6 +2,7 @@ var classExportLayoutDialog =
 [
     [ "ExportLayoutDialog", "de/dbd/classExportLayoutDialog.html#a78f4fd4af94b19f96ee7dafee837b06c", null ],
     [ "~ExportLayoutDialog", "de/dbd/classExportLayoutDialog.html#ad750b12f032ee99f3f0b1db737938669", null ],
+    [ "enableBinaryDXFFormatCheckbox", "de/dbd/classExportLayoutDialog.html#af0c6264f6d4efb098b6088ddd8071dee", null ],
     [ "exportFormatSuffix", "de/dbd/classExportLayoutDialog.html#a5a5e9452f8bdccac188521cc68bf901e", null ],
     [ "fileName", "de/dbd/classExportLayoutDialog.html#a4d29e095660e51edee81f86a6d427f86", null ],
     [ "format", "de/dbd/classExportLayoutDialog.html#a06f64cfe19ccdde0b4607f83a842b75b", null ],
@@ -20,7 +21,7 @@ var classExportLayoutDialog =
     [ "setBinaryDXFFormat", "de/dbd/classExportLayoutDialog.html#aaa85fad90dfbc512e245204cda87357b", null ],
     [ "setDestinationPath", "de/dbd/classExportLayoutDialog.html#a05a97329520b5fa1842368daa97363ea", null ],
     [ "setTextAsPaths", "de/dbd/classExportLayoutDialog.html#a85d7846d094b7691bafef2b4dc60e603", null ],
-    [ "showEvent", "de/dbd/classExportLayoutDialog.html#a0198fc5d765f1280580dfc7d9bb74c68", null ],
+    [ "showEvent", "de/dbd/classExportLayoutDialog.html#a24aa783fe5082f6229a48543447245cc", null ],
     [ "showExportFiles", "de/dbd/classExportLayoutDialog.html#a07800061e1ca0bcfa01a245e65cdccc5", null ],
     [ "writeSettings", "de/dbd/classExportLayoutDialog.html#acddbbe1458589ca2c1fdb96ce369b225", null ],
     [ "m_count", "de/dbd/classExportLayoutDialog.html#aac5130ef046671ad9da4c8ec77c6bd18", null ],

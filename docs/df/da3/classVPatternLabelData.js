@@ -8,7 +8,7 @@ var classVPatternLabelData =
     [ "getFontSize", "df/da3/classVPatternLabelData.html#a7bb9405354b53b986a5fe39283d4a4a2", null ],
     [ "GetLabelHeight", "df/da3/classVPatternLabelData.html#afe1ebc460ab76800f7c2899c1f183bc2", null ],
     [ "GetLabelWidth", "df/da3/classVPatternLabelData.html#ac539f7183a0dcbb05ca7c27e0bc63a99", null ],
-    [ "GetRotation", "df/da3/classVPatternLabelData.html#ad8545fc83ba86b2a4ee0ba6b4c6c795d", null ],
+    [ "getRotation", "df/da3/classVPatternLabelData.html#a36e3cb05fd70c25e13e51aee46d8b490", null ],
     [ "operator=", "df/da3/classVPatternLabelData.html#a291f56c6b50d1f5b65a1f6209f603be6", null ],
     [ "setBottomRightAnchorPoint", "df/da3/classVPatternLabelData.html#a00ed7f0c7e58df93b856b6ab1539fcc0", null ],
     [ "setCenterAnchorPoint", "df/da3/classVPatternLabelData.html#a0f6be5fb903dbf023ffa752d01c9ba5f", null ],
@@ -17,7 +17,7 @@ var classVPatternLabelData =
     [ "SetLabelWidth", "df/da3/classVPatternLabelData.html#ad00e6b782e2db0bc3b25431eeaab84d4", null ],
     [ "SetRotation", "df/da3/classVPatternLabelData.html#a89fbd49ec9499135609779fa0ca20f6e", null ],
     [ "setTopLeftAnchorPoint", "df/da3/classVPatternLabelData.html#ae6fa320f54bf670225b5a89a5bafe049", null ],
-    [ "Swap", "df/da3/classVPatternLabelData.html#a0ee8a27259ec11b454df6ba36f484042", null ],
+    [ "Swap", "df/da3/classVPatternLabelData.html#a7654840bbc19a561fc2a0f91904e9f67", null ],
     [ "topLeftAnchorPoint", "df/da3/classVPatternLabelData.html#ab40bb30622d3bc848d580f9b9cd19d60", null ],
     [ "d", "df/da3/classVPatternLabelData.html#a723c1d73d4fc3bc065e15cbb14cb966c", null ]
 ];

@@ -2,7 +2,7 @@ var classVLayoutPiece =
 [
     [ "VLayoutPiece", "df/de5/classVLayoutPiece.html#af6c5adc88b1dd75c14efe69089b12f10", null ],
     [ "VLayoutPiece", "df/de5/classVLayoutPiece.html#aa2ff64880fa90e1a193c51be6a65bd9e", null ],
-    [ "~VLayoutPiece", "df/de5/classVLayoutPiece.html#a70292032cbf88b017941d07d1bb684cd", null ],
+    [ "~VLayoutPiece", "df/de5/classVLayoutPiece.html#a7256a137ebb45dd5cc65834f5c5b760d", null ],
     [ "Create", "df/de5/classVLayoutPiece.html#abe6f5851868f4e1153bd6905ba9a25c7", null ],
     [ "createAllowanceItem", "df/de5/classVLayoutPiece.html#af60a4ab71f1503847f4202a4b16ba881", null ],
     [ "createAllowancePath", "df/de5/classVLayoutPiece.html#ac99ac632f2d27f2c4fdbd7c46df39bb3", null ],
@@ -23,7 +23,7 @@ var classVLayoutPiece =
     [ "getInternalPaths", "df/de5/classVLayoutPiece.html#aeea0b7cd97c6b24289b1dc9318d8a70e", null ],
     [ "GetItem", "df/de5/classVLayoutPiece.html#abb08f31ba49e4b14936c83274f8aab27", null ],
     [ "getLayoutAllowancePoints", "df/de5/classVLayoutPiece.html#a9449a4506a87a1f96e0a13d3c4326109", null ],
-    [ "GetLayoutWidth", "df/de5/classVLayoutPiece.html#af3bfe75198209091e5f0b3a54ee68c37", null ],
+    [ "getLayoutGap", "df/de5/classVLayoutPiece.html#a5963b29e97ee2a7aedbff1013c728306", null ],
     [ "getMainPathItem", "df/de5/classVLayoutPiece.html#a8869a3737fe54ae0f71669d56c1eb09c", null ],
     [ "getNotches", "df/de5/classVLayoutPiece.html#a79e329800c11a35af60efe6eaa86b9a4", null ],
     [ "GetPatternText", "df/de5/classVLayoutPiece.html#ae88df6e20fd4f610980e7a3697aa8974", null ],
@@ -54,7 +54,7 @@ var classVLayoutPiece =
     [ "setGrainline", "df/de5/classVLayoutPiece.html#a52ac5dbfa55d78f0fe45374f8470f1e1", null ],
     [ "setInternalPaths", "df/de5/classVLayoutPiece.html#a4e14aa4a633fa7a516dd9c2fed1d1793", null ],
     [ "SetLayoutAllowancePoints", "df/de5/classVLayoutPiece.html#a83c09c5cbdd5bc5367456c667481dbec", null ],
-    [ "SetLayoutWidth", "df/de5/classVLayoutPiece.html#a23fadab712e15788fd0fa2ddecbd6618", null ],
+    [ "setLayoutGap", "df/de5/classVLayoutPiece.html#a55522e59f0f688f349bb6af43c31f0b5", null ],
     [ "SetMirror", "df/de5/classVLayoutPiece.html#ab09936b588cac1172985164c21d4d43d", null ],
     [ "setNotches", "df/de5/classVLayoutPiece.html#a566ca5183b3a7a758adbec7efda56407", null ],
     [ "SetPatternInfo", "df/de5/classVLayoutPiece.html#ae6c6fd2c0668ec8a11aaa2a0409944c6", null ],
@@ -62,7 +62,7 @@ var classVLayoutPiece =
     [ "setSeamAllowancePoints", "df/de5/classVLayoutPiece.html#aaaa0520c162fc8a9181b319fd8a52f3f", null ],
     [ "setTransform", "df/de5/classVLayoutPiece.html#a947962edbcbd5af426391b830b40ce56", null ],
     [ "Square", "df/de5/classVLayoutPiece.html#a003008a1860e4422feedad37a556f40d", null ],
-    [ "Swap", "df/de5/classVLayoutPiece.html#a9b70216a127059db8c96b3c0ddd8cf2e", null ],
+    [ "Swap", "df/de5/classVLayoutPiece.html#a9a28f7a23f8fd55145e0214f8d8355ff", null ],
     [ "Translate", "df/de5/classVLayoutPiece.html#a3f04aa0c85bfdb8cf1e7bbab6d15e32f", null ],
     [ "d", "df/de5/classVLayoutPiece.html#a4aaeb0f2eb6391e04d15393cc97d91f3", null ]
 ];
