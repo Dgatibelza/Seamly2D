@@ -572,7 +572,7 @@ var searchData=
   ['maxlength_569',['MaxLength',['../d2/d6d/classVArc.html#ad411564e5afe0a51f0cff82cd170474d',1,'VArc::MaxLength()'],['../d0/d14/classVEllipticalArc.html#acf802e123e3a0f9f70d62d71da240459',1,'VEllipticalArc::MaxLength()']]],
   ['maxlocalsa_570',['MaxLocalSA',['../dd/dfe/classVAbstractPiece.html#a97a516118aa522873659244fba646887',1,'VAbstractPiece']]],
   ['maxoccurs_571',['maxOccurs',['../d6/dd2/classDFAContentModel_1_1Occurence.html#ace1053724311a3c9c13dc5859518c85f',1,'DFAContentModel::Occurence']]],
-  ['maxrecentfiles_572',['MaxRecentFiles',['../d6/d1a/classMainWindow.html#a0ee5fdf298d8f30b5e29418348ecaacfacffff941ca3da9119f465d531db6dc86',1,'MainWindow::MaxRecentFiles()'],['../d8/d61/classTMainWindow.html#a0f3e7779c722d05108da4e56bcd6d478a93e479ed8d33820bb57a4cdff04ed8b5',1,'TMainWindow::MaxRecentFiles()']]],
+  ['maxrecentfiles_572',['MaxRecentFiles',['../d6/d1a/classMainWindow.html#a0ee5fdf298d8f30b5e29418348ecaacfacffff941ca3da9119f465d531db6dc86',1,'MainWindow::MaxRecentFiles()'],['../d8/d61/classTMainWindow.html#ae8d2b6b8d2c58e95e6cfad2634dd782ea93e479ed8d33820bb57a4cdff04ed8b5',1,'TMainWindow::MaxRecentFiles()']]],
   ['maxscale_573',['MaxScale',['../da/d5d/classVMainGraphicsView.html#ad943c932b3319178308162185fcb2232',1,'VMainGraphicsView']]],
   ['maxscenesize_574',['maxSceneSize',['../d2/d31/vmaingraphicsview_8cpp.html#a1767d5be861f1feaaf6fc0d9fedf50e9',1,'vmaingraphicsview.cpp']]],
   ['maxvalue_575',['maxValue',['../d4/de6/classVPE_1_1SpinboxProperty.html#a34d1460ffe4fa88029660760ba8cb749',1,'VPE::SpinboxProperty']]],
