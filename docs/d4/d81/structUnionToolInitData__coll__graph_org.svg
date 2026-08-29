@@ -122,7 +122,7 @@
 <text text-anchor="start" x="208.5" y="-824.5" font-family="Helvetica,sans-Serif" font-size="10.00"># m_DefaultLineType</text>
 <text text-anchor="start" x="208.5" y="-813.5" font-family="Helvetica,sans-Serif" font-size="10.00"># defaultBasePoint</text>
 <text text-anchor="start" x="208.5" y="-802.5" font-family="Helvetica,sans-Serif" font-size="10.00"># lastSavedExportFormat</text>
-<text text-anchor="start" x="208.5" y="-791.5" font-family="Helvetica,sans-Serif" font-size="10.00"># cursor</text>
+<text text-anchor="start" x="208.5" y="-791.5" font-family="Helvetica,sans-Serif" font-size="10.00"># m_cursorId</text>
 <text text-anchor="start" x="208.5" y="-780.5" font-family="Helvetica,sans-Serif" font-size="10.00"># toolsOnRemove</text>
 <text text-anchor="start" x="208.5" y="-769.5" font-family="Helvetica,sans-Serif" font-size="10.00"># m_history</text>
 <text text-anchor="start" x="208.5" y="-758.5" font-family="Helvetica,sans-Serif" font-size="10.00"># patternPieces</text>
@@ -135,12 +135,12 @@
 <text text-anchor="start" x="208.5" y="-684.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ListMeasurements()</text>
 <text text-anchor="start" x="208.5" y="-673.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ListExpressions()</text>
 <text text-anchor="start" x="208.5" y="-662.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ listVariableExpressions()</text>
-<text text-anchor="start" x="208.5" y="-651.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ CreateEmptyFile()</text>
-<text text-anchor="start" x="208.5" y="-640.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ changeActiveDraftBlock()</text>
-<text text-anchor="start" x="208.5" y="-629.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getActiveDraftBlockName()</text>
-<text text-anchor="start" x="208.5" y="-618.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ draftBlockNameExists()</text>
-<text text-anchor="start" x="208.5" y="-607.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ draftBlockCount()</text>
-<text text-anchor="start" x="208.5" y="-596.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 98 more...</text>
+<text text-anchor="start" x="208.5" y="-651.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isVariableUsed()</text>
+<text text-anchor="start" x="208.5" y="-640.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ CreateEmptyFile()</text>
+<text text-anchor="start" x="208.5" y="-629.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ changeActiveDraftBlock()</text>
+<text text-anchor="start" x="208.5" y="-618.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getActiveDraftBlockName()</text>
+<text text-anchor="start" x="208.5" y="-607.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ draftBlockNameExists()</text>
+<text text-anchor="start" x="208.5" y="-596.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 99 more...</text>
 <text text-anchor="start" x="208.5" y="-585.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getTool()</text>
 <text text-anchor="start" x="208.5" y="-574.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ AddTool()</text>
 <text text-anchor="start" x="208.5" y="-563.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ RemoveTool()</text>

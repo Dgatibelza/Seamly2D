@@ -1,5 +1,8 @@
 var namespaces_dup =
 [
+    [ "anonymous_namespace{dialogexporttocsv.cpp}", "d2/d4e/namespaceanonymous__namespace_02dialogexporttocsv_8cpp_03.html", [
+      [ "encodingName", "d2/d4e/namespaceanonymous__namespace_02dialogexporttocsv_8cpp_03.html#a6f7c62063135531346d419500b1f7894", null ]
+    ] ],
     [ "anonymous_namespace{dialogtool.cpp}", "d3/d7d/namespaceanonymous__namespace_02dialogtool_8cpp_03.html", [
       [ "RowId", "d3/d7d/namespaceanonymous__namespace_02dialogtool_8cpp_03.html#ac2e003f541cb5afc14468f3b6945ef46", null ]
     ] ],
@@ -20,6 +23,10 @@ var namespaces_dup =
     [ "anonymous_namespace{preferencespatternpage.cpp}", "d1/dbe/namespaceanonymous__namespace_02preferencespatternpage_8cpp_03.html", [
       [ "initAllStringsComboBox", "d1/dbe/namespaceanonymous__namespace_02preferencespatternpage_8cpp_03.html#a97383a8b46e2afedbc957a5c56b7522f", null ]
     ] ],
+    [ "anonymous_namespace{savetooloptions.cpp}", "dd/da8/namespaceanonymous__namespace_02savetooloptions_8cpp_03.html", [
+      [ "childElements", "dd/da8/namespaceanonymous__namespace_02savetooloptions_8cpp_03.html#a90bc00f8429f2767711cee83fd7c5b09", null ],
+      [ "referencesChanged", "dd/da8/namespaceanonymous__namespace_02savetooloptions_8cpp_03.html#a37fef8eec386cdf9b1548406ee1b6175", null ]
+    ] ],
     [ "anonymous_namespace{vabstractpattern.cpp}", "d0/d42/namespaceanonymous__namespace_02vabstractpattern_8cpp_03.html", [
       [ "ReadExpressionAttribute", "d0/d42/namespaceanonymous__namespace_02vabstractpattern_8cpp_03.html#a03b1fb578fba1ecb51300ab233820199", null ]
     ] ],
@@ -34,6 +41,7 @@ var namespaces_dup =
       [ "pointNameSize", "d5/dc3/namespaceanonymous__namespace_02vcommonsettings_8cpp_03.html#a7136b7a2ed9ead08f0f849054160457b", null ],
       [ "settingBackupPath", "d5/dc3/namespaceanonymous__namespace_02vcommonsettings_8cpp_03.html#a33d50aa96456f560a5ac1845a77a682c", null ],
       [ "settingConfigurationAddress", "d5/dc3/namespaceanonymous__namespace_02vcommonsettings_8cpp_03.html#a7308b7a66e0e6d69b9b7aab47d4253d3", null ],
+      [ "settingConfigurationAppTheme", "d5/dc3/namespaceanonymous__namespace_02vcommonsettings_8cpp_03.html#acaad9fa4b240d692d418f29f99cb9ead", null ],
       [ "settingConfigurationAutosaveState", "d5/dc3/namespaceanonymous__namespace_02vcommonsettings_8cpp_03.html#a7daef37ab258f5781330620fd1c881f0", null ],
       [ "settingConfigurationAutosaveTime", "d5/dc3/namespaceanonymous__namespace_02vcommonsettings_8cpp_03.html#a3a9b2311b6fa39fad1eb5a4c529d641d", null ],
       [ "settingConfigurationCity", "d5/dc3/namespaceanonymous__namespace_02vcommonsettings_8cpp_03.html#aad6035303a156424a369fa4f57eecc09", null ],
@@ -47,6 +55,7 @@ var namespaces_dup =
       [ "settingConfigurationExportFormat", "d5/dc3/namespaceanonymous__namespace_02vcommonsettings_8cpp_03.html#a97304289062448ab19cf7f468ff251db", null ],
       [ "settingConfigurationFax", "d5/dc3/namespaceanonymous__namespace_02vcommonsettings_8cpp_03.html#a432e70947dc777475bd71f014d59f8a7", null ],
       [ "settingConfigurationLocale", "d5/dc3/namespaceanonymous__namespace_02vcommonsettings_8cpp_03.html#a466e58d60d4df94c653ae24efd557bed", null ],
+      [ "settingConfigurationMaxBackups", "d5/dc3/namespaceanonymous__namespace_02vcommonsettings_8cpp_03.html#a4e96bad712d4954fdc97041ed3125574", null ],
       [ "settingConfigurationMirrorByAxisSuffix", "d5/dc3/namespaceanonymous__namespace_02vcommonsettings_8cpp_03.html#acea79ab1f171b09b76c99884725b0a5a", null ],
       [ "settingConfigurationMirrorByLineSuffix", "d5/dc3/namespaceanonymous__namespace_02vcommonsettings_8cpp_03.html#a8463c1243a8c59bfb78650df8b04e890", null ],
       [ "settingConfigurationMoveSuffix", "d5/dc3/namespaceanonymous__namespace_02vcommonsettings_8cpp_03.html#a6d068bb3eeec138734b8a4c3d9329808", null ],
@@ -98,6 +107,8 @@ var namespaces_dup =
       [ "settingGeneralRestoreFileList", "d5/dc3/namespaceanonymous__namespace_02vcommonsettings_8cpp_03.html#a6b89610e94e02cf040d009c330b734ef", null ],
       [ "settingGeneralToolbarsState", "d5/dc3/namespaceanonymous__namespace_02vcommonsettings_8cpp_03.html#af3454acdd594dd98d4348de6cc8643a7", null ],
       [ "settingGeneralWindowState", "d5/dc3/namespaceanonymous__namespace_02vcommonsettings_8cpp_03.html#a0696d67afde5d1eb5346a7a90c11beae", null ],
+      [ "settingGraphicsAutoClearFx", "d5/dc3/namespaceanonymous__namespace_02vcommonsettings_8cpp_03.html#ab6d7c0132ed611b7a2c649e0e7d65771", null ],
+      [ "settingGraphicsUseNativeDialogs", "d5/dc3/namespaceanonymous__namespace_02vcommonsettings_8cpp_03.html#ae909559fcf29f9941cfe10bffcec8932", null ],
       [ "settingGraphicsUseSecondMonitor", "d5/dc3/namespaceanonymous__namespace_02vcommonsettings_8cpp_03.html#a2474fcf7a475730787f7dcc8c7789a6f", null ],
       [ "settingGraphicsUseToolColor", "d5/dc3/namespaceanonymous__namespace_02vcommonsettings_8cpp_03.html#a634ebb3df267982daf0e69606dbcda37", null ],
       [ "settingGraphicsViewAngleDelta", "d5/dc3/namespaceanonymous__namespace_02vcommonsettings_8cpp_03.html#a4737f155235118b924d74d65812b04b6", null ],
@@ -148,6 +159,7 @@ var namespaces_dup =
       [ "settingGraphicsViewZoomRBNegativeColor", "d5/dc3/namespaceanonymous__namespace_02vcommonsettings_8cpp_03.html#aedefb6549602aaba61af1b775475ff7b", null ],
       [ "settingGraphicsViewZoomRBPositiveColor", "d5/dc3/namespaceanonymous__namespace_02vcommonsettings_8cpp_03.html#a0dfede5003a30a9408c3063eb66a92b4", null ],
       [ "settingGraphicsViewZoomSpeedFactor", "d5/dc3/namespaceanonymous__namespace_02vcommonsettings_8cpp_03.html#a26cf87afb2f980c1ec7cd2fd63e9f02d", null ],
+      [ "settingHistoryDialogSize", "d5/dc3/namespaceanonymous__namespace_02vcommonsettings_8cpp_03.html#ae90fc7411eaf8f8b2e52334dbd5db8d6", null ],
       [ "settingImagesPath", "d5/dc3/namespaceanonymous__namespace_02vcommonsettings_8cpp_03.html#a13498b0f2dc5512d31e522096d1484ad", null ],
       [ "settingLabelDateFormat", "d5/dc3/namespaceanonymous__namespace_02vcommonsettings_8cpp_03.html#a9960810b30624736af9c63c4ea1bdb78", null ],
       [ "settingLabelTimeFormat", "d5/dc3/namespaceanonymous__namespace_02vcommonsettings_8cpp_03.html#a400d4d80c42541aab7c2d1572ae4339e", null ],
@@ -183,14 +195,14 @@ var namespaces_dup =
       [ "SaveNodeCanonically", "d6/db9/namespaceanonymous__namespace_02vdomdocument_8cpp_03.html#a48dca2f0db8a0c3d00d69eff6118f8bf", null ]
     ] ],
     [ "anonymous_namespace{vlayoutpiece.cpp}", "d8/dfc/namespaceanonymous__namespace_02vlayoutpiece_8cpp_03.html", [
-      [ "ConvertInternalPaths", "d8/dfc/namespaceanonymous__namespace_02vlayoutpiece_8cpp_03.html#aee188e904012b2c56f9a99b8a90b554b", null ],
-      [ "CorrectPosition", "d8/dfc/namespaceanonymous__namespace_02vlayoutpiece_8cpp_03.html#a26982c628e932aec0813e1c375387df4", null ],
+      [ "convertInternalPaths", "d8/dfc/namespaceanonymous__namespace_02vlayoutpiece_8cpp_03.html#a5e2795caa03fd4edf984846671f95daa", null ],
+      [ "correctPosition", "d8/dfc/namespaceanonymous__namespace_02vlayoutpiece_8cpp_03.html#a000c655a2dfc2f7c09419b0a643ed9bc", null ],
       [ "findGrainlineGeometry", "d8/dfc/namespaceanonymous__namespace_02vlayoutpiece_8cpp_03.html#a7127c03c02e6cd087bc720219e7d9556", null ],
       [ "findLabelGeometry", "d8/dfc/namespaceanonymous__namespace_02vlayoutpiece_8cpp_03.html#a04f05a7019f2d0feb9fc0abc773ad54e", null ],
-      [ "IsItemContained", "d8/dfc/namespaceanonymous__namespace_02vlayoutpiece_8cpp_03.html#a4867ae9889201fd1784404a9a1fe75ea", null ],
-      [ "PieceLabelText", "d8/dfc/namespaceanonymous__namespace_02vlayoutpiece_8cpp_03.html#a9d5be9c5672d55404b37efffeccaa53f", null ],
-      [ "PrepareAllowance", "d8/dfc/namespaceanonymous__namespace_02vlayoutpiece_8cpp_03.html#a52a0730adfd50a44e6904c7028709d88", null ],
-      [ "RotatePoint", "d8/dfc/namespaceanonymous__namespace_02vlayoutpiece_8cpp_03.html#ac9b8474c898648af470a9dde3441a5e8", null ]
+      [ "getLabelText", "d8/dfc/namespaceanonymous__namespace_02vlayoutpiece_8cpp_03.html#a9bda5a4945f75b8a9ba0278df977eb14", null ],
+      [ "isItemContained", "d8/dfc/namespaceanonymous__namespace_02vlayoutpiece_8cpp_03.html#aafadb68390e27769bbae08816fae07c5", null ],
+      [ "prepareAllowance", "d8/dfc/namespaceanonymous__namespace_02vlayoutpiece_8cpp_03.html#aa81bfa3d30caf5623bb2b64bad5e7ec6", null ],
+      [ "rotatePoint", "d8/dfc/namespaceanonymous__namespace_02vlayoutpiece_8cpp_03.html#abe938cdf3c612c15f09105c6214a6dc2", null ]
     ] ],
     [ "anonymous_namespace{vnodedetail.cpp}", "d9/d83/namespaceanonymous__namespace_02vnodedetail_8cpp_03.html", [
       [ "ConvertAfter", "d9/d83/namespaceanonymous__namespace_02vnodedetail_8cpp_03.html#a6333f8827e9243cf90c85518487730c6", null ],
@@ -253,7 +265,7 @@ var namespaces_dup =
       [ "settingTiledPDFPaperWidth", "db/dea/namespaceanonymous__namespace_02vsettings_8cpp_03.html#abeda08ed7a84bd924f68223ffba2e656", null ]
     ] ],
     [ "anonymous_namespace{vtextgraphicsitem.cpp}", "d4/d16/namespaceanonymous__namespace_02vtextgraphicsitem_8cpp_03.html", [
-      [ "GetBoundingRect", "d4/d16/namespaceanonymous__namespace_02vtextgraphicsitem_8cpp_03.html#aa45b98c164dcad8b951baf9d6bb2f745", null ]
+      [ "getBoundingRect", "d4/d16/namespaceanonymous__namespace_02vtextgraphicsitem_8cpp_03.html#ac6b26a0ea6e45c81110d6b48f997eee2", null ]
     ] ],
     [ "anonymous_namespace{vtextmanager.cpp}", "db/dc8/namespaceanonymous__namespace_02vtextmanager_8cpp_03.html", [
       [ "InitPiecePlaceholders", "db/dc8/namespaceanonymous__namespace_02vtextmanager_8cpp_03.html#a4ba47a191ccd57fb49539a3fd571206b", null ],

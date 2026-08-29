@@ -376,6 +376,7 @@ var hierarchy =
       ] ],
       [ "DialogUndo", "de/d7f/classDialogUndo.html", null ],
       [ "EditLabelTemplateDialog", "d7/df1/classEditLabelTemplateDialog.html", null ],
+      [ "ExportProgressDialog", "d7/deb/classExportProgressDialog.html", null ],
       [ "ImageDialog", "d3/db4/classImageDialog.html", null ],
       [ "MeShortcutsDialog", "dd/d67/classMeShortcutsDialog.html", null ],
       [ "MeasurementDatabaseDialog", "d3/d63/classMeasurementDatabaseDialog.html", null ],
@@ -422,7 +423,7 @@ var hierarchy =
       [ "qmu::QmuParserError", "df/ddc/classqmu_1_1QmuParserError.html", null ]
     ] ],
     [ "QFrame", null, [
-      [ "VWidgetPopup", "db/d1a/classVWidgetPopup.html", null ]
+      [ "WidgetPopup", "d1/dbc/classWidgetPopup.html", null ]
     ] ],
     [ "QGraphicsEllipseItem", null, [
       [ "VScaledEllipse", "d8/dbf/classVScaledEllipse.html", null ],
@@ -645,7 +646,7 @@ var hierarchy =
         [ "TST_VAbstractCurve", "d3/d1d/classTST__VAbstractCurve.html", null ],
         [ "TST_VAbstractPiece", "d6/d89/classTST__VAbstractPiece.html", null ],
         [ "TST_VEllipticalArc", "d2/d9c/classTST__VEllipticalArc.html", null ],
-        [ "TST_VLayoutDetail", "d1/dd3/classTST__VLayoutDetail.html", null ],
+        [ "TST_VLayoutPiece", "d4/dd0/classTST__VLayoutPiece.html", null ],
         [ "TST_VPiece", "db/dbb/classTST__VPiece.html", null ],
         [ "TST_VSpline", "d7/d3f/classTST__VSpline.html", null ]
       ] ],
@@ -833,6 +834,7 @@ var hierarchy =
     [ "QSharedPointer< T >", "dd/daa/classQSharedPointer.html", null ],
     [ "QSharedPointer< DialogTool >", "dd/daa/classQSharedPointer.html", null ],
     [ "QSharedPointer< dx_iface >", "dd/daa/classQSharedPointer.html", null ],
+    [ "QSharedPointer< MeasurementDoc >", "dd/daa/classQSharedPointer.html", null ],
     [ "QSharedPointer< QCursor >", "dd/daa/classQSharedPointer.html", null ],
     [ "QSharedPointer< QDomDocument >", "dd/daa/classQSharedPointer.html", null ],
     [ "QSharedPointer< QFile >", "dd/daa/classQSharedPointer.html", null ],
@@ -1071,7 +1073,7 @@ var hierarchy =
       [ "BaseRefVectorOf< Op >", "d0/d2c/classBaseRefVectorOf.html", null ],
       [ "BaseRefVectorOf< PSVIAttributeStorage >", "d0/d2c/classBaseRefVectorOf.html", null ],
       [ "BaseRefVectorOf< XMLEntityDecl >", "d0/d2c/classBaseRefVectorOf.html", null ],
-      [ "BaseRefVectorOf< XMLReader >", "d0/d2c/classBaseRefVectorOf.html", null ],
+      [ "BaseRefVectorOf< ReaderMgr::ReaderData >", "d0/d2c/classBaseRefVectorOf.html", null ],
       [ "BaseRefVectorOf< RegxParser::ReferencePosition >", "d0/d2c/classBaseRefVectorOf.html", null ],
       [ "BaseRefVectorOf< XMLAttr >", "d0/d2c/classBaseRefVectorOf.html", null ],
       [ "BaseRefVectorOf< IdentityConstraint >", "d0/d2c/classBaseRefVectorOf.html", null ],
@@ -1151,7 +1153,7 @@ var hierarchy =
       [ "RefHashTableOfEnumerator< DTDAttDef >", "df/d84/classRefHashTableOfEnumerator.html", null ],
       [ "RefStackOf< DOMBuffer >", "d9/d88/classRefStackOf.html", null ],
       [ "RefStackOf< XMLEntityDecl >", "d9/d88/classRefStackOf.html", null ],
-      [ "RefStackOf< XMLReader >", "d9/d88/classRefStackOf.html", null ],
+      [ "RefStackOf< ReaderMgr::ReaderData >", "d9/d88/classRefStackOf.html", null ],
       [ "RefStackOf< RefHashTableOf< ValueStore, PtrHasher > >", "d9/d88/classRefStackOf.html", null ],
       [ "ValueHashTableOf< DOMLSParserFilter::FilterAction, PtrHasher >", "df/d18/classValueHashTableOf.html", null ],
       [ "ValueHashTableOf< bool, PtrHasher >", "df/d18/classValueHashTableOf.html", null ],
@@ -1204,7 +1206,7 @@ var hierarchy =
         [ "RefVectorOf< Op >", "d9/d67/classRefVectorOf.html", null ],
         [ "RefVectorOf< PSVIAttributeStorage >", "d9/d67/classRefVectorOf.html", null ],
         [ "RefVectorOf< XMLEntityDecl >", "d9/d67/classRefVectorOf.html", null ],
-        [ "RefVectorOf< XMLReader >", "d9/d67/classRefVectorOf.html", null ],
+        [ "RefVectorOf< ReaderMgr::ReaderData >", "d9/d67/classRefVectorOf.html", null ],
         [ "RefVectorOf< RegxParser::ReferencePosition >", "d9/d67/classRefVectorOf.html", null ],
         [ "RefVectorOf< XMLAttr >", "d9/d67/classRefVectorOf.html", null ],
         [ "RefVectorOf< IdentityConstraint >", "d9/d67/classRefVectorOf.html", null ],
@@ -1375,6 +1377,7 @@ var hierarchy =
       [ "RangeTokenMap", "d7/d9f/classRangeTokenMap.html", null ],
       [ "ReaderMgr", "d4/d1c/classReaderMgr.html", null ],
       [ "ReaderMgr::LastExtEntityInfo", "d7/d0c/structReaderMgr_1_1LastExtEntityInfo.html", null ],
+      [ "ReaderMgr::ReaderData", "d0/d84/classReaderMgr_1_1ReaderData.html", null ],
       [ "RefArrayEnumerator< TElem >", "da/db4/classRefArrayEnumerator.html", null ],
       [ "RefArrayOf< TElem >", "d4/d21/classRefArrayOf.html", null ],
       [ "RefHash2KeysTableOf< TVal, THasher >", "df/dfa/classRefHash2KeysTableOf.html", null ],

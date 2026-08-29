@@ -180,7 +180,7 @@
 <text text-anchor="start" x="708.5" y="-1512.5" font-family="Helvetica,sans-Serif" font-size="10.00"># m_DefaultLineType</text>
 <text text-anchor="start" x="708.5" y="-1501.5" font-family="Helvetica,sans-Serif" font-size="10.00"># defaultBasePoint</text>
 <text text-anchor="start" x="708.5" y="-1490.5" font-family="Helvetica,sans-Serif" font-size="10.00"># lastSavedExportFormat</text>
-<text text-anchor="start" x="708.5" y="-1479.5" font-family="Helvetica,sans-Serif" font-size="10.00"># cursor</text>
+<text text-anchor="start" x="708.5" y="-1479.5" font-family="Helvetica,sans-Serif" font-size="10.00"># m_cursorId</text>
 <text text-anchor="start" x="708.5" y="-1468.5" font-family="Helvetica,sans-Serif" font-size="10.00"># toolsOnRemove</text>
 <text text-anchor="start" x="708.5" y="-1457.5" font-family="Helvetica,sans-Serif" font-size="10.00"># m_history</text>
 <text text-anchor="start" x="708.5" y="-1446.5" font-family="Helvetica,sans-Serif" font-size="10.00"># patternPieces</text>
@@ -195,12 +195,12 @@
 <text text-anchor="start" x="708.5" y="-1350.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ListMeasurements()</text>
 <text text-anchor="start" x="708.5" y="-1339.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ ListExpressions()</text>
 <text text-anchor="start" x="708.5" y="-1328.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ listVariableExpressions()</text>
-<text text-anchor="start" x="708.5" y="-1317.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ CreateEmptyFile()</text>
-<text text-anchor="start" x="708.5" y="-1306.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ changeActiveDraftBlock()</text>
-<text text-anchor="start" x="708.5" y="-1295.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getActiveDraftBlockName()</text>
-<text text-anchor="start" x="708.5" y="-1284.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ draftBlockNameExists()</text>
-<text text-anchor="start" x="708.5" y="-1273.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ draftBlockCount()</text>
-<text text-anchor="start" x="708.5" y="-1262.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 98 more...</text>
+<text text-anchor="start" x="708.5" y="-1317.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ isVariableUsed()</text>
+<text text-anchor="start" x="708.5" y="-1306.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ CreateEmptyFile()</text>
+<text text-anchor="start" x="708.5" y="-1295.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ changeActiveDraftBlock()</text>
+<text text-anchor="start" x="708.5" y="-1284.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getActiveDraftBlockName()</text>
+<text text-anchor="start" x="708.5" y="-1273.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ draftBlockNameExists()</text>
+<text text-anchor="start" x="708.5" y="-1262.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 99 more...</text>
 <text text-anchor="start" x="708.5" y="-1251.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ getTool()</text>
 <text text-anchor="start" x="708.5" y="-1240.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ AddTool()</text>
 <text text-anchor="start" x="708.5" y="-1229.5" font-family="Helvetica,sans-Serif" font-size="10.00">+ RemoveTool()</text>
@@ -381,7 +381,7 @@
 <text text-anchor="start" x="512" y="-519.5" font-family="Helvetica,sans-Serif" font-size="10.00">&#45; toVersion0_2_3()</text>
 <text text-anchor="start" x="512" y="-508.5" font-family="Helvetica,sans-Serif" font-size="10.00">&#45; toVersion0_2_4()</text>
 <text text-anchor="start" x="512" y="-497.5" font-family="Helvetica,sans-Serif" font-size="10.00">&#45; toVersion0_2_5()</text>
-<text text-anchor="start" x="512" y="-486.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 73 more...</text>
+<text text-anchor="start" x="512" y="-486.5" font-family="Helvetica,sans-Serif" font-size="10.00">and 74 more...</text>
 <text text-anchor="start" x="512" y="-475.5" font-family="Helvetica,sans-Serif" font-size="10.00">&#45; OldNamesToNewNames</text>
 <text text-anchor="start" x="512" y="-464.5" font-family="Helvetica,sans-Serif" font-size="10.00">_InV0_2_0()</text>
 <text text-anchor="start" x="512" y="-453.5" font-family="Helvetica,sans-Serif" font-size="10.00">&#45; OldNamesToNewNames</text>
